@@ -85,7 +85,7 @@ export const insumosService = {
     },
 
     // PDFs: Hoja de Seguridad
-    async obtenerHojaSeguridad(item: number) {
+    async obtenerHojaSeguridad(item: number | string) {
         const res = await fetch(`${API_BASE}/catalogo/${encodeURIComponent(String(item))}/hoja-seguridad`);
         let data: any = null; try { data = await res.json(); } catch { }
         if (!res.ok) throw new Error((data && data.message) || 'No encontrada');
@@ -99,7 +99,7 @@ export const insumosService = {
         } catch { }
         return data;
     },
-    async subirHojaSeguridad(item: number, file: File) {
+    async subirHojaSeguridad(item: number | string, file: File) {
         const fd = new FormData();
         fd.append('file', file);
         const res = await fetch(`${API_BASE}/catalogo/${encodeURIComponent(String(item))}/hoja-seguridad`, {
@@ -110,7 +110,7 @@ export const insumosService = {
         if (!res.ok) throw new Error((data && data.message) || 'Error al subir PDF');
         return data;
     },
-    async eliminarHojaSeguridad(item: number) {
+    async eliminarHojaSeguridad(item: number | string) {
         const res = await fetch(`${API_BASE}/catalogo/${encodeURIComponent(String(item))}/hoja-seguridad`, { method: 'DELETE' });
         let data: any = null; try { data = await res.json(); } catch { }
         if (!res.ok) throw new Error((data && data.message) || 'Error al eliminar PDF');
@@ -118,7 +118,7 @@ export const insumosService = {
     },
 
     // PDFs: Certificado de Análisis
-    async obtenerCertAnalisis(item: number) {
+    async obtenerCertAnalisis(item: number | string) {
         const res = await fetch(`${API_BASE}/catalogo/${encodeURIComponent(String(item))}/cert-analisis`);
         let data: any = null; try { data = await res.json(); } catch { }
         if (!res.ok) throw new Error((data && data.message) || 'No encontrado');
@@ -132,7 +132,7 @@ export const insumosService = {
         } catch { }
         return data;
     },
-    async subirCertAnalisis(item: number, file: File) {
+    async subirCertAnalisis(item: number | string, file: File) {
         const fd = new FormData();
         fd.append('file', file);
         const res = await fetch(`${API_BASE}/catalogo/${encodeURIComponent(String(item))}/cert-analisis`, {
@@ -143,7 +143,7 @@ export const insumosService = {
         if (!res.ok) throw new Error((data && data.message) || 'Error al subir PDF');
         return data;
     },
-    async eliminarCertAnalisis(item: number) {
+    async eliminarCertAnalisis(item: number | string) {
         const res = await fetch(`${API_BASE}/catalogo/${encodeURIComponent(String(item))}/cert-analisis`, { method: 'DELETE' });
         let data: any = null; try { data = await res.json(); } catch { }
         if (!res.ok) throw new Error((data && data.message) || 'Error al eliminar PDF');
