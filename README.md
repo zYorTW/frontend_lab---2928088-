@@ -1,59 +1,79 @@
-# AppLab
+# AppLab - Sistema de Gestión de Laboratorio
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.3.
+Sistema completo para la gestión de inventario, reactivos, insumos y solicitudes de laboratorio.
 
-## Development server
+## 🚀 Instalación y Configuración
 
-To start a local development server, run:
+### Prerrequisitos
+- Node.js 18 o superior
+- Angular CLI 20
+- MySQL 8.0+
+- Navegador web moderno
 
-```bash
+Instalar Dependencias
+npm i / npm install
+# Instalar Angular CLI globalmente
+npm install -g @angular/cli
+
+# Navegar al directorio del proyecto
+cd frontend_lab---2928088-
+
+# Instalar dependencias del proyecto
+npm install
+
+<!-- ---------------------- -->
+
+# Servidor de desarrollo
 ng serve
-```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+# La aplicación estará disponible en:
+# http://localhost:4200
 
-## Code scaffolding
+<!-- --------------------------- -->
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+3. Credenciales de Acceso
+Usuarios preconfigurados:
 
-```bash
-ng generate component component-name
-```
+Superadmin: superadmin@gmail.com - Acceso total al sistema
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Administrador: admin@gmail.com - Gestión de usuarios e inventario
 
-```bash
-ng generate --help
-```
+Auxiliar: auxiliar@gmail.com - Consultas y solicitudes básicas
 
-## Building
+Contraseña para todos los usuarios: 123456
 
-To build the project run:
+📋 Módulos del Sistema
 
-```bash
-ng build
-```
+Dashboard - Vista general y métricas
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Insumos - Gestión de insumos de laboratorio
 
-## Running unit tests
+Reactivos - Control de reactivos y lotes
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Papelería - Administración de material de oficina
 
-```bash
-ng test
-```
+Solicitudes - Sistema de solicitudes de clientes
 
-## Running end-to-end tests
+Reportes - Generación de reportes e inventarios
 
-For end-to-end (e2e) testing, run:
+Auditoría - Logs de acciones del sistema
 
-```bash
-ng e2e
-```
+Usuarios - Gestión de usuarios y roles
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+🛠️ Tecnologías
 
-## Additional Resources
+Frontend: Angular 17, TypeScript, Signals
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Backend: Node.js, Express, MySQL
+
+Autenticación: JWT con 3 roles
+
+Estilos: CSS3, Diseño responsive
+
+🔐 Roles y Permisos
+
+Superadmin: Acceso completo a todos los módulos
+
+Administrador: Gestión de inventario y usuarios
+
+Auxiliar: Consultas y creación de solicitudes
