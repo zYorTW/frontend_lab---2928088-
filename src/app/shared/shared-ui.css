@@ -1,0 +1,196 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+/* Core theme variables */
+:root{
+  --font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  --bg: #f7f9fc;
+  --card-bg: #ffffff;
+  --muted: #6b7280;
+  --border: #e6e9ef;
+  --primary: #1666ff;
+  --accent: #09b4a8;
+  --radius: 8px;
+  --shadow-xs: 0 1px 2px rgba(16,24,40,0.04);
+  --shadow-sm: 0 6px 18px rgba(15,23,42,0.06);
+}
+
+/* Lightweight reset (scoped only to content pages) */
+*,*::before,*::after{box-sizing:border-box}
+html,body{font-family:var(--font-family);margin:0;padding:0;color:#111827}
+
+/* =====================================================
+   SCOPED PAGE CONTAINER (only applies inside content)
+   ===================================================== */
+:host ::ng-deep .page-container {
+  padding: 20px;
+  max-width: 1100px;
+  margin: 18px auto;
+  background: var(--bg);
+  box-sizing: border-box;
+}
+
+/* =====================================================
+   CARD
+   ===================================================== */
+:host ::ng-deep .card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  box-shadow: var(--shadow-xs);
+}
+
+/* =====================================================
+   FORM UTILITIES
+   ===================================================== */
+:host ::ng-deep .form-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+:host ::ng-deep .form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+:host ::ng-deep label {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+:host ::ng-deep input[type=text],
+:host ::ng-deep input[type=email],
+:host ::ng-deep input[type=password],
+:host ::ng-deep textarea,
+:host ::ng-deep select {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  min-width: 0;
+  font-size: 14px;
+}
+
+/* =====================================================
+   BUTTONS
+   ===================================================== */
+:host ::ng-deep .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+:host ::ng-deep .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+:host ::ng-deep .btn-primary {
+  background: linear-gradient(180deg, var(--primary), #0e4fd6);
+  color: #fff;
+}
+
+:host ::ng-deep .btn-outline {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+/* =====================================================
+   LIST UTILITIES
+   ===================================================== */
+:host ::ng-deep .list-wrapper {
+  display: block;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 6px;
+}
+
+:host ::ng-deep .list-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 120px;
+  gap: 12px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 700;
+  color: var(--muted);
+}
+
+:host ::ng-deep .list-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr 120px;
+  gap: 12px;
+  padding: 10px 12px;
+  align-items: center;
+  border-bottom: 1px solid rgba(0,0,0,0.03);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+
+:host ::ng-deep .list-item:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* =====================================================
+   FIELD ROWS
+   ===================================================== */
+:host ::ng-deep .field-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 0;
+}
+
+:host ::ng-deep .field-label {
+  font-size: 12px;
+  color: var(--muted);
+  min-width: 120px;
+}
+
+:host ::ng-deep .field-value {
+  font-size: 14px;
+  color: #111827;
+  word-break: break-word;
+}
+
+/* =====================================================
+   TOAST
+   ===================================================== */
+:host ::ng-deep .global-toast {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  background: #111827;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(2,6,23,0.4);
+  z-index: 9999;
+}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+@media (max-width:720px){
+  :host ::ng-deep .list-header,
+  :host ::ng-deep .list-item {
+    grid-template-columns: 1fr;
+  }
+  :host ::ng-deep .field-label {
+    min-width: 0;
+  }
+  :host ::ng-deep .page-container {
+    padding: 12px;
+  }
+}

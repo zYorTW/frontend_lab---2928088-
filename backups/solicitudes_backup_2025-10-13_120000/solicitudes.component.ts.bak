@@ -1,0 +1,26 @@
+// BACKUP: solicitudes.component.ts saved 2025-10-13 12:00
+// Original file copied by assistant for safekeeping
+
+import { Component, signal, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { authService } from '../services/auth.service';
+
+const API = (window as any).__env?.API_BASE || 'http://localhost:3000/api/solicitudes';
+
+@Component({
+  standalone: true,
+  selector: 'app-solicitudes',
+  imports: [CommonModule, FormsModule, RouterModule],
+  templateUrl: './solicitudes.component.html',
+  styleUrls: ['./solicitudes.component.css'],
+  encapsulation: ViewEncapsulation.None
+})
+export class SolicitudesComponent implements OnInit, OnDestroy {
+  clientes = signal<Array<any>>([]);
+  solicitudes = signal<Array<any>>([]);
+  clientesFiltrados = signal<Array<any>>([]);
+  solicitudesFiltradas = signal<Array<any>>([]);
+
+  // truncated for brevity in backup

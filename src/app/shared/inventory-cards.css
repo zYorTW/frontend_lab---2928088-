@@ -1,0 +1,141 @@
+/* Inventory Cards Standard Styles
+   Apply to both Insumos and Papelería using the same markup classes. 
+   These selectors target existing classnames used in Insumos and Papelería.
+*/
+
+/* Grid container */
+:is(.insumo-cards, .inventory-cards) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Card */
+:is(.insumo-card, .inventory-card) {
+  background: var(--primary-white);
+  border: 2px solid var(--border-gray);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  position: relative;
+  cursor: pointer;
+}
+:is(.insumo-card, .inventory-card):hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  border-color: var(--primary-turquoise);
+}
+
+/* Media */
+:is(.insumo-card-media, .inventory-card-media) {
+  width: 100%;
+  height: 180px;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+:is(.insumo-card-media img, .inventory-card-media img) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Body */
+:is(.insumo-card-body, .inventory-card-body) {
+  padding: 1rem 1rem 1.25rem 1rem;
+}
+
+/* Header */
+:is(.insumo-card-header, .inventory-card-header) { display: flex; flex-direction: column; gap: 0.15rem; margin-bottom: 0.4rem; }
+:is(.insumo-brand, .inventory-brand) { font-size: 0.82rem; color: #556; }
+:is(.insumo-title-row, .inventory-title-row) { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+:is(.insumo-title, .inventory-title) { font-size: 1.05rem; font-weight: 600; color: var(--primary-blue); margin: 0; }
+:is(.insumo-item-tag, .inventory-item-tag) { background: var(--light-gray); padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.9rem; font-weight: 600; white-space: nowrap; color: #334; }
+
+/* Stats row (spacing like Insumos) */
+:is(.insumo-stats, .inventory-stats) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  margin: 0.5rem 0 0.5rem 0;
+  font-size: 0.92rem;
+}
+
+/* Delete button */
+:is(.insumo-delete-btn, .inventory-delete-btn) {
+  position: absolute; top: 6px !important; right: 6px !important; left: auto !important; width: 28px; height: 28px; padding: 0;
+  border: 1px solid #b11212 !important; background: #d11a1a !important; color: #ffffff;
+  font-size: 22px; font-weight: 900; line-height: 1; display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; box-shadow: none !important; transition: none !important; border-radius: 6px; z-index: 2;
+}
+:is(.insumo-delete-btn, .inventory-delete-btn):hover,
+:is(.insumo-delete-btn, .inventory-delete-btn):active,
+:is(.insumo-delete-btn, .inventory-delete-btn):focus { background: #d11a1a !important; color: #ffffff; box-shadow: none !important; outline: none; }
+:is(.insumo-delete-btn, .inventory-delete-btn):disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* (Estilos de chips eliminados: ya no hay tarjetas de inventario con chips) */
+
+/* (Barra de progreso eliminada) */
+
+/* (Detalles desplegables eliminados) */
+
+/* Stronger safeguard for Papelería: force delete button to top-right */
+.papeleria-page :is(.insumo-delete-btn, .inventory-delete-btn) {
+  position: absolute !important;
+  top: 6px !important;
+  right: 6px !important;
+  left: auto !important;
+}
+
+/* Generic square action button (align with Reactivos pdf-btn) */
+.pdf-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.08);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.04) inset;
+}
+.pdf-btn.delete { background: #d11a1a; color: #fff; border-color: #b11212; }
+.pdf-btn:hover { transform: translateY(-1px); }
+.pdf-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* Position card delete buttons top-right for any card */
+:is(.insumo-card, .inventory-card, .catalog-card) .card-delete-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 2;
+}
+
+/* ==========================
+   Skeleton loading styles
+   ========================== */
+@keyframes skeleton-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-card {
+  pointer-events: none;
+}
+.skeleton-box,
+.skeleton-line {
+  background: linear-gradient(90deg, #f0f0f0 0%, #eaeaea 50%, #f0f0f0 100%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.2s ease-in-out infinite;
+  border-radius: 6px;
+}
+.skeleton-box { width: 100%; height: 180px; border-radius: 8px; }
+.skeleton-line { height: 14px; margin-top: 10px; }
+.skeleton-line.w-90 { width: 90%; }
+.skeleton-line.w-70 { width: 70%; }
+.skeleton-line.w-50 { width: 50%; }
+.skeleton-line.w-40 { width: 40%; }
+.skeleton-line.w-30 { width: 30%; }

@@ -1,0 +1,55 @@
+/* BACKUP: solicitudes.component.css saved 2025-10-13 12:00 */
+/* Original file copied by assistant for safekeeping */
+
+/* === LIBA THEME COMPLETO para solicitudes === */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* ---------- VARIABLES ---------- */
+:root {
+  --primary-blue: #001f5b;
+  --primary-turquoise: #00b8b5;
+  --primary-white: #ffffff;
+  --alert-yellow: #fff3b0;
+  --alert-orange: #ffd6a5;
+  --alert-red: #ffadad;
+  --text-gray: #4a5568;
+  --light-gray: #f7fafc;
+  --border-gray: #e2e8f0;
+}
+
+/* ---------- RESET ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  font-family: "Poppins", sans-serif;
+  background: var(--light-gray);
+  color: var(--text-gray);
+  line-height: 1.6;
+}
+
+/* ---------- SECCIONES GENERALES ---------- */
+h2, h3 {
+  color: var(--primary-blue);
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-turquoise), transparent);
+  border-radius: 2px;
+}
+
+/* truncated for brevity in backup */

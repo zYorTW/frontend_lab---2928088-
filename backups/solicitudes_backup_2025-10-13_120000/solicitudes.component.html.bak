@@ -1,0 +1,106 @@
+<!-- BACKUP: solicitudes.component.html saved 2025-10-13 12:00 -->
+<!-- Original file copied by assistant for safekeeping -->
+
+<!-- CONTAINER PRINCIPAL -->
+<div class="container">
+  <h2>Solicitudes</h2>
+
+  <!-- SECCIÓN: Agregar cliente -->
+  <section>
+    <h3>Agregar cliente</h3>
+    <form (submit)="createCliente($event)" (focusin)="onFormFocus()" (focusout)="onFormBlur()">
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:0.5rem;">
+
+        <!-- Nombre -->
+        <div>
+          <label for="clienteNombre">Nombre:</label>
+          <input id="clienteNombre" [(ngModel)]="clienteNombre" name="clienteNombre" required
+            [style.border-color]="clienteErrors['nombre'] ? '#dc3545' : ''" />
+          <small *ngIf="clienteErrors['nombre']"
+            style="color: #dc3545; font-size: 0.85rem; display: block; margin-top: 0.25rem;">
+            ⚠️ {{ clienteErrors['nombre'] }}
+          </small>
+        </div>
+
+        <!-- Número -->
+        <div>
+          <label for="clienteNumero">Número:</label>
+          <input id="clienteNumero" type="number" [(ngModel)]="clienteNumero" name="clienteNumero"
+            [style.border-color]="clienteErrors['numero'] ? '#dc3545' : ''" />
+          <small *ngIf="clienteErrors['numero']"
+            style="color: #dc3545; font-size: 0.85rem; display: block; margin-top: 0.25rem;">
+            ⚠️ {{ clienteErrors['numero'] }}
+          </small>
+        </div>
+
+        <!-- Fecha vinculación -->
+        <div>
+          <label for="clienteFechaVinc">Fecha vinculación:</label>
+          <input id="clienteFechaVinc" type="date" [(ngModel)]="clienteFechaVinc" name="clienteFechaVinc"
+            [style.border-color]="clienteErrors['fechaVinc'] ? '#dc3545' : ''" />
+          <small *ngIf="clienteErrors['fechaVinc']"
+            style="color: #dc3545; font-size: 0.85rem; display: block; margin-top: 0.25rem;">
+            ⚠️ {{ clienteErrors['fechaVinc'] }}
+          </small>
+        </div>
+
+        <!-- Tipo usuario -->
+        <div>
+          <label for="clienteTipoUsuario">Tipo usuario:</label>
+          <select id="clienteTipoUsuario" [(ngModel)]="clienteTipoUsuario" name="clienteTipoUsuario"
+            [style.border-color]="clienteErrors['tipoUsuario'] ? '#dc3545' : ''">
+            <option value="">Seleccionar tipo de usuario</option>
+            <option value="Emprendedor">Emprendedor</option>
+            <option value="Persona Natural">Persona Natural</option>
+            <option value="Persona Jurídica">Persona Jurídica</option>
+            <option value="Aprendiz SENA">Aprendiz SENA</option>
+            <option value="Instructor SENA">Instructor SENA</option>
+            <option value="Centros SENA">Centros SENA</option>
+          </select>
+          <small *ngIf="clienteErrors['tipoUsuario']"
+            style="color: #dc3545; font-size: 0.85rem; display: block; margin-top: 0.25rem;">
+            ⚠️ {{ clienteErrors['tipoUsuario'] }}
+          </small>
+        </div>
+
+        <!-- Razón social -->
+        <div>
+          <label for="clienteRazonSocial">Razón social:</label>
+          <input id="clienteRazonSocial" [(ngModel)]="clienteRazonSocial" name="clienteRazonSocial"
+            [style.border-color]="clienteErrors['razonSocial'] ? '#dc3545' : ''" />
+          <small *ngIf="clienteErrors['razonSocial']"
+            style="color: #dc3545; font-size: 0.85rem; display: block; margin-top: 0.25rem;">
+            ⚠️ {{ clienteErrors['razonSocial'] }}
+          </small>
+        </div>
+
+        <!-- NIT -->
+        <div>
+          <label for="clienteNit">NIT:</label>
+          <input id="clienteNit" [(ngModel)]="clienteNit" name="clienteNit"
+            [style.border-color]="clienteErrors['nit'] ? '#dc3545' : ''" />
+          <small *ngIf="clienteErrors['nit']"
+            style="color: #dc3545; font-size: 0.85rem; display: block; margin-top: 0.25rem;">
+            ⚠️ {{ clienteErrors['nit'] }}
+          </small>
+        </div>
+
+        <!-- Tipo identificación -->
+        <div>
+          <label for="clienteTipoId">Tipo identificación:</label>
+          <select id="clienteTipoId" [(ngModel)]="clienteTipoId" name="clienteTipoId"
+            [style.border-color]="clienteErrors['tipoId'] ? '#dc3545' : ''">
+            <option value="">Seleccionar tipo de identificación</option>
+            <option value="CC">CC - Cédula de Ciudadanía</option>
+            <option value="TI">TI - Tarjeta de Identidad</option>
+            <option value="CE">CE - Cédula de Extranjería</option>
+            <option value="NIT">NIT - Número de Identificación Tributaria</option>
+            <option value="PASAPORTE">Pasaporte</option>
+            <option value="OTRO">Otro</option>
+          </select>
+          <small *ngIf="clienteErrors['tipoId']"
+            style="color: #dc3545; font-size: 0.85rem; display: block; margin-top: 0.25rem;">
+            ⚠️ {{ clienteErrors['tipoId'] }}
+          </small>
+        </div>
+

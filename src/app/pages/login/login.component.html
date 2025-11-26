@@ -1,0 +1,100 @@
+<div class="container">
+  <!-- Partículas de fondo -->
+  <div class="particles" id="particles"></div>
+  <!-- Sección izquierda - Ilustración -->
+  <div class="left-section">
+    <div class="connection-lines">
+      <div class="connection-line" style="top: 20%; left: 10%; width: 30%; animation-delay: 0s;"></div>
+      <div class="connection-line" style="top: 50%; left: 20%; width: 40%; animation-delay: 1s;"></div>
+      <div class="connection-line" style="top: 80%; left: 5%; width: 35%; animation-delay: 2s;"></div>
+    </div>
+
+    <div class="illustration-container">
+      <h1 class="logo-main">LIBA</h1>
+      <p class="logo-subtitle">Laboratorio Integrado de Biociencias Aplicadas</p>
+
+      <div class="bio-elements">
+        <div class="bio-icon">
+          <i class="fas fa-microscope"></i>
+          <span>Análisis</span>
+        </div>
+        <div class="bio-icon">
+          <i class="fas fa-dna"></i>
+          <span>Genética</span>
+        </div>
+        <div class="bio-icon">
+          <i class="fas fa-atom"></i>
+          <span>Molecular</span>
+        </div>
+        <div class="bio-icon">
+          <i class="fas fa-flask"></i>
+          <span>Ensayos</span>
+        </div>
+        <div class="bio-icon">
+          <i class="fas fa-microchip"></i>
+          <span>Bioinformática</span>
+        </div>
+        <div class="bio-icon">
+          <i class="fas fa-chart-line"></i>
+          <span>Datos</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección derecha - Formulario -->
+  <div class="login-root">
+    <div class="login-backdrop"></div>
+    <main class="login-center">
+      <section class="login-card">
+        <header class="login-header">
+          <div class="logo-container">
+            <img src="img\logo-loggin.png" alt="Logo LIBA" class="brand-circle">
+          </div>
+        
+          <h1 class="login-title">Bienvenido de nuevo</h1>
+          <p class="login-sub">Ingresa a tu cuenta para continuar</p>
+        </header>
+
+        <form class="login-form" #loginForm="ngForm" (ngSubmit)="onSubmit($event, loginForm)">
+          <div class="form-group">
+            <label for="email">Correo electrónico</label>
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="tu@ejemplo.com"
+              [(ngModel)]="email" #emailCtrl="ngModel" required email>
+            @if ((emailCtrl.touched || triedSubmit) && emailCtrl.errors?.['required']) {
+              <small class="field-error">El correo es requerido</small>
+            }
+            @if ((emailCtrl.touched || triedSubmit) && emailCtrl.errors?.['email']) {
+              <small class="field-error">Formato de correo inválido</small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="contrasena">Contraseña</label>
+            <div class="password-field">
+              <input id="contrasena" name="contrasena"
+                type="password"
+                autocomplete="current-password"
+                placeholder="Contraseña" [(ngModel)]="contrasena" #contrasenaCtrl="ngModel" required minlength="3">
+            </div>
+            @if ((contrasenaCtrl.touched || triedSubmit) && contrasenaCtrl.errors?.['required']) {
+              <small class="field-error">La contraseña es requerida</small>
+            }
+            @if ((contrasenaCtrl.touched || triedSubmit) && contrasenaCtrl.errors?.['minlength']) {
+              <small class="field-error">Mínimo 3 caracteres</small>
+            }
+          </div>
+
+          <div class="actions">
+            <button class="btn primary" type="submit" [disabled]="loading">
+              @if (loading) { <span class="spinner-circle" aria-hidden="true"></span> }
+              <span>{{ loading ? 'Ingresando...' : 'Entrar' }}</span>
+            </button>
+          </div>
+        </form>
+
+      </section>
+    </main>
+  </div>
+
+</div>

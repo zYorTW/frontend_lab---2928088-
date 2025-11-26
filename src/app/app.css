@@ -1,0 +1,565 @@
+/* =====================================================
+   HEADER GLOBAL LIBA (nuevo)
+   ===================================================== */
+   
+.app-header, #app-header, header#app-header {
+	background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-turquoise) 100%);
+	color: var(--primary-white);
+	padding: 1rem 2rem;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+	position: sticky;
+	top: 0;
+	z-index: 4000; /* above nav so account dropdown always overlays */
+	width: 100vw;
+	margin-left: calc(-50vw + 50%);
+	margin-right: calc(-50vw + 50%);
+	margin-top: 0;
+}
+
+#app-header .header-content, .app-header .header-content, header#app-header .header-content {
+	display: flex;                /* single row layout */
+	align-items: center;
+	justify-content: space-between; /* logo left, user-menu right */
+	/* align with main content width and padding */
+	max-width: 1400px;
+	margin: 0 auto;
+	padding: 0 2rem;
+}
+
+/* Hide the global header on auth pages (auth pages add body.auth-page) */
+body.auth-page #app-header,
+body.auth-page .app-header {
+	display: none !important;
+}
+
+.logo-section {
+  display: flex;                /* Para que el logo y el texto estén juntos en línea */
+  align-items: center;
+  gap: 15px;                    /* Espacio entre el logo y el texto */
+	justify-content: flex-start;
+}
+
+
+.text-section {
+  display: flex;
+  flex-direction: column;       /* Título y subtítulo en columna */
+}
+
+.header-title {
+	font-weight: 700;
+	font-size: 1.1rem;
+	color: var(--primary-white);
+	line-height: 1.1;
+}
+
+.header-subtitle {
+	font-size: 0.9rem;
+	color: rgba(255,255,255,0.9);
+	font-weight: 400;
+}
+
+
+
+/* Ensure the logo and title are left-aligned exactly where main content starts */
+.logo-section {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	justify-content: flex-start; /* force left alignment */
+}
+
+
+/* Make header paddings explicit and match .main-content so left edges align */
+
+
+.logo-section {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.logo {
+	width: 50px;
+	height: 50px;
+	background: var(--primary-white);
+	border-radius: 8px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--primary-blue);
+	font-weight: bold;
+	font-size: 1.2rem;
+	flex-shrink: 0;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+
+.user-menu {
+	display: flex;
+	align-items: center;
+	gap: 0.8rem;
+	font-size: 0.95rem;
+}
+
+.user-menu i {
+	font-size: 1.5rem;
+}
+
+/* Initial circle that replaces email and icon */
+.user-menu { position: relative; }
+.user-initial {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--primary-white);
+	/* letter painted with the main button color */
+	color: var(--primary-turquoise);
+	border: 2px solid rgba(255,255,255,0.08);
+	font-weight: 700;
+	cursor: pointer;
+	box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+	transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+}
+.user-initial:hover { transform: none; }
+.user-initial.active { transform: scale(0.98); box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+
+/* Dropdown menu under the initial */
+.user-dropdown {
+	position: absolute;
+	right: 0;
+	top: calc(100% + 6px);
+	background: #fff;
+	border: 1px solid var(--border-gray);
+	border-radius: 8px;
+	box-shadow: 0 8px 20px rgba(2,6,23,0.10);
+	z-index: 4000; /* ensure above nav dropdown */
+	min-width: 130px; /* smaller */
+	padding: 4px; /* tighter */
+	font-size: 0.92rem;
+	/* start hidden for animation */
+	opacity: 0;
+	transform: translateY(-6px) scale(0.995);
+	pointer-events: none;
+	visibility: hidden;
+	transition: opacity 180ms ease, transform 180ms cubic-bezier(.2,.9,.2,1);
+}
+.user-dropdown.open {
+	opacity: 1;
+	transform: translateY(0) scale(1);
+	pointer-events: auto;
+	visibility: visible;
+}
+.user-dropdown-item {
+	width: 100%;
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	padding: 6px 8px; /* smaller */
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	color: var(--text-gray);
+	font-weight: 600;
+	border-radius: 6px;
+	transition: background 120ms ease, color 120ms ease;
+}
+.user-dropdown-item:hover { background: var(--light-gray); }
+
+/* GitHub-like compact menu tweaks */
+.user-dropdown.gh-style {
+	min-width: 320px; /* increase so profile header fits comfortably */
+	padding: 10px 12px; /* a bit more breathing room */
+	border-radius: 12px;
+	box-shadow: 0 10px 30px rgba(2,6,23,0.14);
+}
+.user-dropdown.gh-style .user-dropdown-item { padding: 8px 12px; font-weight:600; color: #222; }
+.user-dropdown.gh-style .user-dropdown-item { padding: 8px 12px; font-weight:600; color: #222; font-size: 0.88rem; }
+.user-dropdown.gh-style .user-dropdown-item i { width:16px; text-align:center; color: var(--primary-blue); font-size: 0.85rem; }
+.user-dropdown.gh-style .user-dropdown-item:nth-child(2) { margin-bottom: 8px; }
+.dropdown-divider { height:1px; border:0; background: var(--border-gray); margin:10px 0 6px 0; }
+.user-dropdown.gh-style .user-dropdown-item.logout { color: #b91c1c; }
+.user-dropdown.gh-style .user-dropdown-item.logout i { color: #b91c1c; }
+
+/* Profile header inside dropdown: bigger area with name and email */
+.profile-header {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	padding: 10px 12px;
+	border-radius: 10px;
+	background: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.01));
+	margin-bottom: 6px;
+}
+.profile-initial {
+	width: 56px; /* slightly larger visual weight */
+	height: 56px;
+	border-radius: 50%;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--primary-white);
+	color: var(--primary-turquoise);
+	font-weight: 800;
+	font-size: 1.15rem;
+	border: 2px solid rgba(0,0,0,0.04);
+}
+.profile-meta {
+	display: flex;
+	flex-direction: column;
+	min-width: 160px; /* allow more room for long emails */
+}
+.profile-name {
+	font-weight: 700;
+	color: #0f172a; /* darker */
+	font-size: 0.88rem; /* reduced as requested */
+	line-height: 1.1;
+}
+.profile-email {
+	font-size: 0.76rem; /* slightly smaller */
+	color: var(--text-gray);
+	margin-top: 2px;
+	word-break: break-all;
+}
+
+.profile-actions { display: flex; flex-direction: column; gap: 4px; }
+
+/* Logout button */
+.logout-btn {
+	background: transparent;
+	border: 2px solid var(--primary-white);
+	color: var(--primary-white);
+	padding: 0.4rem 0.6rem;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 0.9rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.3s ease;
+}
+.logout-btn:hover {
+	background: var(--primary-white);
+	color: var(--primary-blue);
+	transform: translateY(-1px);
+}
+.logout-btn:active {
+	transform: translateY(0);
+}
+
+/* =====================================================
+   NAVIGATION MENU (debajo del header)
+   ===================================================== */
+/* Make navigation sticky under the sticky header */
+.nav-menu {
+	background: var(--primary-white);
+	/* increase vertical padding so the menu visually matches section spacing */
+	padding: 1rem 2rem;
+	border-bottom: 1px solid var(--border-gray);
+	width: 100vw;
+	margin-left: calc(-50vw + 50%);
+	margin-right: calc(-50vw + 50%);
+	position: sticky;  /* stick to viewport once reaching top offset */
+	top: var(--liba-header-h, 72px); /* stay right below the sticky header */
+	z-index: 3000;      /* above page content but below user dropdown (4000) */
+	overflow: visible;  /* ensure dropdown is not clipped */
+}
+.dropdown::after {
+	/* Hover bridge so the menu doesn't disappear between button and panel */
+	content: '';
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 100%;
+	height: 10px; /* matches the visual gap below */
+}
+
+.nav-content {
+	display: flex;
+	/* distribute items evenly across the available content width */
+	justify-content: space-between;
+	align-items: center;
+	gap: 2.5rem; /* slightly larger gap so items don't feel cramped */
+	padding: 0 2rem;
+	max-width: 1400px;
+	margin: 0 auto;
+	flex-wrap: wrap; /* allow items to wrap on smaller widths to avoid crowding */
+}
+
+.nav-item {
+	padding: 0.9rem 1.6rem; /* match the slightly larger nav padding */
+	color: var(--text-gray);
+	text-decoration: none;
+	border-radius: 8px;
+	transition: all 0.3s ease;
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	cursor: pointer;
+	font-size: 0.98rem;
+	font-weight: 600;
+	/* make each nav item take equal space so items distribute across the full width */
+	flex: 1 1 0;
+	justify-content: center;
+	text-align: center;
+}
+
+/* Ensure the main content aligns with header/nav widths and centers the page */
+.main-content {
+	max-width: 100%;
+	margin: 0 auto;
+	box-sizing: border-box;
+	/* allow main to grow and push footer to the bottom of the viewport
+	   even when router-outlet content is loading/animating */
+	flex: 1 1 auto;
+  transition: opacity 220ms ease, filter 220ms ease, transform 220ms ease;
+}
+
+/* Route transition effect: subtle fade/blur/slide during navigation */
+.main-content.route-navigating {
+  opacity: 0.35;
+  filter: saturate(0.95) blur(1.5px);
+  transform: translateY(2px);
+  pointer-events: none;
+}
+
+.nav-item i {
+	font-size: 1rem;
+}
+
+.nav-item:hover,
+.nav-item.active {
+	background: var(--primary-turquoise);
+	color: var(--primary-white);
+	transform: translateY(-1px);
+	box-shadow: 0 3px 10px rgba(0, 184, 181, 0.2);
+}
+
+/* Dropdown inside navigation */
+.dropdown { position: relative; }
+.dropdown > .dropdown-toggle {
+	background: transparent;
+	border: none;
+	color: inherit;
+	width: 100%;
+	text-align: center;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	font: inherit;
+	cursor: pointer;
+}
+.dropdown > .dropdown-toggle .caret {
+	font-size: 0.8rem;
+	transition: transform .18s ease;
+}
+.dropdown:hover > .dropdown-toggle .caret { transform: rotate(180deg); }
+
+.dropdown .dropdown-menu {
+	position: absolute;
+	top: calc(100% + 6px); /* small visual gap below the trigger */
+	left: 0;
+	width: 100%; /* same width as the Inventario button */
+	min-width: unset;
+	background: #fff;
+	border: 1px solid var(--border-gray);
+	border-radius: 10px;
+	box-shadow: 0 10px 30px rgba(2,6,23,0.14);
+	padding: 6px;
+	z-index: 3000; /* over everything (header is 1000) */
+	opacity: 0;
+	transform: translateY(0) scale(1);
+	pointer-events: auto; /* keep interactive during fade */
+	visibility: hidden;
+	transition: opacity 260ms ease, visibility 0s linear 260ms; /* linger a bit before hiding */
+}
+.dropdown:hover .dropdown-menu {
+	opacity: 1;
+	pointer-events: auto;
+	visibility: visible;
+	transition-delay: 0s;
+}
+.dropdown .dropdown-item {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 0.6rem; /* match nav-item gap */
+	padding: 0.9rem 1.6rem; /* match nav-item padding */
+	background: transparent;
+	border: none;
+	border-radius: 8px;
+	color: #0f172a;
+	text-decoration: none;
+	font-weight: 600;
+	font-size: 0.98rem; /* match nav-item font-size */
+	cursor: pointer;
+	min-height: 44px; /* closely matches nav-item height */
+	box-sizing: border-box;
+}
+.dropdown .dropdown-item:hover { background: var(--light-gray); }
+.dropdown .dropdown-item.disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* Ensure dropdown stays usable on small screens */
+@media (max-width: 600px) {
+	.dropdown .dropdown-menu { left: 50%; width: 90vw; transform: translate(-50%, 0) scale(0.995); }
+	.dropdown:hover .dropdown-menu { transform: translate(-50%, 0) scale(1); }
+}
+
+/* =====================================================
+   FOOTER GLOBAL
+   ===================================================== */
+.app-footer {
+	background: linear-gradient(135deg, var(--primary-blue) 0%, #002d7a 100%);
+	color: var(--primary-white);
+	text-align: center;
+	padding: 2rem;
+	margin-top: 4rem;
+	position: relative;
+	overflow: hidden;
+}
+.app-footer::before {
+	content: '';
+	position: absolute;
+	top: 0; left: 0; right: 0;
+	height: 3px;
+	background: linear-gradient(90deg, transparent, var(--primary-turquoise), transparent);
+}
+.app-footer p {
+	margin: 0;
+	text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* =====================================================
+   RESPONSIVE ADAPTATION
+   ===================================================== */
+@media (max-width: 992px) {
+
+
+	.nav-content {
+		flex-wrap: wrap;
+		gap: 1rem;
+		justify-content: center;
+		padding: 0.5rem 1rem;
+	}
+	.nav-item {
+		padding: 0.6rem 1rem;
+		font-size: 0.9rem;
+		/* on smaller screens allow natural width */
+		flex: 0 1 auto;
+	}
+}
+
+@media (max-width: 600px) {
+	.logo {
+		width: 40px;
+		height: 40px;
+		font-size: 1rem;
+	}
+	.user-menu span {
+		display: none;
+	}
+	.logout-btn {
+		padding: 0.3rem 0.5rem;
+		font-size: 0.85rem;
+	}
+	.nav-content {
+		flex-direction: column;
+		align-items: stretch;
+	}
+	.nav-item {
+		justify-content: center;
+	}
+}
+
+/* Provide a default header height variable used by sticky nav; tweak if header size changes */
+:root { --liba-header-h: 72px; }
+
+/* Auth loading overlay */
+.auth-loading-overlay {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background: rgba(255,255,255,0.85);
+	z-index: 2000;
+}
+.auth-spinner {
+	display: flex;
+	gap: 8px;
+	margin-bottom: 12px;
+}
+.auth-spinner .dot {
+	width: 12px;
+	height: 12px;
+	background: var(--primary-blue);
+	border-radius: 50%;
+	animation: pulse 1s infinite ease-in-out;
+}
+.auth-spinner .dot:nth-child(2) { animation-delay: 0.12s; }
+.auth-spinner .dot:nth-child(3) { animation-delay: 0.24s; }
+.auth-loading-text {
+	color: var(--text-gray);
+	font-weight: 600;
+}
+
+@keyframes pulse {
+	0% { transform: translateY(0); opacity: 0.6; }
+	50% { transform: translateY(-8px); opacity: 1; }
+	100% { transform: translateY(0); opacity: 0.6; }
+}
+
+/* ==============================
+	 Global Snackbar (bottom-center)
+	 ============================== */
+.snackbar {
+	position: fixed;
+	left: 50%;
+	bottom: 24px;
+	transform: translateX(-50%) translateY(18px);
+	background: #ffffff;
+	color: #0f172a;
+	border-radius: 14px;
+	box-shadow: 0 8px 28px rgba(2,6,23,0.18);
+	padding: 14px 20px 14px;
+	z-index: 5000;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 180ms ease, transform 180ms ease;
+	min-width: min(320px, 92vw);
+	max-width: 92vw;
+	border: 1px solid rgba(15,23,42,0.08);
+	text-align: center;
+}
+.snackbar.open { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+.snackbar .snackbar-content { display: flex; align-items: center; justify-content: center; }
+.snackbar .snackbar-text { font-weight: 600; font-size: 0.9rem; line-height: 1.25; }
+.snackbar .snackbar-close {
+	position: absolute;
+	top: 6px;
+	right: 8px;
+	background: transparent;
+	border: none;
+	color: #475569;
+	font-size: 1.1rem;
+	cursor: pointer;
+	padding: 4px;
+	line-height: 1;
+}
+.snackbar .snackbar-close:hover { color: #0f172a; }
+/* Pastel variants */
+.snackbar.success { background: #ecfdf5; color: #065f46; border-color: #d1fae5; }
+.snackbar.success .snackbar-text { color: #065f46; }
+.snackbar.warn { background: #fffbeb; color: #92400e; border-color: #fde68a; }
+.snackbar.warn .snackbar-text { color: #92400e; }
+.snackbar.error { background: #fef2f2; color: #7f1d1d; border-color: #fecaca; }
+.snackbar.error .snackbar-text { color: #7f1d1d; }
+.snackbar.info { background: #eff6ff; color: #1e3a8a; border-color: #bfdbfe; }
+.snackbar.info .snackbar-text { color: #1e3a8a; }
+/* Remove any timer bar remnants */
+.snackbar .snackbar-timer, .snackbar .snackbar-icon { display: none !important; }
+

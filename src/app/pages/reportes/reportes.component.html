@@ -1,0 +1,195 @@
+<!-- src/app/reportes/reportes.component.html -->
+<div class="reportes-container">
+    <h1>
+        <i class="fas fa-chart-bar"></i>
+        | Sistema de Reportes
+    </h1>
+    <h2>Reportes Manuales</h2>
+
+    <!-- Selector de tipo de reporte -->
+    <div class="filtros">
+        <label>Tipo de Reporte:</label>
+        <select [value]="tipoReporte()" (change)="tipoReporte.set($any($event.target).value); paginaActual.set(1)">
+            <option value="inventario">Inventario General</option>
+            <option value="entradas">Entradas</option>
+            <option value="salidas">Salidas</option>
+            <option value="vencimientos">Vencimientos</option>
+        </select>
+
+        <!-- Filtros para entradas/salidas -->
+        @if (tipoReporte() === 'entradas' || tipoReporte() === 'salidas') {
+        <div class="fechas">
+            <label>Desde:</label>
+            <input type="date" [value]="fechaDesde()" (change)="fechaDesde.set($any($event.target).value)">
+
+            <label>Hasta:</label>
+            <input type="date" [value]="fechaHasta()" (change)="fechaHasta.set($any($event.target).value)">
+        </div>
+        }
+
+        <!-- Filtro para vencimientos -->
+        @if (tipoReporte() === 'vencimientos') {
+        <div class="dias">
+            <label>Días a vencer:</label>
+            <input type="number" [value]="diasVencimiento()" (change)="diasVencimiento.set($any($event.target).value)"
+                min="1" max="365">
+        </div>
+        }
+
+        <button (click)="limpiarFiltros()">Limpiar</button>
+        <button (click)="exportarPDF()" class="btn btn-export">
+            <i class="fas fa-file-pdf"></i>
+            Exportar PDF
+        </button>
+    </div>
+
+    <!-- Resultados -->
+    <div class="resultados">
+        @if (cargando()) {
+        <p>Cargando reporte...</p>
+        }
+
+        <!-- Tabla de Inventario -->
+        @if (tipoReporte() === 'inventario' && datosInventario().length > 0) {
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Nombre</th>
+                        <th>Cantidad</th>
+                        <th>Presentación</th>
+                        <th>Marca</th>
+                        <th>Referencia</th>
+                        <th>Ubicación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- ✅ AGREGAR trackBy AQUÍ -->
+                    @for (item of datosInventarioPaginados(); track trackByInventario($index, item)) {
+                    <tr>
+                        <td>{{ item.tipo_producto }}</td>
+                        <td [title]="item.nombre">{{ item.nombre }}</td>
+                        <td>{{ item.cantidad }}</td>
+                        <td [title]="item.presentacion">{{ item.presentacion }}</td>
+                        <td [title]="item.marca">{{ item.marca }}</td>
+                        <td [title]="item.referencia">{{ item.referencia }}</td>
+                        <td [title]="item.ubicacion">{{ item.ubicacion }}</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Paginación para Inventario -->
+        @if (totalPaginasInventario() > 1) {
+        <div class="pagination">
+            <button (click)="paginaAnterior()" [disabled]="paginaActual() === 1">
+                Anterior
+            </button>
+            <span>Página {{ paginaActual() }} de {{ totalPaginasInventario() }}</span>
+            <button (click)="paginaSiguiente()" [disabled]="paginaActual() === totalPaginasInventario()">
+                Siguiente
+            </button>
+        </div>
+        }
+        }
+
+        <!-- Tabla de Movimientos -->
+        @if ((tipoReporte() === 'entradas' || tipoReporte() === 'salidas') && datosMovimientos().length > 0) {
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Tipo Producto</th>
+                        <th>Referencia</th>
+                        <th>Usuario ID</th>
+                        <th>Tipo Movimiento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- ✅ AGREGAR trackBy AQUÍ -->
+                    @for (mov of datosMovimientosPaginados(); track trackByMovimiento($index, mov)) {
+                    <tr>
+                        <td>{{ mov.fecha | date:'short' }}</td>
+                        <td [title]="mov.producto_tipo">{{ mov.producto_tipo }}</td>
+                        <td [title]="mov.producto_referencia">{{ mov.producto_referencia }}</td>
+                        <td>{{ mov.usuario_id }}</td>
+                        <td [title]="mov.tipo_movimiento">{{ mov.tipo_movimiento }}</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Paginación para Movimientos -->
+        @if (totalPaginasMovimientos() > 1) {
+        <div class="pagination">
+            <button (click)="paginaAnterior()" [disabled]="paginaActual() === 1">
+                Anterior
+            </button>
+            <span>Página {{ paginaActual() }} de {{ totalPaginasMovimientos() }}</span>
+            <button (click)="paginaSiguiente()" [disabled]="paginaActual() === totalPaginasMovimientos()">
+                Siguiente
+            </button>
+        </div>
+        }
+        }
+
+        <!-- Tabla de Vencimientos -->
+        @if (tipoReporte() === 'vencimientos' && datosVencimientos().length > 0) {
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Lote</th>
+                        <th>Cantidad</th>
+                        <th>Fecha Vencimiento</th>
+                        <th>Días Restantes</th>
+                        <th>Marca</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- ✅ AGREGAR trackBy AQUÍ -->
+                    @for (item of datosVencimientosPaginados(); track trackByVencimiento($index, item)) {
+                    <tr>
+                        <td [title]="item.nombre">{{ item.nombre }}</td>
+                        <td>{{ item.id_producto }}</td>
+                        <td>{{ item.cantidad_total }}</td>
+                        <td>{{ item.fecha_vencimiento | date:'shortDate' }}</td>
+                        <td>
+                            <span [class]="item.dias_restantes <= 7 ? 'estado-vencido' : item.dias_restantes <= 30 ? 'estado-proximo' : 'estado-normal'">
+                                {{ item.dias_restantes }} días
+                            </span>
+                        </td>
+                        <td [title]="item.marca">{{ item.marca }}</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Paginación para Vencimientos -->
+        @if (totalPaginasVencimientos() > 1) {
+        <div class="pagination">
+            <button (click)="paginaAnterior()" [disabled]="paginaActual() === 1">
+                Anterior
+            </button>
+            <span>Página {{ paginaActual() }} de {{ totalPaginasVencimientos() }}</span>
+            <button (click)="paginaSiguiente()" [disabled]="paginaActual() === totalPaginasVencimientos()">
+                Siguiente
+            </button>
+        </div>
+        }
+        }
+
+        @if (!cargando() &&
+        (tipoReporte() === 'inventario' && datosInventario().length === 0) ||
+        ((tipoReporte() === 'entradas' || tipoReporte() === 'salidas') && datosMovimientos().length === 0) ||
+        (tipoReporte() === 'vencimientos' && datosVencimientos().length === 0)) {
+        <p>No hay datos para el reporte seleccionado</p>
+        }
+    </div>
+</div>
