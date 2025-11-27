@@ -57,54 +57,67 @@
 @if (user()) {
 <nav class="nav-menu">
   <div class="nav-content">
-    <a
-      routerLink="/dashboard"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{ exact: true }"
-      class="nav-item"
-    >
-      <i class="fas fa-tachometer-alt"></i> Dashboard
-    </a>
-
-    <a 
-      routerLink="/solicitudes" 
-      routerLinkActive="active" 
-      class="nav-item"
-    >
-      <i class="fas fa-clipboard-list"></i> Solicitudes
-    </a>
-
-    <!-- Inventario dropdown -->
-    <div class="nav-item dropdown">
-      <button
-        type="button"
-        class="dropdown-toggle"
-        aria-haspopup="true"
-        aria-expanded="false"
+    
+    <!-- SUPERADMIN: SOLO VE USUARIOS -->
+    @if (user()?.rol === 'Superadmin') {
+      <a 
+        routerLink="/usuarios" 
+        routerLinkActive="active" 
+        class="nav-item"
       >
-        <i class="fas fa-warehouse" aria-hidden="true"></i>
-        <span>Inventario</span>
-        <i class="fas fa-chevron-down caret" aria-hidden="true"></i>
-      </button>
+        <i class="fas fa-users"></i> Usuarios
+      </a>
+    }
 
-      <div class="dropdown-menu" role="menu">
-        <a routerLink="/reactivos" class="dropdown-item" role="menuitem">
-          <i class="fas fa-flask" aria-hidden="true"></i>
-          <span>Reactivos</span>
-        </a>
-        <a routerLink="/insumos" class="dropdown-item" role="menuitem">
-          <i class="fas fa-boxes" aria-hidden="true"></i>
-          <span>Insumos</span>
-        </a>
-        <a routerLink="/papeleria" class="dropdown-item" role="menuitem">
-          <i class="fas fa-paperclip" aria-hidden="true"></i>
-          <span>Papelería</span>
-        </a>
+    <!-- ADMINISTRADOR: VE TODO MENOS USUARIOS -->
+    @if (user()?.rol === 'Administrador') {
+      <a
+        routerLink="/dashboard"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="nav-item"
+      >
+        <i class="fas fa-tachometer-alt"></i> Dashboard
+      </a>
+
+      <a 
+        routerLink="/solicitudes" 
+        routerLinkActive="active" 
+        class="nav-item"
+      >
+        <i class="fas fa-clipboard-list"></i> Solicitudes
+      </a>
+
+      <!-- Inventario dropdown -->
+      <div class="nav-item dropdown">
+        <button
+          type="button"
+          class="dropdown-toggle"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          <i class="fas fa-warehouse" aria-hidden="true"></i>
+          <span>Inventario</span>
+          <i class="fas fa-chevron-down caret" aria-hidden="true"></i>
+        </button>
+
+        <div class="dropdown-menu" role="menu">
+          <a routerLink="/reactivos" class="dropdown-item" role="menuitem">
+            <i class="fas fa-flask" aria-hidden="true"></i>
+            <span>Reactivos</span>
+          </a>
+          <a routerLink="/insumos" class="dropdown-item" role="menuitem">
+            <i class="fas fa-boxes" aria-hidden="true"></i>
+            <span>Insumos</span>
+          </a>
+          <a routerLink="/papeleria" class="dropdown-item" role="menuitem">
+            <i class="fas fa-paperclip" aria-hidden="true"></i>
+            <span>Papelería</span>
+          </a>
+        </div>
       </div>
-    </div>
 
-    <!-- NUEVO: Menú unificado para Auditoría, Logs y Reportes -->
-    @if (user()?.rol === 'Administrador' || user()?.rol === 'Superadmin') {
+      <!-- Análisis (Solo Auditoría y Reportes) -->
       <div class="nav-item dropdown">
         <button
           type="button"
@@ -133,15 +146,53 @@
       </div>
     }
 
-    <!-- Mostrar Usuarios solo si ES Superadmin -->
-    @if (user()?.rol === 'Superadmin') {
+    <!-- AUXILIAR: VE SOLO MÓDULOS BÁSICOS -->
+    @if (user()?.rol === 'Auxiliar') {
+      <a
+        routerLink="/dashboard"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="nav-item"
+      >
+        <i class="fas fa-tachometer-alt"></i> Dashboard
+      </a>
+
       <a 
-        routerLink="/usuarios" 
+        routerLink="/solicitudes" 
         routerLinkActive="active" 
         class="nav-item"
       >
-        <i class="fas fa-users"></i> Usuarios
+        <i class="fas fa-clipboard-list"></i> Solicitudes
       </a>
+
+      <!-- Inventario dropdown -->
+      <div class="nav-item dropdown">
+        <button
+          type="button"
+          class="dropdown-toggle"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          <i class="fas fa-warehouse" aria-hidden="true"></i>
+          <span>Inventario</span>
+          <i class="fas fa-chevron-down caret" aria-hidden="true"></i>
+        </button>
+
+        <div class="dropdown-menu" role="menu">
+          <a routerLink="/reactivos" class="dropdown-item" role="menuitem">
+            <i class="fas fa-flask" aria-hidden="true"></i>
+            <span>Reactivos</span>
+          </a>
+          <a routerLink="/insumos" class="dropdown-item" role="menuitem">
+            <i class="fas fa-boxes" aria-hidden="true"></i>
+            <span>Insumos</span>
+          </a>
+          <a routerLink="/papeleria" class="dropdown-item" role="menuitem">
+            <i class="fas fa-paperclip" aria-hidden="true"></i>
+            <span>Papelería</span>
+          </a>
+        </div>
+      </div>
     }
   </div>
 </nav>
