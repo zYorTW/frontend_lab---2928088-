@@ -11,6 +11,31 @@
   align-items: end;
 }
 
+/* Estilos para campos con error */
+.form-grid input.error,
+.form-grid select.error,
+.form-grid textarea.error {
+  border-color: #dc3545 !important;
+  background-color: #fff5f5;
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.1);
+}
+
+/* Mensajes de error */
+.error-message {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Indicador de campo obligatorio */
+.required-hint {
+  color: #6c757d;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
 .filters-grid label { font-weight: 500; color: var(--primary-blue); margin-bottom: 0.5rem; font-size: 0.9rem; display: block; }
 .filters-grid input { padding: 0.7rem; border: 2px solid var(--border-gray); border-radius: 6px; font-family: inherit; transition: border-color 0.3s ease; width: 100%; }
 .filters-grid input:focus { outline: none; border-color: var(--primary-turquoise); }

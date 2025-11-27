@@ -14,7 +14,6 @@ import { insumosService } from '../../services/insumos.service';
   styleUrls: ['./insumos.component.css'],
   imports: [CommonModule, FormsModule, RouterModule]
 })
-
 export class InsumosComponent implements OnInit {
     public get esAuxiliar(): boolean {
       const user = authUser();
@@ -31,6 +30,22 @@ export class InsumosComponent implements OnInit {
   almacen: Array<any> = [];
   insumoSeleccionado: any = null;
   mostrarDetalles: boolean = false;
+
+  // Signals para errores de validación
+  readonly catalogoErrors = signal<{[key: string]: string}>({});
+  readonly insumoErrors = signal<{[key: string]: string}>({});
+
+  // Patrones de validación
+  private readonly PATTERNS = {
+    NOMBRE: /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s\-\.]{2,100}$/,
+    ITEM: /^[0-9]{1,10}$/,
+    DESCRIPCION: /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s\-\.\,]{0,500}$/,
+    MARCA: /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s\-\.]{0,50}$/,
+    REFERENCIA: /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s\-\.]{0,50}$/,
+    PRESENTACION: /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s\-\.]{0,50}$/,
+    UBICACION: /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s\-\#]{0,100}$/,
+    OBSERVACIONES: /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s\-\.\,]{0,500}$/
+  };
 
   ngOnInit() {
     // Ejecutar inicialización al montar el componente
@@ -62,7 +77,6 @@ export class InsumosComponent implements OnInit {
   get itemFiltro() { return this.itemFiltroSig(); }
   set itemFiltro(v: string) { this.itemFiltroSig.set(v ?? ''); }
 
-
   // Catálogo búsqueda y selección
   catalogoQ = '';
   // Signals para catálogo
@@ -82,7 +96,6 @@ export class InsumosComponent implements OnInit {
   private catalogoTotalSig = signal<number>(0);
   get catalogoTotal() { return this.catalogoTotalSig(); }
   set catalogoTotal(v: number) { this.catalogoTotalSig.set(Number(v) || 0); }
-  // Paginación del catálogo removida: siempre mostrar todo
 
   // ===== Listado de insumos (tarjetas) =====
   private insumosAllSig = signal<Array<any>>([]);
@@ -302,17 +315,13 @@ private insumoMsgSig = signal<string>('');
 get insumoMsg() { return this.insumoMsgSig(); }
 set insumoMsg(v: string) { this.insumoMsgSig.set(v || ''); }
 
-// (Listado de insumos eliminado: señales, filtros y edición inline removidos)
-
 // Panel de catálogo dentro del formulario (autocompletar)
 mostrarCatalogoFormPanel: boolean = false;
-
 
 constructor(private sanitizer: DomSanitizer, private snack: SnackbarService) {}
 
 async init() {
   try {
-
     // Cargar auxiliares y catálogo en paralelo para reducir tiempo de espera perceptual
     this.catalogoCargando = true;
     await Promise.all([
@@ -320,7 +329,6 @@ async init() {
       this.loadCatalogoInicial(),
       this.loadInsumos()
     ]);
-
   } catch (err) {
     console.error('Error inicializando Insumos:', err);
   }
@@ -424,7 +432,6 @@ async cargarCatalogoBase() {
     }
     this.catalogoItemResultados = this.catalogoBaseSig().slice();
     this.catalogoNombreResultados = this.catalogoBaseSig().slice();
-
   } catch (e) {
     console.error('Error cargando catálogo inicial de insumos', e);
     this.catalogoMsgSig.set('Error cargando catálogo');
@@ -455,6 +462,7 @@ async loadCatalogoInicial() {
     // Ocultar panel de catálogo
     this.mostrarCatalogoFormPanel = false;
   }
+
 filtrarCatalogoItem() {
   const q = this.normalizarTexto(this.itemFiltro || '');
   if (!q) {
@@ -564,10 +572,6 @@ resetCatalogoPaginado() {
     } catch {}
   }
 
-  // ===== Inventario: funcionalidades de tarjetas eliminadas =====
-
-// (Helpers de obtención de nombres eliminados al retirar vista de listado de insumos)
-
 // Selección desde el catálogo
   onItemSeleccionado() {
     const catalogoItem = this.catalogoBaseSig().find(c => 
@@ -618,74 +622,236 @@ highlightField(value: string, field:'nombre' | 'otro' | 'item'): SafeHtml {
   return this.sanitizer.bypassSecurityTrustHtml(html);
 }
 
-async crearCatalogo(e: Event) {
-    e.preventDefault();
-  this.catalogoMsg = '';
-    
-    const itemStr = (this.catItem ?? '').toString().trim();
-    const nombreStr = (this.catNombre ?? '').toString().trim();
-    if (!itemStr || !nombreStr) {
-      this.snack.warn('Falta completar: Item y Nombre');
-      return;
+// ===== VALIDACIONES CATÁLOGO =====
+private validarFormularioCatalogo(): boolean {
+  const errors: {[key: string]: string} = {};
+  let isValid = true;
+
+  // Validación de item (OBLIGATORIO)
+  const itemStr = (this.catItem ?? '').toString().trim();
+  if (!itemStr) {
+    errors['item'] = 'El item es obligatorio';
+    isValid = false;
+  } else if (!this.PATTERNS.ITEM.test(itemStr)) {
+    errors['item'] = 'El item debe contener solo números (1-10 dígitos)';
+    isValid = false;
+  } else if (isNaN(Number(itemStr))) {
+    errors['item'] = 'El item debe ser un número válido';
+    isValid = false;
+  }
+
+  // Validación de nombre (OBLIGATORIO)
+  const nombreStr = (this.catNombre ?? '').toString().trim();
+  if (!nombreStr) {
+    errors['nombre'] = 'El nombre es obligatorio';
+    isValid = false;
+  } else if (!this.PATTERNS.NOMBRE.test(nombreStr)) {
+    errors['nombre'] = 'El nombre debe contener solo letras, números y espacios (2-100 caracteres)';
+    isValid = false;
+  }
+
+  // Validación de descripción (NO obligatorio)
+  const descStr = (this.catDescripcion ?? '').toString().trim();
+  if (descStr && !this.PATTERNS.DESCRIPCION.test(descStr)) {
+    errors['descripcion'] = 'La descripción no puede exceder 500 caracteres';
+    isValid = false;
+  }
+
+  // Validación de imagen (OBLIGATORIO)
+  if (!this.catImagen) {
+    errors['imagen'] = 'La imagen es obligatoria';
+    isValid = false;
+  } else {
+    const file = this.catImagen;
+    // Validar tipo de archivo
+    if (!file.type.startsWith('image/')) {
+      errors['imagen'] = 'El archivo debe ser una imagen';
+      isValid = false;
     }
-    // validar item numérico
-    if (isNaN(Number(itemStr))) {
-      this.snack.warn('El item debe ser numérico');
-      return;
-    }
-    
-    try {
-      const form = new FormData();
-      form.append('nombre', nombreStr);
-      const descStr = (this.catDescripcion ?? '').toString().trim();
-      if (descStr) form.append('descripcion', descStr);
-      if (itemStr) form.append('item', itemStr);
-      if (this.catImagen) form.append('imagen', this.catImagen);
-      await insumosService.crearCatalogo(form);
-      
-  this.snack.success('Se creó el item de catálogo');
-      
-      // Limpiar formulario
-      this.catItem = '' as any;
-      this.catNombre = '';
-      this.catDescripcion = '';
-      this.catImagen = null;
-      // Limpiar input file explícitamente (si existe)
-      try {
-        const input = document.getElementById('catImagen') as HTMLInputElement | null;
-        if (input) input.value = '';
-      } catch {}
-      
-      // Recargar catálogo
-      await this.cargarCatalogoBase();
-      
-      if ((this.itemFiltro || '').trim() || (this.nombreFiltro || '').trim()) {
-        this.filtrarCatalogoPorCampos();
-      } else {
-        this.catalogoQ = '';
-        await this.buscarCatalogo();
-      }
-    } catch (err: any) {
-      this.snack.error(err?.message || 'Error al crear el item de catálogo');
+    // Validar tamaño (5MB máximo)
+    if (file.size > 5 * 1024 * 1024) {
+      errors['imagen'] = 'La imagen no puede pesar más de 5 MB';
+      isValid = false;
     }
   }
 
+  this.catalogoErrors.set(errors);
+  return isValid;
+}
+
+// ===== VALIDACIONES INSUMO =====
+private validarFormularioInsumo(): boolean {
+  const errors: {[key: string]: string} = {};
+  let isValid = true;
+
+  // Validación de item catálogo (OBLIGATORIO)
+  if (!this.item_catalogo) {
+    errors['item_catalogo'] = 'El item de catálogo es obligatorio';
+    isValid = false;
+  } else if (this.item_catalogo! <= 0) {
+    errors['item_catalogo'] = 'El item de catálogo debe ser mayor a 0';
+    isValid = false;
+  }
+
+  // Validación de nombre (OBLIGATORIO)
+  const nombreStr = (this.nombre ?? '').toString().trim();
+  if (!nombreStr) {
+    errors['nombre'] = 'El nombre es obligatorio';
+    isValid = false;
+  } else if (!this.PATTERNS.NOMBRE.test(nombreStr)) {
+    errors['nombre'] = 'El nombre debe contener solo letras, números y espacios (2-100 caracteres)';
+    isValid = false;
+  }
+
+  // Validación de cantidad adquirida (OBLIGATORIO)
+  if (this.cantidad_adquirida === null) {
+    errors['cantidad_adquirida'] = 'La cantidad adquirida es obligatoria';
+    isValid = false;
+  } else if (this.cantidad_adquirida! < 0) {
+    errors['cantidad_adquirida'] = 'La cantidad adquirida debe ser mayor o igual a 0';
+    isValid = false;
+  }
+
+  // Validación de cantidad existente (OBLIGATORIO)
+  if (this.cantidad_existente === null) {
+    errors['cantidad_existente'] = 'La cantidad existente es obligatoria';
+    isValid = false;
+  } else if (this.cantidad_existente! < 0) {
+    errors['cantidad_existente'] = 'La cantidad existente debe ser mayor o igual a 0';
+    isValid = false;
+  }
+
+  // Validación de presentación (OBLIGATORIO)
+  const presentacionStr = (this.presentacion ?? '').toString().trim();
+  if (!presentacionStr) {
+    errors['presentacion'] = 'La presentación es obligatoria';
+    isValid = false;
+  } else if (!this.PATTERNS.PRESENTACION.test(presentacionStr)) {
+    errors['presentacion'] = 'La presentación no puede exceder 50 caracteres';
+    isValid = false;
+  }
+
+  // Validación de marca (OBLIGATORIO)
+  const marcaStr = (this.marca ?? '').toString().trim();
+  if (!marcaStr) {
+    errors['marca'] = 'La marca es obligatoria';
+    isValid = false;
+  } else if (!this.PATTERNS.MARCA.test(marcaStr)) {
+    errors['marca'] = 'La marca no puede exceder 50 caracteres';
+    isValid = false;
+  }
+
+  // Validación de referencia (OBLIGATORIO)
+  const referenciaStr = (this.referencia ?? '').toString().trim();
+  if (!referenciaStr) {
+    errors['referencia'] = 'La referencia es obligatoria';
+    isValid = false;
+  } else if (!this.PATTERNS.REFERENCIA.test(referenciaStr)) {
+    errors['referencia'] = 'La referencia no puede exceder 50 caracteres';
+    isValid = false;
+  }
+
+  // Validación de ubicación (OBLIGATORIO)
+  const ubicacionStr = (this.ubicacion ?? '').toString().trim();
+  if (!ubicacionStr) {
+    errors['ubicacion'] = 'La ubicación es obligatoria';
+    isValid = false;
+  } else if (!this.PATTERNS.UBICACION.test(ubicacionStr)) {
+    errors['ubicacion'] = 'La ubicación no puede exceder 100 caracteres';
+    isValid = false;
+  }
+
+  // Validación de fecha adquisición (OBLIGATORIO)
+  if (!this.fecha_adquisicion) {
+    errors['fecha_adquisicion'] = 'La fecha de adquisición es obligatoria';
+    isValid = false;
+  } else {
+    const fechaAdq = new Date(this.fecha_adquisicion);
+    const hoy = new Date();
+    hoy.setHours(23, 59, 59, 999);
+    
+    if (fechaAdq > hoy) {
+      errors['fecha_adquisicion'] = 'La fecha de adquisición no puede ser futura';
+      isValid = false;
+    }
+  }
+
+  // Validación de descripción (OBLIGATORIO)
+  const descripcionStr = (this.descripcion ?? '').toString().trim();
+  if (!descripcionStr) {
+    errors['descripcion'] = 'La descripción es obligatoria';
+    isValid = false;
+  } else if (!this.PATTERNS.DESCRIPCION.test(descripcionStr)) {
+    errors['descripcion'] = 'La descripción no puede exceder 500 caracteres';
+    isValid = false;
+  }
+
+  // Validación de observaciones (NO obligatorio)
+  const observacionesStr = (this.observaciones ?? '').toString().trim();
+  if (observacionesStr && !this.PATTERNS.OBSERVACIONES.test(observacionesStr)) {
+    errors['observaciones'] = 'Las observaciones no pueden exceder 500 caracteres';
+    isValid = false;
+  }
+
+  this.insumoErrors.set(errors);
+  return isValid;
+}
+
+async crearCatalogo(e: Event) {
+  e.preventDefault();
+  this.catalogoMsg = '';
+  
+  // Reemplazar validación actual con la nueva
+  if (!this.validarFormularioCatalogo()) {
+    this.snack.warn('Por favor corrige los errores en el formulario');
+    return;
+  }
+  
+  const itemStr = (this.catItem ?? '').toString().trim();
+  const nombreStr = (this.catNombre ?? '').toString().trim();
+  
+  try {
+    const form = new FormData();
+    form.append('nombre', nombreStr);
+    const descStr = (this.catDescripcion ?? '').toString().trim();
+    if (descStr) form.append('descripcion', descStr);
+    if (itemStr) form.append('item', itemStr);
+    if (this.catImagen) form.append('imagen', this.catImagen);
+    
+    await insumosService.crearCatalogo(form);
+    this.snack.success('Se creó el item de catálogo');
+    
+    // Limpiar formulario y errores
+    this.catItem = '' as any;
+    this.catNombre = '';
+    this.catDescripcion = '';
+    this.catImagen = null;
+    this.catalogoErrors.set({});
+    
+    // Limpiar input file explícitamente
+    try {
+      const input = document.getElementById('catImagen') as HTMLInputElement | null;
+      if (input) input.value = '';
+    } catch {}
+    
+    // Recargar catálogo
+    await this.cargarCatalogoBase();
+    
+  } catch (err: any) {
+    this.snack.error(err?.message || 'Error al crear el item de catálogo');
+  }
+}
+
 async crearInsumo(e: Event) {
   e.preventDefault();
-  this.insumoMsgSig.set(''); // limpiar mensaje
-  // Validación mínima de campos requeridos
-  if (!this.item_catalogo || !(this.nombre || '').trim()) {
-    this.snack.warn('Faltan campos requeridos: Item catálogo y Nombre');
+  this.insumoMsgSig.set('');
+  
+  // Reemplazar validación actual con la nueva
+  if (!this.validarFormularioInsumo()) {
+    this.snack.warn('Por favor corrige los errores en el formulario');
     return;
   }
-  if (this.cantidad_adquirida == null || this.cantidad_existente == null) {
-    this.snack.warn('Faltan las cantidades adquirida y existente');
-    return;
-  }
-  if ((this.cantidad_adquirida as any) < 0 || (this.cantidad_existente as any) < 0) {
-    this.snack.warn('Las cantidades deben ser números >= 0');
-    return;
-  }
+  
   try {
     const payload = {
       item_catalogo: this.item_catalogo,
@@ -705,14 +871,16 @@ async crearInsumo(e: Event) {
     this.snack.success('Se creó el insumo');
 
     await this.loadInsumos();
-    // Reset campos y limpiar input file del catálogo si estuvo precargado
+    // Reset campos y limpiar errores
     this.resetInsumoForm();
+    this.insumoErrors.set({});
+    
   } catch (err: any) {
     this.snack.error(err?.message || 'Error al crear el insumo');
   }
 }
 
-
+// Actualizar método reset para limpiar errores
 resetInsumoForm() {
   this.item_catalogo = null;
   this.nombre = '';
@@ -725,13 +893,28 @@ resetInsumoForm() {
   this.ubicacion = '';
   this.observaciones = '';
   this.descripcion = '';
-
-
   this.insumoMsg = '';
+  this.insumoErrors.set({});
+  
   try {
     const input = document.getElementById('catImagen') as HTMLInputElement | null;
     if (input) input.value = '';
   } catch {}
+}
+
+// Limpiar error de imagen al seleccionar archivo
+onCatImagenChange(ev: any) {
+  const file = ev?.target?.files?.[0];
+  this.catImagen = file || null;
+  
+  // Limpiar error de imagen al seleccionar archivo
+  if (file) {
+    this.catalogoErrors.update(errors => {
+      const newErrors = { ...errors };
+      delete newErrors['imagen'];
+      return newErrors;
+    });
+  }
 }
 
 logout() {
@@ -743,17 +926,10 @@ getCatalogoImagenUrl(item: number | string) {
   return insumosService.getCatalogoImagenUrl(item);
 }
 
-onCatImagenChange(ev: any) {
-  const file = ev?.target?.files?.[0];
-  this.catImagen = file || null;
-}
-
 onImgError(ev: any) {
   try {
     const img = ev?.target as HTMLImageElement;
     if (img) img.style.display = 'none';
   } catch {}
 }
-
-
 }

@@ -7,7 +7,7 @@ import { SolicitudesService } from '../../services/clientes/solicitudes.service'
 import { LocationsService } from '../../services/clientes/locations.service';
 import { UtilsService } from '../../services/clientes/utils.service';
 import { SnackbarService } from '../../services/snackbar.service';
-import { authService, authUser } from '../../services/auth/auth.service';
+import { authService } from '../../services/auth/auth.service';
 
 @Component({
   standalone: true,
@@ -35,14 +35,14 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
   clientesFiltrados = signal<Array<any>>([]);
   solicitudesFiltradas = signal<Array<any>>([]);
 
-  // Variables de estado para errores de validación (se mantienen para el template)
+  // Variables de estado para errores de validación
   clienteErrors: { [key: string]: string } = {};
   solicitudErrors: { [key: string]: string } = {};
   ofertaErrors: { [key: string]: string } = {};
   resultadoErrors: { [key: string]: string } = {};
   encuestaErrors: { [key: string]: string } = {};
 
-  // Variables de formulario (igual que antes)
+  // Variables de formulario
   clienteNombre = '';
   clienteIdNum = '';
   clienteEmail = '';
@@ -109,6 +109,21 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
   private expandedSolicitudes = new Set<number>();
   lastCopiedMessage: string | null = null;
 
+  // Constantes de validación
+  private readonly PATTERNS = {
+    NOMBRE: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s\.\-]{2,100}$/,
+    EMAIL: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    TELEFONO: /^[0-9]{7,15}$/,
+    CELULAR: /^3[0-9]{9}$/,
+    NIT: /^[0-9]{9}-[0-9]$/,
+    IDENTIFICACION: /^[0-9A-Za-z]{5,20}$/,
+    LOTE: /^[A-Z0-9\-]{3,20}$/,
+    CODIGO_INFORME: /^[A-Z]{2,4}-[0-9]{4}-[0-9]{3,5}$/,
+    DIRECCION: /^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s#\-\.\,]{5,200}$/,
+    OBSERVACIONES: /^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s#\-\.\,\(\)]{0,500}$/,
+    MUESTRA: /^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s\-\.]{2,100}$/
+  };
+
   ngOnInit() {
     this.loadInitialData();
     this.filtrarClientes();
@@ -150,7 +165,7 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
     this.clienteIdCiudad = '';
   }
 
-  // ========== FILTRADO (igual que antes) ==========
+  // ========== FILTRADO ==========
   filtrarClientes(): void {
     const clientes = this.clientes();
     
@@ -215,70 +230,276 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
     this.solicitudesFiltradas.set(solicitudesFiltradas);
   }
 
-  // ========== VALIDACIONES (simplificadas - solo retornan boolean) ==========
-  validarCliente(): boolean {
-    this.clienteErrors = {};
-    let isValid = true;
+  // ========== VALIDACIONES COMPLETAS DE LABORATORIO ==========
+validarCliente(): boolean {
+  this.clienteErrors = {};
+  let isValid = true;
 
-    if (!this.clienteNombre.trim()) {
-      this.clienteErrors['nombre'] = 'El nombre es obligatorio';
-      isValid = false;
-    } else if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{1,50}$/.test(this.clienteNombre)) {
-      this.clienteErrors['nombre'] = 'Solo letras y espacios (máx 50 caracteres)';
-      isValid = false;
-    }
-
-    if (!this.clienteNumero) {
-      this.clienteErrors['numero'] = 'El número es obligatorio';
-      isValid = false;
-    }
-
-    if (!this.clienteFechaVinc) {
-      this.clienteErrors['fechaVinc'] = 'La fecha es obligatoria';
-      isValid = false;
-    } else {
-      const fecha = new Date(this.clienteFechaVinc);
-      const hoy = new Date();
-      hoy.setHours(0, 0, 0, 0);
-      fecha.setHours(0, 0, 0, 0);
-      if (fecha > hoy) {
-        this.clienteErrors['fechaVinc'] = 'La fecha no puede ser futura';
-        isValid = false;
-      }
-    }
-
-    // ... (mantener todas las validaciones existentes, pero sin mensajes en variables)
-    // Solo actualizar el objeto de errores para mostrar en el template
-
-    return isValid;
+  // Validación de nombre (OBLIGATORIO)
+  if (!this.clienteNombre.trim()) {
+    this.clienteErrors['nombre'] = 'El nombre del solicitante es obligatorio';
+    isValid = false;
+  } else if (!this.PATTERNS.NOMBRE.test(this.clienteNombre)) {
+    this.clienteErrors['nombre'] = 'El nombre debe contener solo letras, espacios y puntos (2-100 caracteres)';
+    isValid = false;
   }
+
+  // Validación de consecutivo (OBLIGATORIO)
+  if (!this.clienteNumero) {
+    this.clienteErrors['numero'] = 'El número consecutivo es obligatorio';
+    isValid = false;
+  } else if (this.clienteNumero < 1 || this.clienteNumero > 9999) {
+    this.clienteErrors['numero'] = 'El consecutivo debe estar entre 1 y 9999';
+    isValid = false;
+  }
+
+  // Validación de fecha de vinculación (OBLIGATORIO)
+  if (!this.clienteFechaVinc) {
+    this.clienteErrors['fechaVinc'] = 'La fecha de vinculación es obligatoria';
+    isValid = false;
+  } else {
+    const fecha = new Date(this.clienteFechaVinc);
+    const hoy = new Date();
+    hoy.setHours(23, 59, 59, 999);
+    
+    if (fecha > hoy) {
+      this.clienteErrors['fechaVinc'] = 'La fecha de vinculación no puede ser futura';
+      isValid = false;
+    }
+  }
+
+  // Validación de tipo de usuario (OBLIGATORIO)
+  if (!this.clienteTipoUsuario) {
+    this.clienteErrors['tipoUsuario'] = 'Debe seleccionar el tipo de cliente';
+    isValid = false;
+  }
+
+  // ✅ NUEVA: Validación de razón social (OBLIGATORIO)
+  if (!this.clienteRazonSocial.trim()) {
+    this.clienteErrors['razonSocial'] = 'La razón social es obligatoria';
+    isValid = false;
+  } else if (this.clienteRazonSocial.length > 200) {
+    this.clienteErrors['razonSocial'] = 'La razón social no puede exceder 200 caracteres';
+    isValid = false;
+  }
+
+  // ✅ NUEVA: Validación de NIT (OBLIGATORIO)
+  if (!this.clienteNit.trim()) {
+    this.clienteErrors['nit'] = 'El NIT es obligatorio';
+    isValid = false;
+  } else if (!this.PATTERNS.NIT.test(this.clienteNit)) {
+    this.clienteErrors['nit'] = 'Formato de NIT inválido (ej: 900123456-7)';
+    isValid = false;
+  }
+
+  // Validación de tipo de identificación (OBLIGATORIO)
+  if (!this.clienteTipoId) {
+    this.clienteErrors['tipoId'] = 'Debe seleccionar el tipo de identificación';
+    isValid = false;
+  }
+
+  // Validación de número de identificación (OBLIGATORIO)
+  if (!this.clienteIdNum.trim()) {
+    this.clienteErrors['idNum'] = 'El número de identificación es obligatorio';
+    isValid = false;
+  } else if (!this.PATTERNS.IDENTIFICACION.test(this.clienteIdNum)) {
+    this.clienteErrors['idNum'] = 'Número de identificación inválido (5-20 caracteres alfanuméricos)';
+    isValid = false;
+  }
+
+  // ✅ NUEVA: Validación de sexo (OBLIGATORIO)
+  if (!this.clienteSexo) {
+    this.clienteErrors['sexo'] = 'Debe seleccionar el sexo';
+    isValid = false;
+  } else if (!['M', 'F', 'Otro'].includes(this.clienteSexo)) {
+    this.clienteErrors['sexo'] = 'Seleccione una opción válida para sexo';
+    isValid = false;
+  }
+
+  // ✅ NUEVA: Validación de tipo población (OBLIGATORIO)
+  if (!this.clienteTipoPobl.trim()) {
+    this.clienteErrors['tipoPobl'] = 'El tipo de población es obligatorio';
+    isValid = false;
+  } else if (this.clienteTipoPobl.length > 50) {
+    this.clienteErrors['tipoPobl'] = 'El tipo de población no puede exceder 50 caracteres';
+    isValid = false;
+  }
+
+  // ✅ NUEVA: Validación de dirección (OBLIGATORIO)
+  if (!this.clienteDireccion.trim()) {
+    this.clienteErrors['direccion'] = 'La dirección es obligatoria';
+    isValid = false;
+  } else if (!this.PATTERNS.DIRECCION.test(this.clienteDireccion)) {
+    this.clienteErrors['direccion'] = 'La dirección contiene caracteres inválidos (máx 200 caracteres)';
+    isValid = false;
+  }
+
+  // Validación de departamento y ciudad (OBLIGATORIOS)
+  if (!this.clienteIdDepartamento) {
+    this.clienteErrors['departamento'] = 'Debe seleccionar un departamento';
+    isValid = false;
+  }
+  if (!this.clienteIdCiudad) {
+    this.clienteErrors['ciudad'] = 'Debe seleccionar una ciudad';
+    isValid = false;
+  }
+
+  // ✅ NUEVA: Validación de celular (OBLIGATORIO)
+  if (!this.clienteCelular) {
+    this.clienteErrors['celular'] = 'El celular es obligatorio';
+    isValid = false;
+  } else if (!this.PATTERNS.CELULAR.test(this.clienteCelular.replace(/\s/g, ''))) {
+    this.clienteErrors['celular'] = 'Formato de celular inválido (ej: 3001234567)';
+    isValid = false;
+  }
+
+  // ✅ NUEVA: Validación de teléfono (NO obligatorio)
+  if (this.clienteTelefono && !this.PATTERNS.TELEFONO.test(this.clienteTelefono.replace(/\s/g, ''))) {
+    this.clienteErrors['telefono'] = 'Formato de teléfono inválido (7-15 dígitos)';
+    isValid = false;
+  }
+
+  // ✅ NUEVA: Validación de correo (OBLIGATORIO)
+  if (!this.clienteEmail.trim()) {
+    this.clienteErrors['email'] = 'El correo electrónico es obligatorio';
+    isValid = false;
+  } else if (!this.PATTERNS.EMAIL.test(this.clienteEmail)) {
+    this.clienteErrors['email'] = 'Formato de correo electrónico inválido';
+    isValid = false;
+  }
+
+  // ✅ NUEVA: Validación de tipo vinculación (OBLIGATORIO)
+  if (!this.clienteTipoVinc.trim()) {
+    this.clienteErrors['tipoVinc'] = 'El tipo de vinculación es obligatorio';
+    isValid = false;
+  } else if (this.clienteTipoVinc.length > 50) {
+    this.clienteErrors['tipoVinc'] = 'El tipo de vinculación no puede exceder 50 caracteres';
+    isValid = false;
+  }
+
+  // ✅ NUEVA: Validación de registro realizado por (OBLIGATORIO)
+  if (!this.clienteRegistroPor.trim()) {
+    this.clienteErrors['registroPor'] = 'El registro realizado por es obligatorio';
+    isValid = false;
+  } else if (this.clienteRegistroPor.length > 100) {
+    this.clienteErrors['registroPor'] = 'El registro realizado por no puede exceder 100 caracteres';
+    isValid = false;
+  }
+
+  // Validación de observaciones (NO obligatorio)
+  if (this.clienteObservaciones && !this.PATTERNS.OBSERVACIONES.test(this.clienteObservaciones)) {
+    this.clienteErrors['observaciones'] = 'Las observaciones exceden el límite de 500 caracteres';
+    isValid = false;
+  }
+
+  return isValid;
+}
 
   validarSolicitud(): boolean {
-    this.solicitudErrors = {};
-    let isValid = true;
+  this.solicitudErrors = {};
+  let isValid = true;
 
-    if (!this.solicitudClienteId) {
-      this.solicitudErrors['clienteId'] = 'Debe seleccionar un cliente';
-      isValid = false;
-    }
-
-    if (!this.solicitudTipo.trim()) {
-      this.solicitudErrors['tipo'] = 'Debe seleccionar el tipo de solicitud';
-      isValid = false;
-    }
-
-    if (!this.solicitudNombre.trim()) {
-      this.solicitudErrors['nombre'] = 'El nombre de la muestra es obligatorio';
-      isValid = false;
-    } else if (this.solicitudNombre.length > 100) {
-      this.solicitudErrors['nombre'] = 'Máximo 100 caracteres (' + this.solicitudNombre.length + ' actuales)';
-      isValid = false;
-    }
-
-    // ... (mantener todas las validaciones existentes)
-
-    return isValid;
+  // Validación de cliente (OBLIGATORIO)
+  if (!this.solicitudClienteId) {
+    this.solicitudErrors['clienteId'] = 'Debe seleccionar un cliente';
+    isValid = false;
   }
+
+  // Validación de tipo de solicitud (OBLIGATORIO)
+  if (!this.solicitudTipo.trim()) {
+    this.solicitudErrors['tipo'] = 'Debe seleccionar el tipo de solicitud';
+    isValid = false;
+  }
+
+  // Validación de nombre de muestra (OBLIGATORIO)
+  if (!this.solicitudNombre.trim()) {
+    this.solicitudErrors['nombre'] = 'El nombre de la muestra es obligatorio';
+    isValid = false;
+  } else if (!this.PATTERNS.MUESTRA.test(this.solicitudNombre)) {
+    this.solicitudErrors['nombre'] = 'Nombre de muestra inválido (2-100 caracteres alfanuméricos)';
+    isValid = false;
+  }
+
+  // Validación de lote (OBLIGATORIO)
+  if (!this.solicitudLote.trim()) {
+    this.solicitudErrors['lote'] = 'El lote del producto es obligatorio';
+    isValid = false;
+  } else if (!this.PATTERNS.LOTE.test(this.solicitudLote)) {
+    this.solicitudErrors['lote'] = 'Formato de lote inválido (3-20 caracteres alfanuméricos)';
+    isValid = false;
+  }
+
+  // ✅ CORRECCIÓN: Validación de fecha de vencimiento (OBLIGATORIO, NO PASADA)
+  if (!this.solicitudFechaVenc) {
+    this.solicitudErrors['fechaVenc'] = 'La fecha de vencimiento es obligatoria';
+    isValid = false;
+  } else {
+    const fechaVenc = new Date(this.solicitudFechaVenc);
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    fechaVenc.setHours(0, 0, 0, 0);
+    
+    if (fechaVenc < hoy) {
+      this.solicitudErrors['fechaVenc'] = 'La fecha de vencimiento no puede ser una fecha pasada';
+      isValid = false;
+    }
+  }
+
+  // Validación de tipo de muestra (OBLIGATORIO)
+  if (!this.solicitudTipoMuestra.trim()) {
+    this.solicitudErrors['tipoMuestra'] = 'El tipo de muestra es obligatorio';
+    isValid = false;
+  }
+
+  // Validación de condiciones de empaque (OBLIGATORIO)
+  if (!this.solicitudCondEmpaque.trim()) {
+    this.solicitudErrors['condEmpaque'] = 'Las condiciones de empaque son obligatorias';
+    isValid = false;
+  } else if (this.solicitudCondEmpaque.length > 100) {
+    this.solicitudErrors['condEmpaque'] = 'Las condiciones de empaque no pueden exceder 100 caracteres';
+    isValid = false;
+  }
+
+  // Validación de tipo de análisis (OBLIGATORIO)
+  if (!this.solicitudTipoAnalisis.trim()) {
+    this.solicitudErrors['tipoAnalisis'] = 'El tipo de análisis requerido es obligatorio';
+    isValid = false;
+  }
+
+  // Validación de cantidad de muestras (OBLIGATORIO)
+  if (!this.solicitudCantidad) {
+    this.solicitudErrors['cantidad'] = 'La cantidad de muestras es obligatoria';
+    isValid = false;
+  } else if (this.solicitudCantidad < 1 || this.solicitudCantidad > 100) {
+    this.solicitudErrors['cantidad'] = 'La cantidad debe estar entre 1 y 100 muestras';
+    isValid = false;
+  }
+
+  // Validación de fecha estimada de entrega (OBLIGATORIO)
+  if (!this.solicitudFechaEstimada) {
+    this.solicitudErrors['fechaEstimada'] = 'La fecha estimada de entrega es obligatoria';
+    isValid = false;
+  } else {
+    const fechaEstimada = new Date(this.solicitudFechaEstimada);
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    
+    if (fechaEstimada < hoy) {
+      this.solicitudErrors['fechaEstimada'] = 'La fecha estimada no puede ser anterior a hoy';
+      isValid = false;
+    }
+    
+    // Validar que la fecha estimada no sea mayor a 1 año
+    const maxFecha = new Date();
+    maxFecha.setFullYear(maxFecha.getFullYear() + 1);
+    if (fechaEstimada > maxFecha) {
+      this.solicitudErrors['fechaEstimada'] = 'La fecha estimada no puede ser mayor a 1 año';
+      isValid = false;
+    }
+  }
+
+  return isValid;
+}
 
   validarOferta(): boolean {
     this.ofertaErrors = {};
@@ -295,9 +516,24 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
     } else if (this.ofertaValor <= 0) {
       this.ofertaErrors['valor'] = 'El valor debe ser mayor a 0';
       isValid = false;
+    } else if (this.ofertaValor > 1000000000) {
+      this.ofertaErrors['valor'] = 'El valor no puede exceder $1.000.000.000';
+      isValid = false;
     }
 
-    // ... (mantener todas las validaciones existentes)
+    if (!this.ofertaFechaEnvio) {
+      this.ofertaErrors['fechaEnvio'] = 'La fecha de envío es obligatoria';
+      isValid = false;
+    } else {
+      const fechaEnvio = new Date(this.ofertaFechaEnvio);
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+      
+      if (fechaEnvio > hoy) {
+        this.ofertaErrors['fechaEnvio'] = 'La fecha de envío no puede ser futura';
+        isValid = false;
+      }
+    }
 
     return isValid;
   }
@@ -314,9 +550,37 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
     if (!this.resultadoFechaLimite) {
       this.resultadoErrors['fechaLimite'] = 'La fecha límite es obligatoria';
       isValid = false;
+    } else {
+      const fechaLimite = new Date(this.resultadoFechaLimite);
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+      
+      if (fechaLimite < hoy) {
+        this.resultadoErrors['fechaLimite'] = 'La fecha límite no puede ser anterior a hoy';
+        isValid = false;
+      }
     }
 
-    // ... (mantener todas las validaciones existentes)
+    if (!this.resultadoNumeroInforme) {
+      this.resultadoErrors['numeroInforme'] = 'El número de informe es obligatorio';
+      isValid = false;
+    } else if (!this.PATTERNS.CODIGO_INFORME.test(this.resultadoNumeroInforme)) {
+      this.resultadoErrors['numeroInforme'] = 'Formato de informe inválido (ej: INF-2024-001)';
+      isValid = false;
+    }
+
+    if (!this.resultadoFechaEnvio) {
+      this.resultadoErrors['fechaEnvio'] = 'La fecha de envío es obligatoria';
+      isValid = false;
+    } else {
+      const fechaEnvio = new Date(this.resultadoFechaEnvio);
+      const fechaLimite = new Date(this.resultadoFechaLimite);
+      
+      if (fechaEnvio > fechaLimite) {
+        this.resultadoErrors['fechaEnvio'] = 'La fecha de envío no puede ser posterior a la fecha límite';
+        isValid = false;
+      }
+    }
 
     return isValid;
   }
@@ -333,14 +597,31 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
     if (!this.encuestaFecha) {
       this.encuestaErrors['fecha'] = 'La fecha de la encuesta es obligatoria';
       isValid = false;
+    } else {
+      const fechaEncuesta = new Date(this.encuestaFecha);
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+      
+      if (fechaEncuesta > hoy) {
+        this.encuestaErrors['fecha'] = 'La fecha de encuesta no puede ser futura';
+        isValid = false;
+      }
     }
 
-    // ... (mantener todas las validaciones existentes)
+    if (this.encuestaComentarios && this.encuestaComentarios.length > 1000) {
+      this.encuestaErrors['comentarios'] = 'Los comentarios no pueden exceder 1000 caracteres';
+      isValid = false;
+    }
+
+    if (this.encuestaPuntuacion && (this.encuestaPuntuacion < 1 || this.encuestaPuntuacion > 5)) {
+      this.encuestaErrors['puntuacion'] = 'La puntuación debe estar entre 1 y 5';
+      isValid = false;
+    }
 
     return isValid;
   }
 
-  // ========== OPERACIONES CRUD CON MANEJO DETALLADO DE ERRORES ==========
+  // ========== OPERACIONES CRUD (MANTENER IGUAL) ==========
   async createCliente(e: Event): Promise<void> {
     e.preventDefault();
 
@@ -349,7 +630,6 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Verificar permisos antes de intentar crear
     const permError = this.utilsService.getOperationErrorMessage('crear');
     if (permError) {
       this.snackbarService.error(`No puedes crear clientes: ${permError}`);
@@ -380,11 +660,8 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
       };
 
       await this.clientesService.createCliente(payload);
-
       this.snackbarService.success('✅ Cliente creado exitosamente');
       this.clienteErrors = {};
-
-      // Limpiar formulario
       this.limpiarFormularioCliente();
       await this.loadClientes();
 
@@ -402,7 +679,6 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Verificar permisos
     const permError = this.utilsService.getOperationErrorMessage('crear');
     if (permError) {
       this.snackbarService.error(`No puedes crear solicitudes: ${permError}`);
@@ -427,11 +703,8 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
       };
 
       await this.solicitudesService.createSolicitud(body);
-
       this.snackbarService.success('✅ Solicitud creada exitosamente');
       this.solicitudErrors = {};
-
-      // Limpiar formulario
       this.limpiarFormularioSolicitud();
       await this.loadSolicitudes();
 
@@ -449,7 +722,6 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Verificar permisos
     const permError = this.utilsService.getOperationErrorMessage('crear');
     if (permError) {
       this.snackbarService.error(`No puedes crear ofertas: ${permError}`);
@@ -466,11 +738,8 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
       };
 
       await this.solicitudesService.updateSolicitud(this.ofertaSolicitudId, body);
-
       this.snackbarService.success('✅ Oferta registrada exitosamente');
       this.ofertaErrors = {};
-
-      // Limpiar formulario
       this.limpiarFormularioOferta();
       await this.loadSolicitudes();
 
@@ -488,7 +757,6 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Verificar permisos
     const permError = this.utilsService.getOperationErrorMessage('crear');
     if (permError) {
       this.snackbarService.error(`No puedes registrar resultados: ${permError}`);
@@ -503,11 +771,8 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
       };
 
       await this.solicitudesService.updateSolicitud(this.resultadoSolicitudId, body);
-
       this.snackbarService.success('✅ Resultados registrados exitosamente');
       this.resultadoErrors = {};
-
-      // Limpiar formulario
       this.limpiarFormularioResultado();
       await this.loadSolicitudes();
 
@@ -525,7 +790,6 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Verificar permisos
     const permError = this.utilsService.getOperationErrorMessage('crear');
     if (permError) {
       this.snackbarService.error(`No puedes crear encuestas: ${permError}`);
@@ -544,11 +808,8 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
       };
 
       await this.solicitudesService.createEncuesta(body);
-
       this.snackbarService.success('✅ Encuesta registrada exitosamente');
       this.encuestaErrors = {};
-
-      // Limpiar formulario
       this.limpiarFormularioEncuesta();
       await this.loadSolicitudes();
 
@@ -561,7 +822,6 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
   async deleteCliente(id: number): Promise<void> {
     if (!confirm('¿Estás seguro de que quieres eliminar este cliente?')) return;
     
-    // Verificar permisos de eliminación
     if (!this.canDelete()) {
       const errorMsg = this.utilsService.getDeleteErrorMessage();
       this.snackbarService.error(`❌ No puedes eliminar clientes: ${errorMsg}`);
@@ -581,7 +841,6 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
   async deleteSolicitud(id: number): Promise<void> {
     if (!confirm('¿Estás seguro de que quieres eliminar esta solicitud?')) return;
     
-    // Verificar permisos de eliminación
     if (!this.canDelete()) {
       const errorMsg = this.utilsService.getDeleteErrorMessage();
       this.snackbarService.error(`❌ No puedes eliminar solicitudes: ${errorMsg}`);
@@ -599,7 +858,6 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
   }
 
   async toggleCheck(s: any, field: string, value: any): Promise<void> {
-    // Verificar permisos para editar
     const permError = this.utilsService.getOperationErrorMessage('editar');
     if (permError) {
       this.snackbarService.error(`No puedes modificar este campo: ${permError}`);
@@ -633,11 +891,10 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ========== MÉTODOS AUXILIARES PARA MANEJO DE ERRORES ==========
+  // ========== MÉTODOS AUXILIARES (MANTENER IGUAL) ==========
   private manejarError(err: any, operacion: string): void {
     const errorMessage = err.message || err.toString();
     
-    // Detectar tipo de error
     if (errorMessage.includes('No autorizado') || errorMessage.includes('401')) {
       this.snackbarService.error(`🔐 Sesión expirada. Por favor, inicia sesión nuevamente.`);
       setTimeout(() => {
@@ -664,7 +921,6 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
       this.snackbarService.error('📝 Error de validación: Verifica los datos ingresados.');
     }
     else {
-      // Error genérico
       this.snackbarService.error(`❌ Error al ${operacion}: ${this.obtenerMensajeAmigable(errorMessage)}`);
     }
   }
@@ -685,7 +941,6 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Si no encuentra un mensaje amigable, devuelve uno genérico
     return mensaje.length > 100 ? 'Error del sistema. Contacta al administrador.' : mensaje;
   }
 
@@ -752,7 +1007,7 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
     this.encuestaSolicitoNueva = false;
   }
 
-  // ========== MÉTODOS UI (igual que antes) ==========
+  // ========== MÉTODOS UI ==========
   canDelete(): boolean {
     return this.utilsService.canDelete();
   }

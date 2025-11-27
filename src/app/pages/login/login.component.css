@@ -41,7 +41,6 @@ body {
 }
 
 /* Reemplaza estas secciones en tu login.component.css */
-
 /* ========== PARTÍCULAS DE FONDO ========== */
 .particles {
   position: fixed;
@@ -136,12 +135,12 @@ body {
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
 }
-
+/* 
 .bio-icon:hover {
   transform: translateY(-5px);
   border-color: #00b8b5;
   box-shadow: 0 10px 25px rgba(0, 184, 181, 0.2);
-}
+} */
 
 .bio-icon i {
   font-size: 2.5rem;

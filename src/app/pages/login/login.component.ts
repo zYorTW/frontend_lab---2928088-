@@ -69,29 +69,45 @@ export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async onSubmit(e: Event, form?: NgForm) {
-    e?.preventDefault();
-    this.triedSubmit = true;
-    this.error = '';
-    if (form && form.invalid) {
-      // Marcar todos los controles como tocados para mostrar errores
-      Object.values(form.controls).forEach((c: any) => c?.control?.markAsTouched?.());
+  e?.preventDefault();
+  this.triedSubmit = true;
+  this.error = '';
+  
+  // ✅ VALIDACIONES FRONTEND MÁS ESPECÍFICAS
+  if (form && form.invalid) {
+    Object.values(form.controls).forEach((c: any) => c?.control?.markAsTouched?.());
+    
+    if (!this.email) {
+      this.snack.warn('📧 Ingresa tu correo electrónico');
+    } else if (!this.contrasena) {
+      this.snack.warn('🔒 Ingresa tu contraseña');
+    } else {
       this.snack.warn('Completa los campos requeridos');
-      return; // No continuar si el formulario es inválido
     }
-    this.loading = true;
-    try {
-      await authService.login(this.email, this.contrasena);
-      this.triedSubmit = false;
-      this.snack.success('Bienvenido');
-      await this.router.navigateByUrl(this.returnUrl);
-    } catch (err: any) {
-      console.error('Error al iniciar sesión:', err);
-      this.error = err?.message || 'Error al iniciar sesión. Intenta nuevamente.';
-      this.snack.error(this.error);
-    } finally {
-      this.loading = false;
-    }
+    return;
   }
+  
+  // ✅ VALIDAR FORMATO EMAIL
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(this.email)) {
+    this.snack.warn('📧 Formato de email inválido');
+    return;
+  }
+
+  this.loading = true;
+  try {
+    await authService.login(this.email, this.contrasena);
+    this.triedSubmit = false;
+    this.snack.success('✅ Bienvenido');
+    await this.router.navigateByUrl(this.returnUrl);
+  } catch (err: any) {
+    console.error('Error al iniciar sesión:', err);
+    this.error = err?.message || 'Error al iniciar sesión. Intenta nuevamente.';
+    this.snack.error(this.error);
+  } finally {
+    this.loading = false;
+  }
+}
 
   // Placeholder for Google sign-in flow (UI only)
   onGoogleSignIn() {

@@ -49,6 +49,7 @@ export class PapeleriaComponent implements OnInit {
   readonly catDescripcion = signal<string>('');
   readonly catImagen = signal<File | null>(null);
   readonly catalogoMsg = signal<string>('');
+  readonly catalogoErrors = signal<{[key: string]: string}>({});
 
   // ===== LISTADO CATÁLOGO =====
   readonly catalogoResultados = signal<CatalogoItem[]>([]);
@@ -74,6 +75,7 @@ export class PapeleriaComponent implements OnInit {
   readonly ubicacion = signal<string>('');
   readonly observaciones = signal<string>('');
   readonly papMsg = signal<string>('');
+  readonly papeleriaErrors = signal<{[key: string]: string}>({});
 
   // ===== INVENTARIO PAPELERÍA =====
   readonly papeleriaList = signal<PapeleriaItem[]>([]);
@@ -99,6 +101,16 @@ export class PapeleriaComponent implements OnInit {
   private contextTarget: CatalogoItem | PapeleriaItem | null = null;
   contextMenuX = 0;
   contextMenuY = 0;
+
+  // Patrones de validación
+  private readonly PATTERNS = {
+    NOMBRE: /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s\-\.]{2,100}$/,
+    ITEM: /^[0-9]{1,10}$/,
+    DESCRIPCION: /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s\-\.\,]{0,500}$/,
+    MARCA: /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s\-\.]{0,50}$/,
+    UBICACION: /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s\-\#]{0,100}$/,
+    OBSERVACIONES: /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s\-\.\,]{0,500}$/
+  };
 
   // ===== MÉTODOS PÚBLICOS PARA TEMPLATE =====
   
@@ -145,6 +157,168 @@ export class PapeleriaComponent implements OnInit {
     }
   }
 
+  // ===== VALIDACIONES CATÁLOGO =====
+  private validarFormularioCatalogo(): boolean {
+    const errors: {[key: string]: string} = {};
+    let isValid = true;
+
+    // Validación de item (OBLIGATORIO)
+    const itemStr = this.catItem().trim();
+    if (!itemStr) {
+      errors['item'] = 'El item es obligatorio';
+      isValid = false;
+    } else if (!this.PATTERNS.ITEM.test(itemStr)) {
+      errors['item'] = 'El item debe contener solo números (1-10 dígitos)';
+      isValid = false;
+    } else if (isNaN(Number(itemStr))) {
+      errors['item'] = 'El item debe ser un número válido';
+      isValid = false;
+    }
+
+    // Validación de nombre (OBLIGATORIO)
+    const nombreStr = this.catNombre().trim();
+    if (!nombreStr) {
+      errors['nombre'] = 'El nombre es obligatorio';
+      isValid = false;
+    } else if (!this.PATTERNS.NOMBRE.test(nombreStr)) {
+      errors['nombre'] = 'El nombre debe contener solo letras, números y espacios (2-100 caracteres)';
+      isValid = false;
+    }
+
+    // Validación de descripción (NO obligatorio)
+    if (this.catDescripcion() && !this.PATTERNS.DESCRIPCION.test(this.catDescripcion())) {
+      errors['descripcion'] = 'La descripción no puede exceder 500 caracteres';
+      isValid = false;
+    }
+
+    // Validación de imagen (OBLIGATORIO)
+    if (!this.catImagen()) {
+      errors['imagen'] = 'La imagen es obligatoria';
+      isValid = false;
+    } else {
+      const file = this.catImagen()!;
+      // Validar tipo de archivo
+      if (!file.type.startsWith('image/')) {
+        errors['imagen'] = 'El archivo debe ser una imagen';
+        isValid = false;
+      }
+      // Validar tamaño (5MB máximo)
+      if (file.size > 5 * 1024 * 1024) {
+        errors['imagen'] = 'La imagen no puede pesar más de 5 MB';
+        isValid = false;
+      }
+    }
+
+    this.catalogoErrors.set(errors);
+    return isValid;
+  }
+
+  // ===== VALIDACIONES PAPELERÍA =====
+  private validarFormularioPapeleria(): boolean {
+    const errors: {[key: string]: string} = {};
+    let isValid = true;
+
+    // Validación de item catálogo (OBLIGATORIO)
+    if (!this.item_catalogo()) {
+      errors['item_catalogo'] = 'El item de catálogo es obligatorio';
+      isValid = false;
+    } else if (this.item_catalogo()! <= 0) {
+      errors['item_catalogo'] = 'El item de catálogo debe ser mayor a 0';
+      isValid = false;
+    }
+
+    // Validación de nombre (OBLIGATORIO)
+    const nombreStr = this.nombre().trim();
+    if (!nombreStr) {
+      errors['nombre'] = 'El nombre es obligatorio';
+      isValid = false;
+    } else if (!this.PATTERNS.NOMBRE.test(nombreStr)) {
+      errors['nombre'] = 'El nombre debe contener solo letras, números y espacios (2-100 caracteres)';
+      isValid = false;
+    }
+
+    // Validación de cantidad adquirida (OBLIGATORIO)
+    if (this.cantidad_adquirida() === null) {
+      errors['cantidad_adquirida'] = 'La cantidad adquirida es obligatoria';
+      isValid = false;
+    } else if (this.cantidad_adquirida()! < 0) {
+      errors['cantidad_adquirida'] = 'La cantidad adquirida debe ser mayor o igual a 0';
+      isValid = false;
+    }
+
+    // Validación de cantidad existente (OBLIGATORIO)
+    if (this.cantidad_existente() === null) {
+      errors['cantidad_existente'] = 'La cantidad existente es obligatoria';
+      isValid = false;
+    } else if (this.cantidad_existente()! < 0) {
+      errors['cantidad_existente'] = 'La cantidad existente debe ser mayor o igual a 0';
+      isValid = false;
+    }
+
+    // Validación de presentación (OBLIGATORIO)
+    if (!this.presentacion()) {
+      errors['presentacion'] = 'La presentación es obligatoria';
+      isValid = false;
+    } else if (!['unidad', 'paquete', 'caja', 'cajas'].includes(this.presentacion())) {
+      errors['presentacion'] = 'Seleccione una presentación válida';
+      isValid = false;
+    }
+
+    // Validación de marca (OBLIGATORIO)
+    const marcaStr = this.marca().trim();
+    if (!marcaStr) {
+      errors['marca'] = 'La marca es obligatoria';
+      isValid = false;
+    } else if (!this.PATTERNS.MARCA.test(marcaStr)) {
+      errors['marca'] = 'La marca no puede exceder 50 caracteres';
+      isValid = false;
+    }
+
+    // Validación de fecha adquisición (OBLIGATORIO)
+    if (!this.fecha_adquisicion()) {
+      errors['fecha_adquisicion'] = 'La fecha de adquisición es obligatoria';
+      isValid = false;
+    } else {
+      const fechaAdq = new Date(this.fecha_adquisicion());
+      const hoy = new Date();
+      hoy.setHours(23, 59, 59, 999);
+      
+      if (fechaAdq > hoy) {
+        errors['fecha_adquisicion'] = 'La fecha de adquisición no puede ser futura';
+        isValid = false;
+      }
+    }
+
+    // Validación de ubicación (OBLIGATORIO)
+    const ubicacionStr = this.ubicacion().trim();
+    if (!ubicacionStr) {
+      errors['ubicacion'] = 'La ubicación es obligatoria';
+      isValid = false;
+    } else if (!this.PATTERNS.UBICACION.test(ubicacionStr)) {
+      errors['ubicacion'] = 'La ubicación no puede exceder 100 caracteres';
+      isValid = false;
+    }
+
+    // Validación de descripción (OBLIGATORIO)
+    const descripcionStr = this.descripcion().trim();
+    if (!descripcionStr) {
+      errors['descripcion'] = 'La descripción es obligatoria';
+      isValid = false;
+    } else if (!this.PATTERNS.DESCRIPCION.test(descripcionStr)) {
+      errors['descripcion'] = 'La descripción no puede exceder 500 caracteres';
+      isValid = false;
+    }
+
+    // Validación de observaciones (NO obligatorio)
+    if (this.observaciones() && !this.PATTERNS.OBSERVACIONES.test(this.observaciones())) {
+      errors['observaciones'] = 'Las observaciones no pueden exceder 500 caracteres';
+      isValid = false;
+    }
+
+    this.papeleriaErrors.set(errors);
+    return isValid;
+  }
+
   // ===== CATÁLOGO - MÉTODOS PRINCIPALES =====
   async loadCatalogoInicial(): Promise<void> {
     this.catalogoOffset = 0;
@@ -156,7 +330,6 @@ export class PapeleriaComponent implements OnInit {
       this.catalogoCargando.set(true);
       const response = await this.papeleriaService.buscarCatalogo('', this.catalogoVisibleCount, this.catalogoOffset);
       
-      // CORREGIDO: Usar || consistentemente
       const base = Array.isArray(response) ? response : (response.rows || []);
       this.catalogoBase.set(base);
       this.catalogoResultados.set([...base]);
@@ -200,7 +373,6 @@ export class PapeleriaComponent implements OnInit {
       const query = this.itemFiltro() || this.nombreFiltro() || '';
       const response = await this.papeleriaService.buscarCatalogo(query, this.catalogoVisibleCount, this.catalogoOffset);
       
-      // CORREGIDO: Usar || consistentemente
       const nuevos = Array.isArray(response) ? response : (response.rows || []);
       this.catalogoResultados.update(current => [...current, ...nuevos]);
       
@@ -223,23 +395,27 @@ export class PapeleriaComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] || null;
     this.catImagen.set(file);
+    // Limpiar error de imagen al seleccionar archivo
+    if (file) {
+      this.catalogoErrors.update(errors => {
+        const newErrors = { ...errors };
+        delete newErrors['imagen'];
+        return newErrors;
+      });
+    }
   }
 
   async crearCatalogo(event: Event): Promise<void> {
     event.preventDefault();
+    this.catalogoMsg.set('');
+
+    if (!this.validarFormularioCatalogo()) {
+      this.snack.warn('Por favor corrige los errores en el formulario');
+      return;
+    }
 
     const itemStr = this.catItem().trim();
     const nombreStr = this.catNombre().trim();
-
-    if (!itemStr || !nombreStr) {
-      this.snack.warn('Faltan campos requeridos: Item y Nombre');
-      return;
-    }
-
-    if (isNaN(Number(itemStr))) {
-      this.snack.warn('El item debe ser numérico');
-      return;
-    }
 
     const formData = new FormData();
     formData.set('item', itemStr);
@@ -257,10 +433,16 @@ export class PapeleriaComponent implements OnInit {
       await this.papeleriaService.crearCatalogo(formData);
       this.snack.success('Item de catálogo creado exitosamente');
 
+      // Limpiar formulario
       this.catItem.set('');
       this.catNombre.set('');
       this.catDescripcion.set('');
       this.catImagen.set(null);
+      this.catalogoErrors.set({});
+
+      // Resetear input de archivo
+      const input = document.getElementById('catImagen') as HTMLInputElement;
+      if (input) input.value = '';
 
       await this.loadCatalogoInicial();
     } catch (error: any) {
@@ -277,7 +459,6 @@ export class PapeleriaComponent implements OnInit {
     try {
       const response = await this.papeleriaService.listar('', limit || 0);
       
-      // CORREGIDO: Usar || consistentemente
       const rows = Array.isArray(response) ? response : (response.rows || []);
       this.papeleriaAll = rows;
       this.papeleriaList.set(rows);
@@ -376,6 +557,7 @@ export class PapeleriaComponent implements OnInit {
     this.papMsg.set('');
 
     if (!this.validarFormularioPapeleria()) {
+      this.snack.warn('Por favor corrige los errores en el formulario');
       return;
     }
 
@@ -484,21 +666,6 @@ export class PapeleriaComponent implements OnInit {
     this.papeleriaList.update(actualizarLista);
   }
 
-  private validarFormularioPapeleria(): boolean {
-    if (!this.item_catalogo() || !this.nombre().trim() || 
-        this.cantidad_adquirida() == null || this.cantidad_existente() == null) {
-      this.snack.warn('Faltan campos requeridos del formulario');
-      return false;
-    }
-
-    if (this.cantidad_adquirida()! < 0 || this.cantidad_existente()! < 0) {
-      this.snack.warn('Las cantidades deben ser números mayores o iguales a 0');
-      return false;
-    }
-
-    return true;
-  }
-
   private async procesarRegistroCreado(created: any, payload: CreatePapeleriaPayload): Promise<void> {
     const idReal = created?.id || created?.insertId || created?.lastId;
 
@@ -537,6 +704,7 @@ export class PapeleriaComponent implements OnInit {
     this.fecha_adquisicion.set('');
     this.ubicacion.set('');
     this.observaciones.set('');
+    this.papeleriaErrors.set({});
 
     try {
       const input = document.getElementById('catImagen') as HTMLInputElement;

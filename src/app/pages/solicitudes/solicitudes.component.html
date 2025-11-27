@@ -2,7 +2,7 @@
 <div class="liba-theme container">
   <h1>
     <i class="fas fa-clipboard-list"></i>
-    | Solicitudes
+    | Solicitudes - Laboratorio
   </h1>
   
   <h2>Agregar cliente</h2>
@@ -14,21 +14,23 @@
 
         <!-- Nombre -->
         <div class="form-field">
-          <label for="clienteNombre">Nombre:</label>
+          <label for="clienteNombre">Nombre del solicitante: *</label>
           <input id="clienteNombre" [(ngModel)]="clienteNombre" name="clienteNombre" required
-            [class.error]="clienteErrors['nombre']" placeholder="Ej: Juan Pérez" />
+            [class.error]="clienteErrors['nombre']" placeholder="Ej: Juan Pérez García" 
+            maxlength="100" />
           @if (clienteErrors['nombre']) {
             <small class="error-message">
               ⚠️ {{ clienteErrors['nombre'] }}
             </small>
           }
+          
         </div>
 
         <!-- Número -->
         <div class="form-field">
-          <label for="clienteNumero">Consecutivo:</label>
-          <input id="clienteNumero" type="number" [(ngModel)]="clienteNumero" name="clienteNumero"
-            [class.error]="clienteErrors['numero']" placeholder="Ej: 101" />
+          <label for="clienteNumero">Consecutivo: *</label>
+          <input id="clienteNumero" type="number" [(ngModel)]="clienteNumero" name="clienteNumero" required
+            [class.error]="clienteErrors['numero']" placeholder="Ej: 101" min="1" max="9999" />
           @if (clienteErrors['numero']) {
             <small class="error-message">
               ⚠️ {{ clienteErrors['numero'] }}
@@ -38,9 +40,9 @@
 
         <!-- Fecha vinculación -->
         <div class="form-field">
-          <label for="clienteFechaVinc">Fecha vinculación:</label>
-          <input id="clienteFechaVinc" type="date" [(ngModel)]="clienteFechaVinc" name="clienteFechaVinc"
-            [class.error]="clienteErrors['fechaVinc']" placeholder="Ej: 2025-11-24" />
+          <label for="clienteFechaVinc">Fecha vinculación: *</label>
+          <input id="clienteFechaVinc" type="date" [(ngModel)]="clienteFechaVinc" name="clienteFechaVinc" required
+            [class.error]="clienteErrors['fechaVinc']" />
           @if (clienteErrors['fechaVinc']) {
             <small class="error-message">
               ⚠️ {{ clienteErrors['fechaVinc'] }}
@@ -50,8 +52,8 @@
 
         <!-- Tipo usuario -->
         <div class="form-field">
-          <label for="clienteTipoUsuario">Tipo cliente:</label>
-          <select id="clienteTipoUsuario" [(ngModel)]="clienteTipoUsuario" name="clienteTipoUsuario"
+          <label for="clienteTipoUsuario">Tipo cliente: *</label>
+          <select id="clienteTipoUsuario" [(ngModel)]="clienteTipoUsuario" name="clienteTipoUsuario" required
             [class.error]="clienteErrors['tipoUsuario']">
             <option value="">Seleccionar tipo de cliente</option>
             <option value="Emprendedor">Emprendedor</option>
@@ -72,7 +74,8 @@
         <div class="form-field">
           <label for="clienteRazonSocial">Razón social:</label>
           <input id="clienteRazonSocial" [(ngModel)]="clienteRazonSocial" name="clienteRazonSocial"
-            [class.error]="clienteErrors['razonSocial']" placeholder="Ej: Industrias SENA S.A.S." />
+            [class.error]="clienteErrors['razonSocial']" placeholder="Ej: Industrias SENA S.A.S." 
+            maxlength="200" />
           @if (clienteErrors['razonSocial']) {
             <small class="error-message">
               ⚠️ {{ clienteErrors['razonSocial'] }}
@@ -84,7 +87,8 @@
         <div class="form-field">
           <label for="clienteNit">NIT:</label>
           <input id="clienteNit" [(ngModel)]="clienteNit" name="clienteNit"
-            [class.error]="clienteErrors['nit']" placeholder="Ej: 900123456-7" />
+            [class.error]="clienteErrors['nit']" placeholder="Ej: 900123456-7" 
+            pattern="[0-9]{9}-[0-9]" maxlength="10" />
           @if (clienteErrors['nit']) {
             <small class="error-message">
               ⚠️ {{ clienteErrors['nit'] }}
@@ -94,8 +98,8 @@
 
         <!-- Tipo identificación -->
         <div class="form-field">
-          <label for="clienteTipoId">Tipo identificación:</label>
-          <select id="clienteTipoId" [(ngModel)]="clienteTipoId" name="clienteTipoId"
+          <label for="clienteTipoId">Tipo identificación: *</label>
+          <select id="clienteTipoId" [(ngModel)]="clienteTipoId" name="clienteTipoId" required
             [class.error]="clienteErrors['tipoId']">
             <option value="">Seleccionar tipo de id</option>
             <option value="CC">CC - Cédula de Ciudadanía</option>
@@ -114,9 +118,10 @@
 
         <!-- Número identificación -->
         <div class="form-field">
-          <label for="clienteIdNum">Número identificación:</label>
+          <label for="clienteIdNum">Número identificación: *</label>
           <input id="clienteIdNum" [(ngModel)]="clienteIdNum" name="clienteIdNum" required
-            [class.error]="clienteErrors['idNum']" placeholder="Ej: 12345678" />
+            [class.error]="clienteErrors['idNum']" placeholder="Ej: 1234567890" 
+            maxlength="20" />
           @if (clienteErrors['idNum']) {
             <small class="error-message">
               ⚠️ {{ clienteErrors['idNum'] }}
@@ -145,7 +150,8 @@
         <div class="form-field">
           <label for="clienteTipoPobl">Tipo población:</label>
           <input id="clienteTipoPobl" [(ngModel)]="clienteTipoPobl" name="clienteTipoPobl"
-            [class.error]="clienteErrors['tipoPobl']" placeholder="Ej: Rural, Urbana" />
+            [class.error]="clienteErrors['tipoPobl']" placeholder="Ej: Rural, Urbana" 
+            maxlength="50" />
           @if (clienteErrors['tipoPobl']) {
             <small class="error-message">
               ⚠️ {{ clienteErrors['tipoPobl'] }}
@@ -157,7 +163,8 @@
         <div class="form-field">
           <label for="clienteDireccion">Dirección:</label>
           <input id="clienteDireccion" [(ngModel)]="clienteDireccion" name="clienteDireccion"
-            [class.error]="clienteErrors['direccion']" placeholder="Ej: Calle 123 #45-67" />
+            [class.error]="clienteErrors['direccion']" placeholder="Ej: Calle 123 #45-67" 
+            maxlength="200" />
           @if (clienteErrors['direccion']) {
             <small class="error-message">
               ⚠️ {{ clienteErrors['direccion'] }}
@@ -167,8 +174,8 @@
 
         <!-- Departamento -->
         <div class="form-field">
-          <label for="clienteDepartamento">Departamento:</label>
-          <select id="clienteDepartamento" [(ngModel)]="clienteIdDepartamento" name="clienteIdDepartamento"
+          <label for="clienteDepartamento">Departamento: *</label>
+          <select id="clienteDepartamento" [(ngModel)]="clienteIdDepartamento" name="clienteIdDepartamento" required
             (change)="onDepartamentoChange()" [class.error]="clienteErrors['departamento']">
             <option value="">Seleccionar departamento</option>
             @for (dep of departamentos(); track dep.codigo) {
@@ -184,8 +191,8 @@
 
         <!-- Ciudad -->
         <div class="form-field">
-          <label for="clienteCiudad">Ciudad:</label>
-          <select id="clienteCiudad" [(ngModel)]="clienteIdCiudad" name="clienteIdCiudad"
+          <label for="clienteCiudad">Ciudad: *</label>
+          <select id="clienteCiudad" [(ngModel)]="clienteIdCiudad" name="clienteIdCiudad" required
             [class.error]="clienteErrors['ciudad']">
             <option value="">Seleccionar ciudad</option>
             @for (ciudad of ciudades(); track ciudad.codigo) {
@@ -203,7 +210,8 @@
         <div class="form-field">
           <label for="clienteCelular">Celular:</label>
           <input id="clienteCelular" [(ngModel)]="clienteCelular" name="clienteCelular"
-            [class.error]="clienteErrors['celular']" placeholder="Ej: 3001234567" />
+            [class.error]="clienteErrors['celular']" placeholder="Ej: 3001234567" 
+            pattern="3[0-9]{9}" maxlength="10" />
           @if (clienteErrors['celular']) {
             <small class="error-message">
               ⚠️ {{ clienteErrors['celular'] }}
@@ -215,7 +223,8 @@
         <div class="form-field">
           <label for="clienteTelefono">Teléfono:</label>
           <input id="clienteTelefono" [(ngModel)]="clienteTelefono" name="clienteTelefono"
-            [class.error]="clienteErrors['telefono']" placeholder="Ej: 6011234567" />
+            [class.error]="clienteErrors['telefono']" placeholder="Ej: 6011234567" 
+            pattern="[0-9]{7,15}" maxlength="15" />
           @if (clienteErrors['telefono']) {
             <small class="error-message">
               ⚠️ {{ clienteErrors['telefono'] }}
@@ -225,9 +234,10 @@
 
         <!-- Correo -->
         <div class="form-field">
-          <label for="clienteEmail">Correo:</label>
-          <input id="clienteEmail" [(ngModel)]="clienteEmail" name="clienteEmail"
-            [class.error]="clienteErrors['email']" placeholder="Ej: correo@ejemplo.com" />
+          <label for="clienteEmail">Correo electrónico:</label>
+          <input id="clienteEmail" type="email" [(ngModel)]="clienteEmail" name="clienteEmail"
+            [class.error]="clienteErrors['email']" placeholder="Ej: correo@ejemplo.com" 
+            maxlength="100" />
           @if (clienteErrors['email']) {
             <small class="error-message">
               ⚠️ {{ clienteErrors['email'] }}
@@ -239,7 +249,8 @@
         <div class="form-field">
           <label for="clienteTipoVinc">Tipo vinculación:</label>
           <input id="clienteTipoVinc" [(ngModel)]="clienteTipoVinc" name="clienteTipoVinc"
-            [class.error]="clienteErrors['tipoVinc']" placeholder="Ej: Contrato, Convenio" />
+            [class.error]="clienteErrors['tipoVinc']" placeholder="Ej: Contrato, Convenio" 
+            maxlength="50" />
           @if (clienteErrors['tipoVinc']) {
             <small class="error-message">
               ⚠️ {{ clienteErrors['tipoVinc'] }}
@@ -251,7 +262,8 @@
         <div class="form-field">
           <label for="clienteRegistroPor">Registro realizado por:</label>
           <input id="clienteRegistroPor" [(ngModel)]="clienteRegistroPor" name="clienteRegistroPor"
-            [class.error]="clienteErrors['registroPor']" placeholder="Ej: Administrador" />
+            [class.error]="clienteErrors['registroPor']" placeholder="Ej: Administrador" 
+            maxlength="100" />
           @if (clienteErrors['registroPor']) {
             <small class="error-message">
               ⚠️ {{ clienteErrors['registroPor'] }}
@@ -260,10 +272,11 @@
         </div>
 
         <!-- Observaciones -->
-        <div class="form-field">
+        <div class="form-field full-width">
           <label for="clienteObservaciones">Observaciones:</label>
-          <input id="clienteObservaciones" [(ngModel)]="clienteObservaciones" name="clienteObservaciones"
-            [class.error]="clienteErrors['observaciones']" placeholder="Observaciones adicionales" />
+          <textarea id="clienteObservaciones" [(ngModel)]="clienteObservaciones" name="clienteObservaciones"
+            [class.error]="clienteErrors['observaciones']" placeholder="Observaciones adicionales"
+            maxlength="500" rows="3"></textarea>
           @if (clienteErrors['observaciones']) {
             <small class="error-message">
               ⚠️ {{ clienteErrors['observaciones'] }}
@@ -271,11 +284,13 @@
           }
         </div>
       </div>
-      <div class="form-actions"><button type="submit">Agregar cliente</button></div>
+      <div class="form-actions">
+        <button type="submit">Agregar cliente</button>
+      </div>
     </form>
   </section>
 
-  <!-- SECCIÓN: AGREGAR SOLICITUD-->
+  <!-- SECCIÓN: AGREGAR SOLICITUD -->
   <h2>Agregar solicitud</h2>
   <section>
     <form (submit)="createSolicitud($event)" (focusin)="onFormFocus()" (focusout)="onFormBlur()">
@@ -283,7 +298,7 @@
 
         <!-- Cliente -->
         <div class="form-field">
-          <label for="solicitudClienteId">Cliente:</label>
+          <label for="solicitudClienteId">Cliente: *</label>
           <select id="solicitudClienteId" [(ngModel)]="solicitudClienteId" name="solicitudClienteId" required
             [class.error]="solicitudErrors['clienteId']">
             <option value="">Seleccionar cliente</option>
@@ -302,8 +317,8 @@
 
         <!-- Tipo de solicitud -->
         <div class="form-field">
-          <label for="solicitudTipo">Tipo de solicitud:</label>
-          <select id="solicitudTipo" [(ngModel)]="solicitudTipo" name="solicitudTipo"
+          <label for="solicitudTipo">Tipo de solicitud: *</label>
+          <select id="solicitudTipo" [(ngModel)]="solicitudTipo" name="solicitudTipo" required
             [class.error]="solicitudErrors['tipo']">
             <option value="">Seleccionar tipo de solicitud</option>
             <option value="AF">AF - Apoyo Formación</option>
@@ -320,9 +335,10 @@
 
         <!-- Nombre de muestra/producto -->
         <div class="form-field">
-          <label for="solicitudNombre">Nombre de la muestra:</label>
-          <input id="solicitudNombre" [(ngModel)]="solicitudNombre" name="solicitudNombre"
-            [class.error]="solicitudErrors['nombre']" placeholder="Ej: Suero lácteo" />
+          <label for="solicitudNombre">Nombre de la muestra: *</label>
+          <input id="solicitudNombre" [(ngModel)]="solicitudNombre" name="solicitudNombre" required
+            [class.error]="solicitudErrors['nombre']" placeholder="Ej: Suero lácteo" 
+            maxlength="100" />
           @if (solicitudErrors['nombre']) {
             <small class="error-message">
               ⚠️ {{ solicitudErrors['nombre'] }}
@@ -334,7 +350,8 @@
         <div class="form-field">
           <label for="solicitudLote">Lote del producto:</label>
           <input id="solicitudLote" [(ngModel)]="solicitudLote" name="solicitudLote"
-            [class.error]="solicitudErrors['lote']" placeholder="Ej: L202501" />
+            [class.error]="solicitudErrors['lote']" placeholder="Ej: L202501" 
+            maxlength="20" />
           @if (solicitudErrors['lote']) {
             <small class="error-message">
               ⚠️ {{ solicitudErrors['lote'] }}
@@ -356,9 +373,10 @@
 
         <!-- Tipo de muestra -->
         <div class="form-field">
-          <label for="solicitudTipoMuestra">Tipo de muestra:</label>
-          <input id="solicitudTipoMuestra" [(ngModel)]="solicitudTipoMuestra" name="solicitudTipoMuestra"
-            [class.error]="solicitudErrors['tipoMuestra']" placeholder="Ej: Líquido, Sólido, Gas" />
+          <label for="solicitudTipoMuestra">Tipo de muestra: *</label>
+          <input id="solicitudTipoMuestra" [(ngModel)]="solicitudTipoMuestra" name="solicitudTipoMuestra" required
+            [class.error]="solicitudErrors['tipoMuestra']" placeholder="Ej: Líquido, Sólido, Gas" 
+            maxlength="50" />
           @if (solicitudErrors['tipoMuestra']) {
             <small class="error-message">
               ⚠️ {{ solicitudErrors['tipoMuestra'] }}
@@ -370,7 +388,8 @@
         <div class="form-field">
           <label for="solicitudCondEmpaque">Condiciones de empaque:</label>
           <input id="solicitudCondEmpaque" [(ngModel)]="solicitudCondEmpaque" name="solicitudCondEmpaque"
-            [class.error]="solicitudErrors['condEmpaque']" placeholder="Ej: Refrigerado, sellado al vacío" />
+            [class.error]="solicitudErrors['condEmpaque']" placeholder="Ej: Refrigerado, sellado al vacío" 
+            maxlength="100" />
           @if (solicitudErrors['condEmpaque']) {
             <small class="error-message">
               ⚠️ {{ solicitudErrors['condEmpaque'] }}
@@ -380,9 +399,10 @@
 
         <!-- Tipo de análisis -->
         <div class="form-field">
-          <label for="solicitudTipoAnalisis">Tipo de análisis requerido:</label>
-          <input id="solicitudTipoAnalisis" [(ngModel)]="solicitudTipoAnalisis" name="solicitudTipoAnalisis"
-            [class.error]="solicitudErrors['tipoAnalisis']" placeholder="Ej: Microbiológico, Fisicoquímico" />
+          <label for="solicitudTipoAnalisis">Tipo de análisis requerido: *</label>
+          <input id="solicitudTipoAnalisis" [(ngModel)]="solicitudTipoAnalisis" name="solicitudTipoAnalisis" required
+            [class.error]="solicitudErrors['tipoAnalisis']" placeholder="Ej: Microbiológico, Fisicoquímico" 
+            maxlength="100" />
           @if (solicitudErrors['tipoAnalisis']) {
             <small class="error-message">
               ⚠️ {{ solicitudErrors['tipoAnalisis'] }}
@@ -392,9 +412,9 @@
 
         <!-- Cantidad de muestras -->
         <div class="form-field">
-          <label for="solicitudCantidad">Cantidad de muestras:</label>
-          <input id="solicitudCantidad" type="number" [(ngModel)]="solicitudCantidad" name="solicitudCantidad" min="1"
-            max="1000" [class.error]="solicitudErrors['cantidad']" placeholder="Ej: 3" />
+          <label for="solicitudCantidad">Cantidad de muestras: *</label>
+          <input id="solicitudCantidad" type="number" [(ngModel)]="solicitudCantidad" name="solicitudCantidad" required
+            min="1" max="100" [class.error]="solicitudErrors['cantidad']" placeholder="Ej: 3" />
           @if (solicitudErrors['cantidad']) {
             <small class="error-message">
               ⚠️ {{ solicitudErrors['cantidad'] }}
@@ -404,9 +424,9 @@
 
         <!-- Fecha estimada de entrega -->
         <div class="form-field">
-          <label for="solicitudFechaEstimada">Fecha estimada entrega:</label>
+          <label for="solicitudFechaEstimada">Fecha estimada entrega: *</label>
           <input id="solicitudFechaEstimada" type="date" [(ngModel)]="solicitudFechaEstimada"
-            name="solicitudFechaEstimada" [class.error]="solicitudErrors['fechaEstimada']" />
+            name="solicitudFechaEstimada" required [class.error]="solicitudErrors['fechaEstimada']" />
           @if (solicitudErrors['fechaEstimada']) {
             <small class="error-message">
               ⚠️ {{ solicitudErrors['fechaEstimada'] }}
@@ -444,7 +464,9 @@
           </select>
         </div>
       </div>
-      <div class="form-actions"><button type="submit">Agregar solicitud</button></div>
+      <div class="form-actions">
+        <button type="submit">Agregar solicitud</button>
+      </div>
     </form>
   </section>
 
@@ -456,7 +478,7 @@
 
         <!-- Solicitud -->
         <div class="form-field">
-          <label for="ofertaSolicitudId">Solicitud:</label>
+          <label for="ofertaSolicitudId">Solicitud: *</label>
           <select id="ofertaSolicitudId" [(ngModel)]="ofertaSolicitudId" name="ofertaSolicitudId" required
             [class.error]="ofertaErrors['solicitudId']">
             <option value="">Seleccionar solicitud</option>
@@ -475,9 +497,10 @@
 
         <!-- Valor -->
         <div class="form-field">
-          <label for="ofertaValor">Valor:</label>
-          <input id="ofertaValor" type="number" [(ngModel)]="ofertaValor" name="ofertaValor" min="0" step="0.01"
-            [class.error]="ofertaErrors['valor']" placeholder="Ej: 150000" />
+          <label for="ofertaValor">Valor: *</label>
+          <input id="ofertaValor" type="number" [(ngModel)]="ofertaValor" name="ofertaValor" required
+            min="1" max="1000000000" step="0.01" [class.error]="ofertaErrors['valor']" 
+            placeholder="Ej: 150000.00" />
           @if (ofertaErrors['valor']) {
             <small class="error-message">
               ⚠️ {{ ofertaErrors['valor'] }}
@@ -487,8 +510,8 @@
 
         <!-- Fecha de envío -->
         <div class="form-field">
-          <label for="ofertaFechaEnvio">Fecha de envío de la oferta:</label>
-          <input id="ofertaFechaEnvio" type="date" [(ngModel)]="ofertaFechaEnvio" name="ofertaFechaEnvio"
+          <label for="ofertaFechaEnvio">Fecha de envío de la oferta: *</label>
+          <input id="ofertaFechaEnvio" type="date" [(ngModel)]="ofertaFechaEnvio" name="ofertaFechaEnvio" required
             [class.error]="ofertaErrors['fechaEnvio']" />
           @if (ofertaErrors['fechaEnvio']) {
             <small class="error-message">
@@ -501,7 +524,8 @@
         <div class="form-field">
           <label for="ofertaObservacion">Observación:</label>
           <input id="ofertaObservacion" [(ngModel)]="ofertaObservacion" name="ofertaObservacion"
-            [class.error]="ofertaErrors['observacion']" placeholder="Observaciones sobre la oferta" />
+            [class.error]="ofertaErrors['observacion']" placeholder="Observaciones sobre la oferta" 
+            maxlength="200" />
           @if (ofertaErrors['observacion']) {
             <small class="error-message">
               ⚠️ {{ ofertaErrors['observacion'] }}
@@ -529,7 +553,9 @@
           </select>
         </div>
       </div>
-      <div class="form-actions"><button type="submit">Agregar oferta</button></div>
+      <div class="form-actions">
+        <button type="submit">Agregar oferta</button>
+      </div>
     </form>
   </section>
 
@@ -541,7 +567,7 @@
 
         <!-- Solicitud -->
         <div class="form-field">
-          <label for="resultadoSolicitudId">Solicitud:</label>
+          <label for="resultadoSolicitudId">Solicitud: *</label>
           <select id="resultadoSolicitudId" [(ngModel)]="resultadoSolicitudId" name="resultadoSolicitudId" required
             [class.error]="resultadoErrors['solicitudId']">
             <option value="">Seleccionar solicitud</option>
@@ -560,8 +586,8 @@
 
         <!-- Fecha límite -->
         <div class="form-field">
-          <label for="resultadoFechaLimite">Fecha límite para la entrega:</label>
-          <input id="resultadoFechaLimite" type="date" [(ngModel)]="resultadoFechaLimite" name="resultadoFechaLimite"
+          <label for="resultadoFechaLimite">Fecha límite para la entrega: *</label>
+          <input id="resultadoFechaLimite" type="date" [(ngModel)]="resultadoFechaLimite" name="resultadoFechaLimite" required
             [class.error]="resultadoErrors['fechaLimite']" />
           @if (resultadoErrors['fechaLimite']) {
             <small class="error-message">
@@ -572,9 +598,10 @@
 
         <!-- Número de informe -->
         <div class="form-field">
-          <label for="resultadoNumeroInforme">Número del informe de resultados:</label>
-          <input id="resultadoNumeroInforme" [(ngModel)]="resultadoNumeroInforme" name="resultadoNumeroInforme"
-            [class.error]="resultadoErrors['numeroInforme']" placeholder="Ej: INF-2025-001" />
+          <label for="resultadoNumeroInforme">Número del informe de resultados: *</label>
+          <input id="resultadoNumeroInforme" [(ngModel)]="resultadoNumeroInforme" name="resultadoNumeroInforme" required
+            [class.error]="resultadoErrors['numeroInforme']" placeholder="Ej: INF-2025-001" 
+            pattern="[A-Z]{2,4}-[0-9]{4}-[0-9]{3,5}" maxlength="15" />
           @if (resultadoErrors['numeroInforme']) {
             <small class="error-message">
               ⚠️ {{ resultadoErrors['numeroInforme'] }}
@@ -584,8 +611,8 @@
 
         <!-- Fecha de envío -->
         <div class="form-field">
-          <label for="resultadoFechaEnvio">Fecha de envío de resultados:</label>
-          <input id="resultadoFechaEnvio" type="date" [(ngModel)]="resultadoFechaEnvio" name="resultadoFechaEnvio"
+          <label for="resultadoFechaEnvio">Fecha de envío de resultados: *</label>
+          <input id="resultadoFechaEnvio" type="date" [(ngModel)]="resultadoFechaEnvio" name="resultadoFechaEnvio" required
             [class.error]="resultadoErrors['fechaEnvio']" />
           @if (resultadoErrors['fechaEnvio']) {
             <small class="error-message">
@@ -594,7 +621,9 @@
           }
         </div>
       </div>
-      <div class="form-actions"><button type="submit">Agregar seguimiento de resultados</button></div>
+      <div class="form-actions">
+        <button type="submit">Agregar seguimiento de resultados</button>
+      </div>
     </form>
   </section>
 
@@ -606,7 +635,7 @@
 
         <!-- Solicitud -->
         <div class="form-field">
-          <label for="encuestaSolicitudId">Solicitud:</label>
+          <label for="encuestaSolicitudId">Solicitud: *</label>
           <select id="encuestaSolicitudId" [(ngModel)]="encuestaSolicitudId" name="encuestaSolicitudId" required
             [class.error]="encuestaErrors['solicitudId']">
             <option value="">Seleccionar solicitud</option>
@@ -625,8 +654,8 @@
 
         <!-- Fecha de encuesta -->
         <div class="form-field">
-          <label for="encuestaFecha">Fecha de envio de la encuesta:</label>
-          <input id="encuestaFecha" type="date" [(ngModel)]="encuestaFecha" name="encuestaFecha"
+          <label for="encuestaFecha">Fecha de envio de la encuesta: *</label>
+          <input id="encuestaFecha" type="date" [(ngModel)]="encuestaFecha" name="encuestaFecha" required
             [class.error]="encuestaErrors['fecha']" />
           @if (encuestaErrors['fecha']) {
             <small class="error-message">
@@ -635,11 +664,25 @@
           }
         </div>
 
-        <!-- Comentarios -->
+        <!-- Puntuación -->
         <div class="form-field">
+          <label for="encuestaPuntuacion">Puntuación de satisfacción:</label>
+          <input id="encuestaPuntuacion" type="number" [(ngModel)]="encuestaPuntuacion" name="encuestaPuntuacion"
+            min="1" max="5" step="1" [class.error]="encuestaErrors['puntuacion']" 
+            placeholder="Ej: 5" />
+          @if (encuestaErrors['puntuacion']) {
+            <small class="error-message">
+              ⚠️ {{ encuestaErrors['puntuacion'] }}
+            </small>
+          }
+        </div>
+
+        <!-- Comentarios -->
+        <div class="form-field full-width">
           <label for="encuestaComentarios">Comentarios:</label>
           <textarea id="encuestaComentarios" [(ngModel)]="encuestaComentarios" name="encuestaComentarios"
-            [class.error]="encuestaErrors['comentarios']" placeholder="Comentarios del cliente"></textarea>
+            [class.error]="encuestaErrors['comentarios']" placeholder="Comentarios del cliente"
+            maxlength="1000" rows="4"></textarea>
           @if (encuestaErrors['comentarios']) {
             <small class="error-message">
               ⚠️ {{ encuestaErrors['comentarios'] }}
@@ -684,6 +727,7 @@
     </form>
   </section>
 
+  <!-- Las secciones de catálogo se mantienen igual que en tu código original -->
   <!-- SECCIÓN: Lista rápida de solicitudes -->
   <h2>Catalogo de Solicitudes</h2>
   <section>

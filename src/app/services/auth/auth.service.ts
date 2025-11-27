@@ -26,30 +26,54 @@ export const authService = {
       data = null;
     }
 
+    console.log('🔍 RESPONSE STATUS:', res.status);
+    console.log('🔍 RESPONSE DATA:', data);
+
     if (!res.ok) {
-      let msg = (data && data.message) || 'Error al iniciar sesión';
+      // 🔧 USAR EL MENSAJE ESPECÍFICO DEL BACKEND
+      let msg = data?.message || 'Error al iniciar sesión';
+      
+      // 🔧 AGREGAR EMOJIS SEGÚN EL TIPO DE ERROR
+      if (msg.includes('no encontrado')) {
+        msg = '❌ ' + msg;
+      } else if (msg.includes('contraseña') || msg.includes('incorrecta')) {
+        msg = '🔑 ' + msg;
+      } else if (msg.includes('desactivada')) {
+        msg = '🚫 ' + msg;
+      } else if (msg.includes('email') || msg.includes('formato')) {
+        msg = '📧 ' + msg;
+      } else if (msg.includes('requeridos')) {
+        msg = '⚠️ ' + msg;
+      } else {
+        msg = '❌ ' + msg;
+      }
+      
       throw new Error(msg);
     }
 
-    const dataJson = data || {};
+    // 🔧 AJUSTAR PARA NUEVA ESTRUCTURA {success, data, message}
+    const responseData = data?.data || data || {};
+
+    // Validar que tenemos los datos necesarios
+    if (!responseData.token || !responseData.id_usuario) {
+      throw new Error('❌ Respuesta inválida del servidor');
+    }
 
     // Guardar token JWT en localStorage
-    if (dataJson.token) {
-      localStorage.setItem('token', dataJson.token);
-    }
+    localStorage.setItem('token', responseData.token);
 
     // Guardar usuario en memoria y localStorage
     const userData = {
-      id: dataJson.id_usuario, 
-      email: dataJson.email,
-      rol: dataJson.rol,
-      id_rol: dataJson.id_rol
+      id: responseData.id_usuario, 
+      email: responseData.email,
+      rol: responseData.rol,
+      id_rol: responseData.id_rol
     };
     
     authUser.set(userData);
     localStorage.setItem('user', JSON.stringify(userData));
 
-    return dataJson;
+    return responseData;
   },
 
   // TU sistema - Verificar autenticación al cargar la app
@@ -71,9 +95,17 @@ export const authService = {
       });
 
       if (res.ok) {
-        const user = await res.json();
-        authUser.set(user);
-        return user;
+        const data = await res.json();
+        // 🔧 AJUSTAR PARA NUEVA ESTRUCTURA
+        const userData = data?.data || data;
+        
+        if (userData && userData.id) {
+          authUser.set(userData);
+          return userData;
+        } else {
+          this.logout();
+          return null;
+        }
       } else {
         this.logout();
         return null;
@@ -107,23 +139,27 @@ export const authService = {
       }
 
       const data = await res.json();
-      if (!data || !data.id) {
+      
+      // 🔧 AJUSTAR PARA NUEVA ESTRUCTURA
+      const userData = data?.data || data;
+      
+      if (!userData || !userData.id) {
         localStorage.removeItem('token');
         authUser.set(null);
         throw new Error('Invalid response from auth/me');
       }
 
       // Actualizar con datos completos incluyendo rol
-      const userData = {
-        id: data.id, 
-        email: data.email,
-        rol: data.rol,
-        id_rol: data.id_rol
+      const finalUserData = {
+        id: userData.id, 
+        email: userData.email,
+        rol: userData.rol,
+        id_rol: userData.id_rol
       };
-      authUser.set(userData);
-      localStorage.setItem('user', JSON.stringify(userData));
+      authUser.set(finalUserData);
+      localStorage.setItem('user', JSON.stringify(finalUserData));
       
-      return data;
+      return userData;
     } catch (error) {
       this.logout();
       throw error;

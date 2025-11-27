@@ -702,27 +702,32 @@ button[type="button"]:hover,
 }
 
 /* ===== Messages ===== */
-.success-message,
-.error-message,
-p[role="status"],
-p[aria-live="polite"] {
-    padding: 1rem;
-    border-radius: 6px;
-    margin: 1rem 0;
-    font-weight: 500;
+/* ===== ESTILOS PARA CAMPOS CON ERROR ===== */
+.form-grid input.error,
+.form-grid select.error,
+.form-grid textarea.error {
+  border-color: #dc3545 !important;
+  background-color: #fff5f5;
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.1);
 }
 
-.success-message,
-p[role="status"]:not(.error-message) {
-    background: #c6f6d5;
-    color: #22543d;
-    border-left: 4px solid #22543d;
-}
-
+/* ===== MENSAJES DE ERROR - SOLO TEXTO ROJO ===== */
 .error-message {
-    background: var(--alert-red);
-    color: #742a2a;
-    border-left: 4px solid #742a2a;
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin: 0.25rem 0 0 0;
+  display: block;
+  padding: 0;
+  background: none;
+  border: none;
+}
+
+/* ===== INDICADOR DE CAMPOS OBLIGATORIOS ===== */
+.required-hint {
+  color: #6c757d;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  display: block;
 }
 
 /* ===== Status Badges ===== */
