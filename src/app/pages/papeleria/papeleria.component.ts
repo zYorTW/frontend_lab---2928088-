@@ -6,6 +6,9 @@ import { RouterModule } from '@angular/router';
 import { SnackbarService } from '../../services/snackbar.service';
 import { authService, authUser } from '../../services/auth/auth.service';
 import { PapeleriaService, CatalogoItem, PapeleriaItem } from '../../services/papeleria.service';
+import { NumbersOnlyDirective } from '../../directives/numbers-only.directive';
+import { LettersOnlyDirective } from '../../directives/letters-only.directive';
+import { AlphaNumericDirective } from '../../directives/alpha-numeric.directive';
 
 interface CreatePapeleriaPayload {
   item_catalogo: number;
@@ -25,7 +28,7 @@ interface CreatePapeleriaPayload {
   selector: 'app-papeleria',
   templateUrl: './papeleria.component.html',
   styleUrls: ['./papeleria.component.css'],
-  imports: [CommonModule, FormsModule, RouterModule]
+  imports: [CommonModule, FormsModule, RouterModule, NumbersOnlyDirective, LettersOnlyDirective, AlphaNumericDirective],
 })
 export class PapeleriaComponent implements OnInit {
   // Inyección de dependencias

@@ -6,6 +6,9 @@ import { RouterModule } from '@angular/router';
 import { authService, authUser } from '../../services/auth/auth.service';
 import { SnackbarService } from '../../services/snackbar.service';
 import { reactivosService } from '../../services/reactivos.service';
+import { NumbersOnlyDirective } from '../../directives/numbers-only.directive';
+import { LettersOnlyDirective } from '../../directives/letters-only.directive';
+import { AlphaNumericDirective } from '../../directives/alpha-numeric.directive';
 
 
 
@@ -14,7 +17,7 @@ import { reactivosService } from '../../services/reactivos.service';
   selector: 'app-reactivos',
   templateUrl: './reactivos.component.html',
   styleUrls: ['./reactivos.component.css'],
-  imports: [CommonModule, FormsModule, RouterModule]
+  imports: [CommonModule, FormsModule, RouterModule, NumbersOnlyDirective]
 })
 
 export class ReactivosComponent implements OnInit {
@@ -303,6 +306,12 @@ export class ReactivosComponent implements OnInit {
   onCasBlur() {
     const n = this.normalizeCas(this.cas);
     this.cas = n === null ? '' : n;
+  }
+  
+  minFutureDate(): string {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
   }
 
   async loadAux() {

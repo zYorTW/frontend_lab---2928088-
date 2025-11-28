@@ -8,11 +8,14 @@ import { LocationsService } from '../../services/clientes/locations.service';
 import { UtilsService } from '../../services/clientes/utils.service';
 import { SnackbarService } from '../../services/snackbar.service';
 import { authService } from '../../services/auth/auth.service';
+import { NumbersOnlyDirective } from '../../directives/numbers-only.directive';
+import { LettersOnlyDirective } from '../../directives/letters-only.directive';
+import { AlphaNumericDirective } from '../../directives/alpha-numeric.directive';
 
 @Component({
   standalone: true,
   selector: 'app-solicitudes',
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, NumbersOnlyDirective, LettersOnlyDirective, AlphaNumericDirective],
   templateUrl: './solicitudes.component.html',
   styleUrls: ['./solicitudes.component.css'],
   encapsulation: ViewEncapsulation.None
@@ -488,7 +491,9 @@ validarCliente(): boolean {
       this.solicitudErrors['fechaEstimada'] = 'La fecha estimada no puede ser anterior a hoy';
       isValid = false;
     }
+
     
+
     // Validar que la fecha estimada no sea mayor a 1 año
     const maxFecha = new Date();
     maxFecha.setFullYear(maxFecha.getFullYear() + 1);
@@ -712,6 +717,19 @@ validarCliente(): boolean {
       console.error('Error creating solicitud:', err);
       this.manejarError(err, 'crear solicitud');
     }
+  }
+
+  maxDate(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+
+  minFutureDate(): string {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
+  }
+  minTodayDate(): string {
+    return new Date().toISOString().split('T')[0];
   }
 
   async createOferta(e: Event): Promise<void> {

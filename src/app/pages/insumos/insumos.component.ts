@@ -6,13 +6,16 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { authService, authUser } from '../../services/auth/auth.service';
 import { insumosService } from '../../services/insumos.service';
+import { NumbersOnlyDirective } from '../../directives/numbers-only.directive';
+import { LettersOnlyDirective } from '../../directives/letters-only.directive';
+import { AlphaNumericDirective } from '../../directives/alpha-numeric.directive';
 
 @Component({  
   standalone: true,
   selector: 'app-insumos',
   templateUrl: './insumos.component.html',
   styleUrls: ['./insumos.component.css'],
-  imports: [CommonModule, FormsModule, RouterModule]
+  imports: [CommonModule, FormsModule, RouterModule, NumbersOnlyDirective, LettersOnlyDirective, AlphaNumericDirective]
 })
 export class InsumosComponent implements OnInit {
     public get esAuxiliar(): boolean {

@@ -15,7 +15,7 @@
         <!-- Nombre -->
         <div class="form-field">
           <label for="clienteNombre">Nombre del solicitante: *</label>
-          <input id="clienteNombre" [(ngModel)]="clienteNombre" name="clienteNombre" required
+          <input id="clienteNombre" [(ngModel)]="clienteNombre" name="clienteNombre" required appLettersOnly
             [class.error]="clienteErrors['nombre']" placeholder="Ej: Juan Pérez García" 
             maxlength="100" />
           @if (clienteErrors['nombre']) {
@@ -29,7 +29,7 @@
         <!-- Número -->
         <div class="form-field">
           <label for="clienteNumero">Consecutivo: *</label>
-          <input id="clienteNumero" type="number" [(ngModel)]="clienteNumero" name="clienteNumero" required
+          <input id="clienteNumero" type="number" [(ngModel)]="clienteNumero" name="clienteNumero" required appNumbersOnly
             [class.error]="clienteErrors['numero']" placeholder="Ej: 101" min="1" max="9999" />
           @if (clienteErrors['numero']) {
             <small class="error-message">
@@ -42,7 +42,8 @@
         <div class="form-field">
           <label for="clienteFechaVinc">Fecha vinculación: *</label>
           <input id="clienteFechaVinc" type="date" [(ngModel)]="clienteFechaVinc" name="clienteFechaVinc" required
-            [class.error]="clienteErrors['fechaVinc']" />
+            [class.error]="clienteErrors['fechaVinc']"
+            [max]="maxDate()" />
           @if (clienteErrors['fechaVinc']) {
             <small class="error-message">
               ⚠️ {{ clienteErrors['fechaVinc'] }}
@@ -73,7 +74,7 @@
         <!-- Razón social -->
         <div class="form-field">
           <label for="clienteRazonSocial">Razón social:</label>
-          <input id="clienteRazonSocial" [(ngModel)]="clienteRazonSocial" name="clienteRazonSocial"
+          <input id="clienteRazonSocial" [(ngModel)]="clienteRazonSocial" name="clienteRazonSocial" appAlphaNumeric
             [class.error]="clienteErrors['razonSocial']" placeholder="Ej: Industrias SENA S.A.S." 
             maxlength="200" />
           @if (clienteErrors['razonSocial']) {
@@ -86,9 +87,9 @@
         <!-- NIT -->
         <div class="form-field">
           <label for="clienteNit">NIT:</label>
-          <input id="clienteNit" [(ngModel)]="clienteNit" name="clienteNit"
+          <input id="clienteNit" [(ngModel)]="clienteNit" name="clienteNit" appNumbersOnly
             [class.error]="clienteErrors['nit']" placeholder="Ej: 900123456-7" 
-            pattern="[0-9]{9}-[0-9]" maxlength="10" />
+            pattern="[0-9]{9}-[0-9]" maxlength="10" appNumbersOnly />
           @if (clienteErrors['nit']) {
             <small class="error-message">
               ⚠️ {{ clienteErrors['nit'] }}
@@ -119,7 +120,7 @@
         <!-- Número identificación -->
         <div class="form-field">
           <label for="clienteIdNum">Número identificación: *</label>
-          <input id="clienteIdNum" [(ngModel)]="clienteIdNum" name="clienteIdNum" required
+          <input id="clienteIdNum" [(ngModel)]="clienteIdNum" name="clienteIdNum" required appNumbersOnly
             [class.error]="clienteErrors['idNum']" placeholder="Ej: 1234567890" 
             maxlength="20" />
           @if (clienteErrors['idNum']) {
@@ -149,7 +150,7 @@
         <!-- Tipo población -->
         <div class="form-field">
           <label for="clienteTipoPobl">Tipo población:</label>
-          <input id="clienteTipoPobl" [(ngModel)]="clienteTipoPobl" name="clienteTipoPobl"
+          <input id="clienteTipoPobl" [(ngModel)]="clienteTipoPobl" name="clienteTipoPobl" appLettersOnly
             [class.error]="clienteErrors['tipoPobl']" placeholder="Ej: Rural, Urbana" 
             maxlength="50" />
           @if (clienteErrors['tipoPobl']) {
@@ -162,7 +163,7 @@
         <!-- Dirección -->
         <div class="form-field">
           <label for="clienteDireccion">Dirección:</label>
-          <input id="clienteDireccion" [(ngModel)]="clienteDireccion" name="clienteDireccion"
+          <input id="clienteDireccion" [(ngModel)]="clienteDireccion" name="clienteDireccion" appAlphaNumeric
             [class.error]="clienteErrors['direccion']" placeholder="Ej: Calle 123 #45-67" 
             maxlength="200" />
           @if (clienteErrors['direccion']) {
@@ -209,7 +210,7 @@
         <!-- Celular -->
         <div class="form-field">
           <label for="clienteCelular">Celular:</label>
-          <input id="clienteCelular" [(ngModel)]="clienteCelular" name="clienteCelular"
+          <input id="clienteCelular" [(ngModel)]="clienteCelular" name="clienteCelular" appNumbersOnly
             [class.error]="clienteErrors['celular']" placeholder="Ej: 3001234567" 
             pattern="3[0-9]{9}" maxlength="10" />
           @if (clienteErrors['celular']) {
@@ -222,7 +223,7 @@
         <!-- Teléfono -->
         <div class="form-field">
           <label for="clienteTelefono">Teléfono:</label>
-          <input id="clienteTelefono" [(ngModel)]="clienteTelefono" name="clienteTelefono"
+          <input id="clienteTelefono" [(ngModel)]="clienteTelefono" name="clienteTelefono" appNumbersOnly
             [class.error]="clienteErrors['telefono']" placeholder="Ej: 6011234567" 
             pattern="[0-9]{7,15}" maxlength="15" />
           @if (clienteErrors['telefono']) {
@@ -248,7 +249,7 @@
         <!-- Tipo vinculación -->
         <div class="form-field">
           <label for="clienteTipoVinc">Tipo vinculación:</label>
-          <input id="clienteTipoVinc" [(ngModel)]="clienteTipoVinc" name="clienteTipoVinc"
+          <input id="clienteTipoVinc" [(ngModel)]="clienteTipoVinc" name="clienteTipoVinc" appLettersOnly
             [class.error]="clienteErrors['tipoVinc']" placeholder="Ej: Contrato, Convenio" 
             maxlength="50" />
           @if (clienteErrors['tipoVinc']) {
@@ -261,7 +262,7 @@
         <!-- Registro realizado por -->
         <div class="form-field">
           <label for="clienteRegistroPor">Registro realizado por:</label>
-          <input id="clienteRegistroPor" [(ngModel)]="clienteRegistroPor" name="clienteRegistroPor"
+          <input id="clienteRegistroPor" [(ngModel)]="clienteRegistroPor" name="clienteRegistroPor" appLettersOnly
             [class.error]="clienteErrors['registroPor']" placeholder="Ej: Administrador" 
             maxlength="100" />
           @if (clienteErrors['registroPor']) {
@@ -336,7 +337,7 @@
         <!-- Nombre de muestra/producto -->
         <div class="form-field">
           <label for="solicitudNombre">Nombre de la muestra: *</label>
-          <input id="solicitudNombre" [(ngModel)]="solicitudNombre" name="solicitudNombre" required
+          <input id="solicitudNombre" [(ngModel)]="solicitudNombre" name="solicitudNombre" required appAlphaNumeric
             [class.error]="solicitudErrors['nombre']" placeholder="Ej: Suero lácteo" 
             maxlength="100" />
           @if (solicitudErrors['nombre']) {
@@ -349,7 +350,7 @@
         <!-- Lote -->
         <div class="form-field">
           <label for="solicitudLote">Lote del producto:</label>
-          <input id="solicitudLote" [(ngModel)]="solicitudLote" name="solicitudLote"
+          <input id="solicitudLote" [(ngModel)]="solicitudLote" name="solicitudLote" appAlphaNumeric
             [class.error]="solicitudErrors['lote']" placeholder="Ej: L202501" 
             maxlength="20" />
           @if (solicitudErrors['lote']) {
@@ -363,7 +364,8 @@
         <div class="form-field">
           <label for="solicitudFechaVenc">Fecha de vencimiento:</label>
           <input id="solicitudFechaVenc" type="date" [(ngModel)]="solicitudFechaVenc" name="solicitudFechaVenc"
-            [class.error]="solicitudErrors['fechaVenc']" />
+            [class.error]="solicitudErrors['fechaVenc']" 
+            [min]="minFutureDate()" />
           @if (solicitudErrors['fechaVenc']) {
             <small class="error-message">
               ⚠️ {{ solicitudErrors['fechaVenc'] }}
@@ -374,7 +376,7 @@
         <!-- Tipo de muestra -->
         <div class="form-field">
           <label for="solicitudTipoMuestra">Tipo de muestra: *</label>
-          <input id="solicitudTipoMuestra" [(ngModel)]="solicitudTipoMuestra" name="solicitudTipoMuestra" required
+          <input id="solicitudTipoMuestra" [(ngModel)]="solicitudTipoMuestra" name="solicitudTipoMuestra" required appLettersOnly
             [class.error]="solicitudErrors['tipoMuestra']" placeholder="Ej: Líquido, Sólido, Gas" 
             maxlength="50" />
           @if (solicitudErrors['tipoMuestra']) {
@@ -387,7 +389,7 @@
         <!-- Condiciones de empaque -->
         <div class="form-field">
           <label for="solicitudCondEmpaque">Condiciones de empaque:</label>
-          <input id="solicitudCondEmpaque" [(ngModel)]="solicitudCondEmpaque" name="solicitudCondEmpaque"
+          <input id="solicitudCondEmpaque" [(ngModel)]="solicitudCondEmpaque" name="solicitudCondEmpaque" appLettersOnly
             [class.error]="solicitudErrors['condEmpaque']" placeholder="Ej: Refrigerado, sellado al vacío" 
             maxlength="100" />
           @if (solicitudErrors['condEmpaque']) {
@@ -400,7 +402,7 @@
         <!-- Tipo de análisis -->
         <div class="form-field">
           <label for="solicitudTipoAnalisis">Tipo de análisis requerido: *</label>
-          <input id="solicitudTipoAnalisis" [(ngModel)]="solicitudTipoAnalisis" name="solicitudTipoAnalisis" required
+          <input id="solicitudTipoAnalisis" [(ngModel)]="solicitudTipoAnalisis" name="solicitudTipoAnalisis" required appLettersOnly
             [class.error]="solicitudErrors['tipoAnalisis']" placeholder="Ej: Microbiológico, Fisicoquímico" 
             maxlength="100" />
           @if (solicitudErrors['tipoAnalisis']) {
@@ -413,7 +415,7 @@
         <!-- Cantidad de muestras -->
         <div class="form-field">
           <label for="solicitudCantidad">Cantidad de muestras: *</label>
-          <input id="solicitudCantidad" type="number" [(ngModel)]="solicitudCantidad" name="solicitudCantidad" required
+          <input id="solicitudCantidad" type="number" [(ngModel)]="solicitudCantidad" name="solicitudCantidad" required appNumbersOnly
             min="1" max="100" [class.error]="solicitudErrors['cantidad']" placeholder="Ej: 3" />
           @if (solicitudErrors['cantidad']) {
             <small class="error-message">
@@ -426,7 +428,8 @@
         <div class="form-field">
           <label for="solicitudFechaEstimada">Fecha estimada entrega: *</label>
           <input id="solicitudFechaEstimada" type="date" [(ngModel)]="solicitudFechaEstimada"
-            name="solicitudFechaEstimada" required [class.error]="solicitudErrors['fechaEstimada']" />
+            name="solicitudFechaEstimada" required [class.error]="solicitudErrors['fechaEstimada']"
+            [min]="minTodayDate()" />
           @if (solicitudErrors['fechaEstimada']) {
             <small class="error-message">
               ⚠️ {{ solicitudErrors['fechaEstimada'] }}
@@ -498,7 +501,7 @@
         <!-- Valor -->
         <div class="form-field">
           <label for="ofertaValor">Valor: *</label>
-          <input id="ofertaValor" type="number" [(ngModel)]="ofertaValor" name="ofertaValor" required
+          <input id="ofertaValor" type="number" [(ngModel)]="ofertaValor" name="ofertaValor" required appNumbersOnly
             min="1" max="1000000000" step="0.01" [class.error]="ofertaErrors['valor']" 
             placeholder="Ej: 150000.00" />
           @if (ofertaErrors['valor']) {
@@ -512,7 +515,8 @@
         <div class="form-field">
           <label for="ofertaFechaEnvio">Fecha de envío de la oferta: *</label>
           <input id="ofertaFechaEnvio" type="date" [(ngModel)]="ofertaFechaEnvio" name="ofertaFechaEnvio" required
-            [class.error]="ofertaErrors['fechaEnvio']" />
+            [class.error]="ofertaErrors['fechaEnvio']" 
+               [min]="minTodayDate()"/>
           @if (ofertaErrors['fechaEnvio']) {
             <small class="error-message">
               ⚠️ {{ ofertaErrors['fechaEnvio'] }}
@@ -523,7 +527,7 @@
         <!-- Observación -->
         <div class="form-field">
           <label for="ofertaObservacion">Observación:</label>
-          <input id="ofertaObservacion" [(ngModel)]="ofertaObservacion" name="ofertaObservacion"
+          <input id="ofertaObservacion" [(ngModel)]="ofertaObservacion" name="ofertaObservacion" appAlphaNumeric
             [class.error]="ofertaErrors['observacion']" placeholder="Observaciones sobre la oferta" 
             maxlength="200" />
           @if (ofertaErrors['observacion']) {
@@ -588,7 +592,8 @@
         <div class="form-field">
           <label for="resultadoFechaLimite">Fecha límite para la entrega: *</label>
           <input id="resultadoFechaLimite" type="date" [(ngModel)]="resultadoFechaLimite" name="resultadoFechaLimite" required
-            [class.error]="resultadoErrors['fechaLimite']" />
+            [class.error]="resultadoErrors['fechaLimite']"
+               [min]="minTodayDate()" />
           @if (resultadoErrors['fechaLimite']) {
             <small class="error-message">
               ⚠️ {{ resultadoErrors['fechaLimite'] }}
@@ -599,7 +604,7 @@
         <!-- Número de informe -->
         <div class="form-field">
           <label for="resultadoNumeroInforme">Número del informe de resultados: *</label>
-          <input id="resultadoNumeroInforme" [(ngModel)]="resultadoNumeroInforme" name="resultadoNumeroInforme" required
+          <input id="resultadoNumeroInforme" [(ngModel)]="resultadoNumeroInforme" name="resultadoNumeroInforme" required appAlphaNumeric
             [class.error]="resultadoErrors['numeroInforme']" placeholder="Ej: INF-2025-001" 
             pattern="[A-Z]{2,4}-[0-9]{4}-[0-9]{3,5}" maxlength="15" />
           @if (resultadoErrors['numeroInforme']) {
@@ -613,7 +618,8 @@
         <div class="form-field">
           <label for="resultadoFechaEnvio">Fecha de envío de resultados: *</label>
           <input id="resultadoFechaEnvio" type="date" [(ngModel)]="resultadoFechaEnvio" name="resultadoFechaEnvio" required
-            [class.error]="resultadoErrors['fechaEnvio']" />
+            [class.error]="resultadoErrors['fechaEnvio']"
+               [min]="minTodayDate()" />
           @if (resultadoErrors['fechaEnvio']) {
             <small class="error-message">
               ⚠️ {{ resultadoErrors['fechaEnvio'] }}
@@ -667,9 +673,9 @@
         <!-- Puntuación -->
         <div class="form-field">
           <label for="encuestaPuntuacion">Puntuación de satisfacción:</label>
-          <input id="encuestaPuntuacion" type="number" [(ngModel)]="encuestaPuntuacion" name="encuestaPuntuacion"
+          <input id="encuestaPuntuacion" type="number" [(ngModel)]="encuestaPuntuacion" name="encuestaPuntuacion" appNumbersOnly
             min="1" max="5" step="1" [class.error]="encuestaErrors['puntuacion']" 
-            placeholder="Ej: 5" />
+            placeholder="Ej: 1 - Malo / 5 - Excelente" />
           @if (encuestaErrors['puntuacion']) {
             <small class="error-message">
               ⚠️ {{ encuestaErrors['puntuacion'] }}
@@ -680,7 +686,7 @@
         <!-- Comentarios -->
         <div class="form-field full-width">
           <label for="encuestaComentarios">Comentarios:</label>
-          <textarea id="encuestaComentarios" [(ngModel)]="encuestaComentarios" name="encuestaComentarios"
+          <textarea id="encuestaComentarios" [(ngModel)]="encuestaComentarios" name="encuestaComentarios" appAlphaNumeric
             [class.error]="encuestaErrors['comentarios']" placeholder="Comentarios del cliente"
             maxlength="1000" rows="4"></textarea>
           @if (encuestaErrors['comentarios']) {

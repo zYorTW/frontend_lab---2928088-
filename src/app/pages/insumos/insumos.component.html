@@ -10,7 +10,7 @@
     <form class="form-grid" (submit)="crearCatalogo($event)">
       <div *ngIf="!esAuxiliar">
         <label for="catNombre">Nombre *</label>
-        <input id="catNombre" [(ngModel)]="catNombre" name="catNombre" required
+        <input id="catNombre" [(ngModel)]="catNombre" name="catNombre" required appAlphaNumeric 
           placeholder="Ej: Guantes de nitrilo" 
           [class.error]="catalogoErrors()['nombre']" />
         @if (catalogoErrors()['nombre']) {
@@ -19,7 +19,7 @@
       </div>
       <div>
         <label for="catItem">Item *</label>
-        <input id="catItem" type="number" min="1" step="1" [(ngModel)]="catItem" name="catItem" required 
+        <input id="catItem" type="number" min="1" step="1" [(ngModel)]="catItem" name="catItem" required appNumbersOnly
           placeholder="Ej: 1001" 
           [class.error]="catalogoErrors()['item']" />
         @if (catalogoErrors()['item']) {
@@ -38,7 +38,7 @@
       </div>
       <div class="full-row">
         <label for="catDescripcion">Descripción</label>
-        <textarea id="catDescripcion" [(ngModel)]="catDescripcion" name="catDescripcion" rows="2"
+        <textarea id="catDescripcion" [(ngModel)]="catDescripcion" name="catDescripcion" appAlphaNumeric rows="2"
           [class.error]="catalogoErrors()['descripcion']"></textarea>
         @if (catalogoErrors()['descripcion']) {
           <small class="error-message">⚠️ {{ catalogoErrors()['descripcion'] }}</small>
@@ -164,7 +164,7 @@
         </div>
         <div>
           <label for="cantidad_adquirida">Cantidad adquirida *</label>
-          <input id="cantidad_adquirida" type="number" [(ngModel)]="cantidad_adquirida" name="cantidad_adquirida"
+          <input id="cantidad_adquirida" type="number" [(ngModel)]="cantidad_adquirida" name="cantidad_adquirida" appNumbersOnly
             required 
             [class.error]="insumoErrors()['cantidad_adquirida']" />
           @if (insumoErrors()['cantidad_adquirida']) {
@@ -173,7 +173,7 @@
         </div>
         <div>
           <label for="cantidad_existente">Cantidad existente *</label>
-          <input id="cantidad_existente" type="number" [(ngModel)]="cantidad_existente" name="cantidad_existente"
+          <input id="cantidad_existente" type="number" [(ngModel)]="cantidad_existente" name="cantidad_existente" appNumbersOnly
             required 
             [class.error]="insumoErrors()['cantidad_existente']" />
           @if (insumoErrors()['cantidad_existente']) {
@@ -182,7 +182,7 @@
         </div>
         <div>
           <label for="presentacion">Presentación *</label>
-          <input id="presentacion" [(ngModel)]="presentacion" name="presentacion" 
+          <input id="presentacion" [(ngModel)]="presentacion" name="presentacion" appLettersOnly
             [class.error]="insumoErrors()['presentacion']" />
           @if (insumoErrors()['presentacion']) {
             <small class="error-message">⚠️ {{ insumoErrors()['presentacion'] }}</small>
@@ -190,7 +190,7 @@
         </div>
         <div>
           <label for="marca">Marca *</label>
-          <input id="marca" [(ngModel)]="marca" name="marca" 
+          <input id="marca" [(ngModel)]="marca" name="marca" appAlphaNumeric
             [class.error]="insumoErrors()['marca']" />
           @if (insumoErrors()['marca']) {
             <small class="error-message">⚠️ {{ insumoErrors()['marca'] }}</small>
@@ -198,7 +198,7 @@
         </div>
         <div>
           <label for="referencia">Referencia *</label>
-          <input id="referencia" [(ngModel)]="referencia" name="referencia" 
+          <input id="referencia" [(ngModel)]="referencia" name="referencia" appAlphaNumeric
             [class.error]="insumoErrors()['referencia']" />
           @if (insumoErrors()['referencia']) {
             <small class="error-message">⚠️ {{ insumoErrors()['referencia'] }}</small>
@@ -206,7 +206,7 @@
         </div>
         <div>
           <label for="ubicacion">Ubicación *</label>
-          <input id="ubicacion" [(ngModel)]="ubicacion" name="ubicacion" 
+          <input id="ubicacion" [(ngModel)]="ubicacion" name="ubicacion" appAlphaNumeric
             [class.error]="insumoErrors()['ubicacion']" />
           @if (insumoErrors()['ubicacion']) {
             <small class="error-message">⚠️ {{ insumoErrors()['ubicacion'] }}</small>
@@ -230,7 +230,7 @@
         </div>
         <div class="full-row">
           <label for="observaciones">Observaciones</label>
-          <textarea id="observaciones" [(ngModel)]="observaciones" name="observaciones" rows="2"
+          <textarea id="observaciones" [(ngModel)]="observaciones" name="observaciones" appAlphaNumeric rows="2"
             [class.error]="insumoErrors()['observaciones']"></textarea>
           @if (insumoErrors()['observaciones']) {
             <small class="error-message">⚠️ {{ insumoErrors()['observaciones'] }}</small>

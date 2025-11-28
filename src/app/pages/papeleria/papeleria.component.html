@@ -11,7 +11,7 @@
       <form class="form-grid" (ngSubmit)="crearCatalogo($event)">
         <div>
           <label for="catNombre">Nombre *</label>
-          <input id="catNombre" [(ngModel)]="catNombre" name="catNombre" required 
+          <input id="catNombre" [(ngModel)]="catNombre" name="catNombre" required appLettersOnly
                  placeholder="Ej: Resmas de papel" 
                  [class.error]="catalogoErrors()['nombre']" />
           @if (catalogoErrors()['nombre']) {
@@ -20,7 +20,7 @@
         </div>
         <div>
           <label for="catItem">Item *</label>
-          <input id="catItem" type="number" min="1" step="1" [(ngModel)]="catItem" name="catItem" required 
+          <input id="catItem" type="number" min="1" step="1" [(ngModel)]="catItem" name="catItem" required appNumbersOnly 
                  placeholder="Ej: 2001" 
                  [class.error]="catalogoErrors()['item']" />
           @if (catalogoErrors()['item']) {
@@ -39,14 +39,13 @@
         </div>
         <div class="full-row">
           <label for="catDescripcion">Descripción</label>
-          <textarea id="catDescripcion" [(ngModel)]="catDescripcion" name="catDescripcion" rows="2"
+          <textarea id="catDescripcion" [(ngModel)]="catDescripcion" name="catDescripcion" appAlphaNumeric rows="2"
                     [class.error]="catalogoErrors()['descripcion']"></textarea>
           @if (catalogoErrors()['descripcion']) {
             <small class="error-message">⚠️ {{ catalogoErrors()['descripcion'] }}</small>
           }
         </div>
         <div class="actions">
-          <small class="required-hint">* Campos obligatorios</small>
           <button class="btn-compact" type="submit">Agregar al catálogo</button>
         </div>
       </form>
@@ -175,7 +174,7 @@
         </div>
         <div>
           <label for="cantidad_adquirida">Cantidad adquirida *</label>
-          <input id="cantidad_adquirida" type="number" [(ngModel)]="cantidad_adquirida" name="cantidad_adquirida" required 
+          <input id="cantidad_adquirida" type="number" [(ngModel)]="cantidad_adquirida" name="cantidad_adquirida" required appNumbersOnly 
                  [class.error]="papeleriaErrors()['cantidad_adquirida']" />
           @if (papeleriaErrors()['cantidad_adquirida']) {
             <small class="error-message">⚠️ {{ papeleriaErrors()['cantidad_adquirida'] }}</small>
@@ -183,7 +182,7 @@
         </div>
         <div>
           <label for="cantidad_existente">Cantidad existente *</label>
-          <input id="cantidad_existente" type="number" [(ngModel)]="cantidad_existente" name="cantidad_existente" required 
+          <input id="cantidad_existente" type="number" [(ngModel)]="cantidad_existente" name="cantidad_existente" required appNumbersOnly
                  [class.error]="papeleriaErrors()['cantidad_existente']" />
           @if (papeleriaErrors()['cantidad_existente']) {
             <small class="error-message">⚠️ {{ papeleriaErrors()['cantidad_existente'] }}</small>
@@ -205,7 +204,7 @@
         </div>
         <div>
           <label for="marca">Marca *</label>
-          <input id="marca" [(ngModel)]="marca" name="marca" 
+          <input id="marca" [(ngModel)]="marca" name="marca" appAlphaNumeric
                  [class.error]="papeleriaErrors()['marca']" />
           @if (papeleriaErrors()['marca']) {
             <small class="error-message">⚠️ {{ papeleriaErrors()['marca'] }}</small>
@@ -213,7 +212,7 @@
         </div>
         <div>
           <label for="ubicacion">Ubicación *</label>
-          <input id="ubicacion" [(ngModel)]="ubicacion" name="ubicacion" 
+          <input id="ubicacion" [(ngModel)]="ubicacion" name="ubicacion" appAlphaNumeric
                  [class.error]="papeleriaErrors()['ubicacion']" />
           @if (papeleriaErrors()['ubicacion']) {
             <small class="error-message">⚠️ {{ papeleriaErrors()['ubicacion'] }}</small>
@@ -229,7 +228,7 @@
         </div>
         <div class="full-row">
           <label for="descripcion">Descripción *</label>
-          <textarea id="descripcion" [(ngModel)]="descripcion" name="descripcion" rows="2"
+          <textarea id="descripcion" [(ngModel)]="descripcion" name="descripcion" appAlphaNumeric rows="2"
                     [class.error]="papeleriaErrors()['descripcion']"></textarea>
           @if (papeleriaErrors()['descripcion']) {
             <small class="error-message">⚠️ {{ papeleriaErrors()['descripcion'] }}</small>
@@ -237,14 +236,13 @@
         </div>
         <div class="full-row">
           <label for="observaciones">Observaciones</label>
-          <textarea id="observaciones" [(ngModel)]="observaciones" name="observaciones" rows="2"
+          <textarea id="observaciones" [(ngModel)]="observaciones" name="observaciones" appAlphaNumeric rows="2"
                     [class.error]="papeleriaErrors()['observaciones']"></textarea>
           @if (papeleriaErrors()['observaciones']) {
             <small class="error-message">⚠️ {{ papeleriaErrors()['observaciones'] }}</small>
           }
         </div>
         <div class="actions">
-          <small class="required-hint">* Campos obligatorios</small>
           <button class="btn-compact" type="submit">Crear</button>
         </div>
       </form>

@@ -22,7 +22,7 @@
 
       <div>
         <label for="catNombre">Nombre</label>
-        <input id="catNombre" [(ngModel)]="catNombre" name="catNombre" #catNombreCtrl="ngModel" required
+        <input id="catNombre" [(ngModel)]="catNombre" name="catNombre" #catNombreCtrl="ngModel" required appLettersOnly
           [class.invalid]="catNombreCtrl.invalid && (catNombreCtrl.touched || submittedCatalogo)" placeholder="Ej: Ácido acético" />
         @if (catNombreCtrl.invalid && (catNombreCtrl.touched || submittedCatalogo)) {
         <span class="field-error">Requerido</span>
@@ -148,7 +148,7 @@
     <form class="form-grid" #reactivoForm="ngForm" (ngSubmit)="crearReactivo($event, reactivoForm)">
       <div class="field-sm field-autocomplete">
         <label for="lote">Lote</label>
-        <input id="lote" [(ngModel)]="lote" name="lote" #loteCtrl="ngModel" required
+        <input id="lote" [(ngModel)]="lote" name="lote" #loteCtrl="ngModel" required appNumbersOnly
           [class.invalid]="loteCtrl.invalid && (loteCtrl.touched || submittedReactivo)" />
         @if (loteCtrl.invalid && (loteCtrl.touched || submittedReactivo)) {
         <span class="field-error">Requerido</span>
@@ -203,7 +203,7 @@
 
       <div>
         <label for="marca">Marca</label>
-        <input id="marca" [(ngModel)]="marca" name="marca" #marcaCtrl="ngModel" required
+        <input id="marca" [(ngModel)]="marca" name="marca" #marcaCtrl="ngModel" required appAlphaNumeric
           [class.invalid]="marcaCtrl.invalid && (marcaCtrl.touched || submittedReactivo)" />
         @if (marcaCtrl.invalid && (marcaCtrl.touched || submittedReactivo)) {
         <span class="field-error">Requerido</span>
@@ -212,7 +212,7 @@
 
       <div>
         <label for="referencia">Referencia</label>
-        <input id="referencia" [(ngModel)]="referencia" name="referencia" #referenciaCtrl="ngModel" required
+        <input id="referencia" [(ngModel)]="referencia" name="referencia" #referenciaCtrl="ngModel" required appAlphaNumeric 
           [class.invalid]="referenciaCtrl.invalid && (referenciaCtrl.touched || submittedReactivo)" />
         @if (referenciaCtrl.invalid && (referenciaCtrl.touched || submittedReactivo)) {
         <span class="field-error">Requerido</span>
@@ -221,7 +221,7 @@
 
       <div>
         <label for="cas">CAS</label>
-        <input id="cas" [(ngModel)]="cas" name="cas" #casCtrl="ngModel" required title="Formato: 64-17-5"
+        <input id="cas" [(ngModel)]="cas" name="cas" appAlphaNumeric #casCtrl="ngModel" required title="Formato: 64-17-5"
           (blur)="onCasBlur()" [class.invalid]="casCtrl.invalid && (casCtrl.touched || submittedReactivo)" />
         @if (casCtrl.errors?.['required'] && (casCtrl.touched || submittedReactivo)) {
         <span class="field-error">Requerido</span>
@@ -234,7 +234,7 @@
       <div class="field-sm">
         <label for="presentacion">Presentación</label>
         <input id="presentacion" type="number" [(ngModel)]="presentacion" name="presentacion" min="0" step="any"
-          required #presentacionCtrl="ngModel" (input)="calcularCantidadTotal()"
+          required appNumbersOnly #presentacionCtrl="ngModel" (input)="calcularCantidadTotal()"
           [class.invalid]="presentacionCtrl.invalid && (presentacionCtrl.touched || submittedReactivo)" />
 
         @if (presentacionCtrl.errors?.['required'] && (presentacionCtrl.touched || submittedReactivo)) {
@@ -262,7 +262,7 @@
 
       <div class="field-sm">
         <label for="presentacion_cant">Cantidad x presentación</label>
-        <input id="presentacion_cant" type="number" [(ngModel)]="presentacion_cant" name="presentacion_cant" min="0"
+        <input id="presentacion_cant" type="number" [(ngModel)]="presentacion_cant" name="presentacion_cant" appNumbersOnly min="0"
           step="any" required #presentCantCtrl="ngModel" (input)="calcularCantidadTotal()"
           [class.invalid]="presentCantCtrl.invalid && (presentCantCtrl.touched || submittedReactivo)" />
         @if (presentCantCtrl.errors?.['required'] && (presentCantCtrl.touched || submittedReactivo)) {
@@ -282,7 +282,8 @@
         <label for="fecha_adquisicion">Fecha de adquisición</label>
         <input id="fecha_adquisicion" type="date" [(ngModel)]="fecha_adquisicion" name="fecha_adquisicion"
           #fechaAdqCtrl="ngModel" required
-          [class.invalid]="fechaAdqCtrl.invalid && (fechaAdqCtrl.touched || submittedReactivo)" />
+          [class.invalid]="fechaAdqCtrl.invalid && (fechaAdqCtrl.touched || submittedReactivo)" 
+          />
         @if (fechaAdqCtrl.invalid && (fechaAdqCtrl.touched || submittedReactivo)) {
         <span class="field-error">Requerido</span>
         }
@@ -292,7 +293,8 @@
         <label for="fecha_vencimiento">Fecha de vencimiento</label>
         <input id="fecha_vencimiento" type="date" [(ngModel)]="fecha_vencimiento" name="fecha_vencimiento"
           #fechaVencCtrl="ngModel" required
-          [class.invalid]="(fechaVencCtrl.invalid && (fechaVencCtrl.touched || submittedReactivo)) || fechasInconsistentes()" />
+          [class.invalid]="(fechaVencCtrl.invalid && (fechaVencCtrl.touched || submittedReactivo)) || fechasInconsistentes()" 
+          [min]="minFutureDate()"/>
         @if (fechaVencCtrl.invalid && (fechaVencCtrl.touched || submittedReactivo)) {
         <span class="field-error">Requerido</span>
         }
