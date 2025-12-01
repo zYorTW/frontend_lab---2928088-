@@ -1,0 +1,655 @@
+<div class="liba-theme container equipos-page">
+  <h1>
+    <i class="fas fa-screwdriver-wrench"></i>
+    | Gestión de Equipos
+  </h1>
+
+  <!-- Tarjetas de Dashboard -->
+  <div class="dashboard-cards">
+    <div class="action-card" (click)="toggleFormulario('hojaVida')">
+      <i class="fas fa-file-medical"></i>
+      <span>Registrar Equipo (Hoja de Vida)</span>
+    </div>
+
+    <div class="action-card" (click)="toggleFormulario('fichaTecnica')">
+      <i class="fas fa-clipboard-list"></i>
+      <span>Registrar Equipo (Ficha Técnica)</span>
+    </div>
+
+    <div class="action-card" (click)="toggleFormulario('historial')">
+      <i class="fas fa-history"></i>
+      <span>Registrar Historial de Equipo</span>
+    </div>
+
+    <div class="action-card" (click)="toggleFormulario('intervalo')">
+      <i class="fas fa-calendar-alt"></i>
+      <span>Registrar Intervalo de Equipo</span>
+    </div>
+  </div>
+
+  <!-- Formulario de Hoja de Vida -->
+  <div *ngIf="formularioActivo === 'hojaVida'" class="form-section">
+    <h2>
+      <i class="fas fa-file-medical"></i>
+      | Registrar Equipo (Hoja de Vida)
+    </h2>
+    <section>
+      <form class="form-grid" (submit)="crearEquipo($event)">
+        <div class="form-section-title" style="grid-column: 1 / -1; font-weight: bold; margin-top: 1.5rem;">Datos generales</div>
+        <div>
+          <label for="codigo_identificacion">Código de identificación *</label>
+          <input id="codigo_identificacion" name="codigo_identificacion" [(ngModel)]="codigo_identificacion" required appAlphaNumeric  placeholder="Ej: EQ-001" />
+        </div>
+        <div>
+          <label for="nombre">Nombre *</label>
+          <input id="nombre" name="nombre" [(ngModel)]="nombre" required appLettersOnly  placeholder="Ej: Balanza analítica" />
+        </div>
+        <div>
+          <label for="modelo">Modelo</label>
+          <input id="modelo" name="modelo" appAlphaNumeric  [(ngModel)]="modelo" placeholder="Ej: M123" />
+        </div>
+        <div>
+          <label for="marca">Marca</label>
+          <input id="marca" name="marca" appAlphaNumeric  [(ngModel)]="marca" placeholder="Ej: Sartorius" />
+        </div>
+        <div>
+          <label for="inventario_sena">Inventario SENA</label>
+          <input id="inventario_sena" name="inventario_sena" appAlphaNumeric  [(ngModel)]="inventario_sena" placeholder="Ej: INV-456" />
+        </div>
+        <div>
+          <label for="ubicacion">Ubicación</label>
+          <input id="ubicacion" name="ubicacion"  appAlphaNumeric [(ngModel)]="ubicacion" placeholder="Ej: Laboratorio 1" />
+        </div>
+        <div>
+          <label for="acreditacion">Acreditación</label>
+          <select id="acreditacion" name="acreditacion" [(ngModel)]="acreditacion">
+            <option value="">Seleccione</option>
+            <option value="Si">Si</option>
+            <option value="No aplica">No aplica</option>
+          </select>
+        </div>
+        <div>
+          <label for="tipo_manual">Tipo de manual</label>
+          <select id="tipo_manual" name="tipo_manual" [(ngModel)]="tipo_manual">
+            <option value="">Seleccione</option>
+            <option value="Fisico">Fisico</option>
+            <option value="Digital">Digital</option>
+          </select>
+        </div>
+        <div>
+          <label for="numero_serie">Número de serie</label>
+          <input id="numero_serie" name="numero_serie" appAlphaNumeric  [(ngModel)]="numero_serie" placeholder="Ej: SN-789" />
+        </div>
+        <div>
+          <label for="tipo">Tipo</label>
+          <select id="tipo" name="tipo" [(ngModel)]="tipo">
+            <option value="">Seleccione</option>
+            <option value="Gravimetría">Gravimetría</option>
+            <option value="Espectrofotometría">Espectrofotometría</option>
+            <option value="Potenciometría">Potenciometría</option>
+            <option value="Densidad">Densidad</option>
+            <option value="Óptico">Óptico</option>
+            <option value="Isotérmico">Isotérmico</option>
+          </select>
+        </div>
+        <div>
+          <label for="clasificacion">Clasificación</label>
+          <select id="clasificacion" name="clasificacion" [(ngModel)]="clasificacion">
+            <option value="">Seleccione</option>
+            <option value="Crítica">Crítica</option>
+            <option value="Soporte">Soporte</option>
+          </select>
+        </div>
+        <div>
+          <label for="manual_usuario">Manual de usuario</label>
+          <select id="manual_usuario" name="manual_usuario" [(ngModel)]="manual_usuario">
+            <option value="">Seleccione</option>
+            <option value="Si">Si</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+        <div>
+          <label for="puesta_en_servicio">Puesta en servicio</label>
+          <input id="puesta_en_servicio" type="date" name="puesta_en_servicio" [(ngModel)]="puesta_en_servicio"  [max]="maxDate()"/>
+        </div>
+        <div>
+          <label for="fecha_adquisicion">Fecha de adquisición</label>
+          <input id="fecha_adquisicion" type="date" name="fecha_adquisicion" [(ngModel)]="fecha_adquisicion"  [max]="maxDate()" />
+        </div>
+        <!-- Mantenimiento del equipo -->
+        <div class="form-section-title" style="grid-column: 1 / -1; font-weight: bold; margin-top: 1.5rem;">Mantenimiento</div>
+        <div class="full-row">
+          <label for="requerimientos_equipo">Requerimientos del equipo</label>
+          <textarea id="requerimientos_equipo" name="requerimientos_equipo" [(ngModel)]="requerimientos_equipo" rows="2"></textarea>
+        </div>
+
+        <div>
+          <label for="elementos_electricos">Elementos eléctricos</label>
+          <select id="elementos_electricos" name="elementos_electricos" [(ngModel)]="elementos_electricos">
+            <option value="">Seleccione</option>
+            <option value="Si">Si</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+        <div>
+          <label for="voltaje">Voltaje</label>
+          <input id="voltaje" name="voltaje" appAlphaNumeric  [(ngModel)]="voltaje" placeholder="Ej: 220V" />
+        </div>
+        <div>
+          <label for="elementos_mecanicos">Elementos mecánicos</label>
+          <select id="elementos_mecanicos" name="elementos_mecanicos" [(ngModel)]="elementos_mecanicos">
+            <option value="">Seleccione</option>
+            <option value="Si">Si</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+        <div>
+          <label for="frecuencia">Frecuencia</label>
+          <input id="frecuencia" name="frecuencia" appAlphaNumeric  [(ngModel)]="frecuencia" placeholder="Ej: 60Hz" />
+        </div>
+        <div class="form-section-title" style="grid-column: 1 / -1; font-weight: bold; margin-top: 1.5rem;">Verificación</div>
+        <div>
+          <label for="campo_medicion">Campo de medición</label>
+          <input id="campo_medicion" name="campo_medicion" appLettersOnly  [(ngModel)]="campo_medicion" placeholder="Ej: Masa" />
+        </div>
+        <div>
+          <label for="exactitud">Exactitud</label>
+          <input id="exactitud" name="exactitud"  appAlphaNumeric [(ngModel)]="exactitud" placeholder="Ej: ±0.01g" />
+        </div>
+        <div>
+          <label for="sujeto_verificar">Sujeto a verificar</label>
+          <select id="sujeto_verificar" name="sujeto_verificar" [(ngModel)]="sujeto_verificar">
+            <option value="">Seleccione</option>
+            <option value="Si">Si</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+        <div>
+          <label for="sujeto_calibracion">Sujeto a calibración</label>
+          <select id="sujeto_calibracion" name="sujeto_calibracion" [(ngModel)]="sujeto_calibracion">
+            <option value="">Seleccione</option>
+            <option value="Si">Si</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+        <div>
+          <label for="resolucion_division">Resolución/división</label>
+          <input id="resolucion_division" name="resolucion_division" appAlphaNumeric  [(ngModel)]="resolucion_division" placeholder="Ej: 0.1g" />
+        </div>
+        <div>
+          <label for="sujeto_calificacion">Sujeto a calificación</label>
+          <select id="sujeto_calificacion" name="sujeto_calificacion" [(ngModel)]="sujeto_calificacion">
+            <option value="">Seleccione</option>
+            <option value="Si">Si</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+        <div class="form-section-title" style="grid-column: 1 / -1; font-weight: bold; margin-top: 1.5rem;">Accesorios</div>
+        <div class="full-row">
+          <label for="accesorios">Accesorios</label>
+          <textarea id="accesorios" name="accesorios" [(ngModel)]="accesorios" rows="2"></textarea>
+        </div>
+        <div class="actions" style="width:100%; display:flex; justify-content:flex-end;">
+          <button class="btn-compact" type="submit" style="width:fit-content;">Registrar equipo</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <!-- Formulario de Ficha Técnica -->
+  <div *ngIf="formularioActivo === 'fichaTecnica'" class="form-section">
+    <h2>Registrar Ficha Técnica de Equipo</h2>
+    <section>
+      <form class="form-grid" (submit)="crearFichaTecnica($event)">
+        
+        <!-- Búsqueda de equipo con campo combinado -->
+        <div class="form-section-title" style="grid-column: 1 / -1; font-weight: bold; margin-top: 1.5rem;">
+          Buscar Equipo Registrado
+        </div>
+        <div class="full-row" style="position: relative;">
+          <label for="busquedaEquipo">Buscar equipo *</label>
+          <div class="campo-combinado">
+            <select 
+              class="select-filtro" 
+              [(ngModel)]="tipoFiltro" 
+              name="tipoFiltro"
+              (change)="cambiarTipoFiltro(tipoFiltro)"
+            >
+              <option *ngFor="let opcion of opcionesFiltro" [value]="opcion.valor">
+                {{ opcion.texto }}
+              </option>
+            </select>
+            <input 
+              id="busquedaEquipo" 
+              name="busquedaEquipo" 
+              [(ngModel)]="busquedaEquipo" 
+              (input)="buscarEquipos()"
+              (focus)="mostrarResultados = true"
+              (blur)="onFocusOut()"
+              [placeholder]="getPlaceholder()"
+              autocomplete="off"
+              required
+              class="input-combinado"
+            />
+          </div>
+          
+          <!-- Lista de resultados -->
+          <div *ngIf="mostrarResultados && busquedaEquipo.trim()" class="lista-resultados">
+            <div *ngIf="equiposFiltrados.length === 0" class="sin-resultados">
+              <i class="fas fa-search"></i>
+              <span>No se encontraron equipos</span>
+              <small>Intenta con otros términos de búsqueda</small>
+            </div>
+            
+            <div 
+              *ngFor="let equipo of equiposFiltrados" 
+              class="resultado-item"
+              (mousedown)="seleccionarEquipo(equipo)"
+            >
+              <div class="resultado-header">
+                <strong class="codigo">{{ equipo.codigo_identificacion }}</strong>
+                <span class="nombre">{{ equipo.nombre }}</span>
+              </div>
+              <div class="info-adicional">
+                <span *ngIf="equipo.marca"><i class="fas fa-tag"></i> {{ equipo.marca }}</span>
+                <span *ngIf="equipo.modelo"><i class="fas fa-cube"></i> {{ equipo.modelo }}</span>
+                <span *ngIf="equipo.ubicacion"><i class="fas fa-map-marker-alt"></i> {{ equipo.ubicacion }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Equipo seleccionado -->
+          <div *ngIf="equipoSeleccionado" class="equipo-seleccionado">
+            <div class="seleccionado-info">
+              <div class="seleccionado-content">
+                <div class="seleccionado-header">
+                  <i class="fas fa-check-circle"></i>
+                  <strong>Equipo seleccionado:</strong>
+                </div>
+                <div class="seleccionado-details">
+                  <span class="codigo-nombre">{{ equipoSeleccionado.codigo_identificacion }} - {{ equipoSeleccionado.nombre }}</span>
+                  <div class="detalles-seleccionado">
+                    <span *ngIf="equipoSeleccionado.marca"><strong>Marca:</strong> {{ equipoSeleccionado.marca }}</span>
+                    <span *ngIf="equipoSeleccionado.modelo"><strong>Modelo:</strong> {{ equipoSeleccionado.modelo }}</span>
+                    <span *ngIf="equipoSeleccionado.voltaje"><strong>Voltaje:</strong> {{ equipoSeleccionado.voltaje }}</span>
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="btn-limpiar" (click)="limpiarBusqueda()" title="Limpiar selección">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Información de ayuda -->
+          <div *ngIf="!equipoSeleccionado" class="info-ayuda">
+            <small>
+              <i class="fas fa-info-circle"></i>
+              Selecciona un equipo existente para autocompletar los campos similares automáticamente
+            </small>
+          </div>
+        </div>
+
+        <!-- Información básica del equipo -->
+        <div class="form-section-title" style="grid-column: 1 / -1; font-weight: bold; margin-top: 1.5rem;">
+          Información Básica del Equipo
+        </div>
+        <div>
+          <label for="codigo_identificador">Código Identificador *</label>
+          <input id="codigo_identificador" name="codigo_identificador" [(ngModel)]="codigo_identificador" required placeholder="Ej: FT-001" [readonly]="equipoSeleccionado" />
+        </div>
+        <div>
+          <label for="nombre_ficha">Nombre *</label>
+          <input id="nombre_ficha" name="nombre_ficha" [(ngModel)]="nombre_ficha" required placeholder="Ej: Balanza Analítica" [readonly]="equipoSeleccionado" />
+        </div>
+        <div>
+          <label for="marca_ficha">Marca</label>
+          <input id="marca_ficha" name="marca_ficha" [(ngModel)]="marca_ficha" placeholder="Ej: Sartorius" [readonly]="equipoSeleccionado" />
+        </div>
+        <div>
+          <label for="modelo_ficha">Modelo</label>
+          <input id="modelo_ficha" name="modelo_ficha" [(ngModel)]="modelo_ficha" placeholder="Ej: BSA224S" [readonly]="equipoSeleccionado" />
+        </div>
+        <div>
+          <label for="serie_ficha">Serie</label>
+          <input id="serie_ficha" name="serie_ficha" [(ngModel)]="serie_ficha" placeholder="Ej: SN123456" [readonly]="equipoSeleccionado" />
+        </div>
+        <div>
+          <label for="fabricante">Fabricante</label>
+          <input id="fabricante" name="fabricante" [(ngModel)]="fabricante" placeholder="Ej: Sartorius AG" />
+        </div>
+        
+        <!-- El resto del formulario permanece igual -->
+        <div>
+          <label for="fecha_adq">Fecha de Adquisición</label>
+          <input id="fecha_adq" name="fecha_adq" type="date" [(ngModel)]="fecha_adq" [readonly]="equipoSeleccionado" />
+        </div>
+        <div>
+          <label for="uso">Uso</label>
+          <input id="uso" name="uso" [(ngModel)]="uso" placeholder="Ej: Laboratorio de Química" />
+        </div>
+        <div>
+          <label for="fecha_func">Fecha de Puesta en Funcionamiento</label>
+          <input id="fecha_func" name="fecha_func" type="date" [(ngModel)]="fecha_func" [readonly]="equipoSeleccionado"  [max]="maxDate()" />
+        </div>
+        <div>
+          <label for="precio">Precio ($)</label>
+          <input id="precio" name="precio" appNumbersOnly  type="number" step="0.01" [(ngModel)]="precio" placeholder="0.00" />
+        </div>
+        <div>
+          <label for="manual_ope">Manual de Operación</label>
+          <select id="manual_ope" name="manual_ope" [(ngModel)]="manual_ope">
+            <option value="">Seleccione</option>
+            <option value="digital">Digital</option>
+            <option value="Fisico">Físico</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+        <div>
+          <label for="idioma_manual">Idioma del Manual</label>
+          <input id="idioma_manual" name="idioma_manual" appLettersOnly  [(ngModel)]="idioma_manual" placeholder="Ej: Español" />
+        </div>
+
+        <!-- Especificaciones de medición -->
+        <div class="form-section-title" style="grid-column: 1 / -1; font-weight: bold; margin-top: 1.5rem;">
+          Especificaciones de Medición
+        </div>
+        <div>
+          <label for="magnitud">Magnitud</label>
+          <input id="magnitud" name="magnitud" appLettersOnly  [(ngModel)]="magnitud" placeholder="Ej: Masa" />
+        </div>
+        <div>
+          <label for="resolucion">Resolución</label>
+          <input id="resolucion" name="resolucion" [(ngModel)]="resolucion" placeholder="Ej: 0.1 mg" />
+        </div>
+        <div>
+          <label for="precision_med">Precisión</label>
+          <input id="precision_med" name="precision_med" [(ngModel)]="precision_med" placeholder="Ej: ±0.2 mg" />
+        </div>
+        <div>
+          <label for="exactitud_ficha">Exactitud</label>
+          <input id="exactitud_ficha" name="exactitud_ficha" [(ngModel)]="exactitud_ficha" placeholder="Ej: ±0.1%" />
+        </div>
+        <div>
+          <label for="rango_de_medicion">Rango de Medición</label>
+          <input id="rango_de_medicion" name="rango_de_medicion" [(ngModel)]="rango_de_medicion" placeholder="Ej: 0-220 g" />
+        </div>
+        <div>
+          <label for="rango_de_uso">Rango de Uso</label>
+          <input id="rango_de_uso" name="rango_de_uso" [(ngModel)]="rango_de_uso" placeholder="Ej: 10-210 g" />
+        </div>
+
+        <!-- Especificaciones eléctricas -->
+        <div class="form-section-title" style="grid-column: 1 / -1; font-weight: bold; margin-top: 1.5rem;">
+          Especificaciones Eléctricas
+        </div>
+        <div>
+          <label for="voltaje_ficha">Voltaje</label>
+          <input id="voltaje_ficha" name="voltaje_ficha" [(ngModel)]="voltaje_ficha" placeholder="Ej: 220V" [readonly]="equipoSeleccionado" />
+        </div>
+        <div>
+          <label for="potencia">Potencia</label>
+          <input id="potencia" name="potencia" [(ngModel)]="potencia" placeholder="Ej: 15W" />
+        </div>
+        <div>
+          <label for="amperaje">Amperaje</label>
+          <input id="amperaje" name="amperaje" [(ngModel)]="amperaje" placeholder="Ej: 1.5A" />
+        </div>
+        <div>
+          <label for="frecuencia_ficha">Frecuencia</label>
+          <input id="frecuencia_ficha" name="frecuencia_ficha" [(ngModel)]="frecuencia_ficha" placeholder="Ej: 60Hz" [readonly]="equipoSeleccionado" />
+        </div>
+
+        <!-- Dimensiones físicas -->
+        <div class="form-section-title" style="grid-column: 1 / -1; font-weight: bold; margin-top: 1.5rem;">
+          Dimensiones Físicas
+        </div>
+        <div>
+          <label for="ancho">Ancho (cm)</label>
+          <input id="ancho" name="ancho" appNumbersOnly  type="number" step="0.01" [(ngModel)]="ancho" placeholder="0.00" />
+        </div>
+        <div>
+          <label for="alto">Alto (cm)</label>
+          <input id="alto" name="alto" type="number" appNumbersOnly  step="0.01" [(ngModel)]="alto" placeholder="0.00" />
+        </div>
+        <div>
+          <label for="profundidad">Profundidad (cm)</label>
+          <input id="profundidad" name="profundidad" appNumbersOnly  type="number" step="0.01" [(ngModel)]="profundidad" placeholder="0.00" />
+        </div>
+        <div>
+          <label for="peso_kg">Peso (kg)</label>
+          <input id="peso_kg" name="peso_kg" type="number" appNumbersOnly  step="0.01" [(ngModel)]="peso_kg" placeholder="0.00" />
+        </div>
+
+        <!-- Condiciones ambientales -->
+        <div class="form-section-title" style="grid-column: 1 / -1; font-weight: bold; margin-top: 1.5rem;">
+          Condiciones Ambientales
+        </div>
+        <div>
+          <label for="temperatura_c">Temperatura (°C)</label>
+          <input id="temperatura_c" name="temperatura_c" appNumbersOnly  type="number" step="0.01" [(ngModel)]="temperatura_c" placeholder="Ej: 25.00" />
+        </div>
+        <div>
+          <label for="humedad_porcentaje">Humedad (%)</label>
+          <input id="humedad_porcentaje" name="humedad_porcentaje" appNumbersOnly  type="number" step="0.01" [(ngModel)]="humedad_porcentaje" placeholder="Ej: 50.00" />
+        </div>
+        <div class="full-row">
+          <label for="limitaciones_e_interferencias">Limitaciones e Interferencias</label>
+          <textarea id="limitaciones_e_interferencias" name="limitaciones_e_interferencias" [(ngModel)]="limitaciones_e_interferencias" rows="3"></textarea>
+        </div>
+        <div class="full-row">
+          <label for="otros">Otros</label>
+          <textarea id="otros" name="otros" [(ngModel)]="otros" rows="2"></textarea>
+        </div>
+
+        <!-- Información del proveedor -->
+        <div class="form-section-title" style="grid-column: 1 / -1; font-weight: bold; margin-top: 1.5rem;">
+          Información del Proveedor
+        </div>
+        <div>
+          <label for="proveedor">Proveedor</label>
+          <input id="proveedor" name="proveedor" appLettersOnly  [(ngModel)]="proveedor" placeholder="Ej: Distribuidora XYZ" />
+        </div>
+        <div>
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" [(ngModel)]="email" placeholder="Ej: contacto@proveedor.com" />
+        </div>
+        <div>
+          <label for="telefono">Teléfono</label>
+          <input id="telefono" name="telefono" appNumbersOnly  [(ngModel)]="telefono" placeholder="Ej: +57 123 456 7890" />
+        </div>
+        <div>
+          <label for="fecha_de_instalacion">Fecha de Instalación</label>
+          <input id="fecha_de_instalacion" name="fecha_de_instalacion" type="date" [(ngModel)]="fecha_de_instalacion"  [max]="maxDate()" />
+        </div>
+        <div>
+          <label for="garantia">Garantía</label>
+          <input id="garantia" name="garantia" [(ngModel)]="garantia" placeholder="Ej: 2 años" />
+        </div>
+        <div class="full-row">
+          <label for="alcance_del_servicio">Alcance del Servicio</label>
+          <textarea id="alcance_del_servicio" name="alcance_del_servicio" [(ngModel)]="alcance_del_servicio" rows="3"></textarea>
+        </div>
+
+        <!-- Campos finales -->
+        <div class="form-section-title" style="grid-column: 1 / -1; font-weight: bold; margin-top: 1.5rem;">
+          Información Final
+        </div>
+        <div class="full-row">
+          <label for="accesorios_ficha">Accesorios</label>
+          <textarea id="accesorios_ficha" name="accesorios_ficha" [(ngModel)]="accesorios_ficha" rows="2"></textarea>
+        </div>
+        <div class="full-row">
+          <label for="especificaciones_software">Especificaciones de Software</label>
+          <textarea id="especificaciones_software" name="especificaciones_software" [(ngModel)]="especificaciones_software" rows="3"></textarea>
+        </div>
+        <div class="full-row">
+          <label for="observaciones_ficha">Observaciones</label>
+          <textarea id="observaciones_ficha" name="observaciones_ficha" [(ngModel)]="observaciones_ficha" rows="3"></textarea>
+        </div>
+        <div>
+          <label for="recibido_por">Recibido Por</label>
+          <input id="recibido_por" name="recibido_por" appLettersOnly  [(ngModel)]="recibido_por" placeholder="Nombre completo" />
+        </div>
+        <div>
+          <label for="cargo_y_firma">Cargo y Firma</label>
+          <input id="cargo_y_firma" name="cargo_y_firma" appLettersOnly  [(ngModel)]="cargo_y_firma" placeholder="Ej: Jefe de Laboratorio" />
+        </div>
+        <div>
+          <label for="fecha_ficha">Fecha</label>
+          <input id="fecha_ficha" name="fecha_ficha" type="date" [(ngModel)]="fecha_ficha"  [max]="maxDate()" />
+        </div>
+
+        <div class="actions" style="width:100%; display:flex; justify-content:flex-end;">
+          <button class="btn-compact" type="submit" style="width:fit-content;">Registrar Ficha Técnica</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <!-- Formulario de Historial -->
+  <div *ngIf="formularioActivo === 'historial'" class="form-section">
+    <h2>Registrar historial de equipo</h2>
+    <section>
+      <form class="form-grid" (submit)="crearHistorial($event)">
+        <!-- Equipo primero -->
+        <div>
+          <label for="codigo_identificacion">Equipo *</label>
+          <select id="codigo_identificacion" name="codigo_identificacion" appAlphaNumeric  [(ngModel)]="codigo_identificacion">
+            <option value="" disabled selected>Seleccione un equipo</option>
+            <option *ngFor="let equipo of equiposRegistrados" [value]="equipo.codigo_identificacion">
+              {{ equipo.codigo_identificacion }} - {{ equipo.nombre }}
+            </option>
+          </select>
+        </div>
+        
+        <!-- Consecutivo readonly -->
+        <div>
+          <label for="consecutivo">Consecutivo *</label>
+          <input id="consecutivo" name="consecutivo" [(ngModel)]="consecutivo" required placeholder="Digite el consecutivo" />
+        </div>
+        
+        <div>
+          <label for="fecha">Fecha</label>
+          <input id="fecha" name="fecha" type="date" [(ngModel)]="fecha" />
+        </div>
+        <div>
+          <label for="tipo_historial">Tipo historial</label>
+          <input id="tipo_historial" name="tipo_historial" appLettersOnly  [(ngModel)]="tipo_historial" placeholder="Ej: Calibración, Mantenimiento" />
+        </div>
+        <div>
+          <label for="codigo_registro">Código registro</label>
+          <input id="codigo_registro" name="codigo_registro" appAlphaNumeric  [(ngModel)]="codigo_registro" placeholder="Ej: REG-001" />
+        </div>
+        <div>
+          <label for="tolerancia_g">Tolerancia (g)</label>
+          <input id="tolerancia_g" name="tolerancia_g" appNumbersOnly  type="number" step="0.0001" [(ngModel)]="tolerancia_g" />
+        </div>
+        <div>
+          <label for="tolerancia_error_g">Tolerancia error (g)</label>
+          <input id="tolerancia_error_g" name="tolerancia_error_g" appNumbersOnly  type="number" step="0.0001" [(ngModel)]="tolerancia_error_g" />
+        </div>
+        <div>
+          <label for="incertidumbre_u">Incertidumbre (u)</label>
+          <input id="incertidumbre_u" name="incertidumbre_u" appNumbersOnly  type="number" step="0.0001" [(ngModel)]="incertidumbre_u" />
+        </div>
+        <div>
+          <label for="realizo">Realizó</label>
+          <input id="realizo" name="realizo" appLettersOnly  [(ngModel)]="realizo" placeholder="Nombre de quien realizó" />
+        </div>
+        <div>
+          <label for="superviso">Supervisó</label>
+          <input id="superviso" name="superviso" appLettersOnly  [(ngModel)]="superviso" placeholder="Nombre de quien supervisó" />
+        </div>
+        <div class="full-row">
+          <label for="observaciones">Observaciones</label>
+          <textarea id="observaciones" name="observaciones" [(ngModel)]="observaciones" rows="2"></textarea>
+        </div>
+        <div class="actions">
+          <button class="btn-compact" type="submit">Registrar historial</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <!-- Formulario de Intervalo -->
+  <div *ngIf="formularioActivo === 'intervalo'" class="form-section">
+    <h2>Registrar intervalo de equipo</h2>
+    <section>
+      <form class="form-grid" (submit)="crearIntervalo($event)">
+        <!-- Equipo primero -->
+        <div>
+          <label for="codigo_identificacion_intervalo">Equipo *</label>
+          <select id="codigo_identificacion_intervalo" name="codigo_identificacion_intervalo" [(ngModel)]="codigo_identificacion_intervalo">
+            <option value="" disabled selected>Seleccione un equipo</option>
+            <option *ngFor="let equipo of equiposRegistrados" [value]="equipo.codigo_identificacion">
+              {{ equipo.codigo_identificacion }} - {{ equipo.nombre }}
+            </option>
+          </select>
+        </div>
+        
+        <!-- Consecutivo readonly -->
+        <div>
+          <label for="consecutivo_intervalo">Consecutivo *</label>
+          <input id="consecutivo_intervalo" name="consecutivo_intervalo" [(ngModel)]="consecutivo_intervalo" required placeholder="Digite el consecutivo" />
+        </div>
+        
+        <div>
+          <label for="unidad_nominal_g">Unidad nominal (g)</label>
+          <input id="unidad_nominal_g" name="unidad_nominal_g" type="number" step="0.0001" [(ngModel)]="unidad_nominal_g" />
+        </div>
+        <div>
+          <label for="calibracion_1">Calibración 1</label>
+          <input id="calibracion_1" name="calibracion_1" [(ngModel)]="calibracion_1" placeholder="Ej: Certificado 1" />
+        </div>
+        <div>
+          <label for="fecha_c1">Fecha calibración 1</label>
+          <input id="fecha_c1" name="fecha_c1" type="date" [(ngModel)]="fecha_c1" />
+        </div>
+        <div>
+          <label for="error_c1_g">Error calibración 1 (g)</label>
+          <input id="error_c1_g" name="error_c1_g" type="number" step="0.0001" [(ngModel)]="error_c1_g" />
+        </div>
+        <div>
+          <label for="calibracion_2">Calibración 2</label>
+          <input id="calibracion_2" name="calibracion_2" [(ngModel)]="calibracion_2" placeholder="Ej: Certificado 2" />
+        </div>
+        <div>
+          <label for="fecha_c2">Fecha calibración 2</label>
+          <input id="fecha_c2" name="fecha_c2" type="date" [(ngModel)]="fecha_c2" />
+        </div>
+        <div>
+          <label for="error_c2_g">Error calibración 2 (g)</label>
+          <input id="error_c2_g" name="error_c2_g" type="number" step="0.0001" [(ngModel)]="error_c2_g" />
+        </div>
+        <div>
+          <label for="diferencia_dias">Diferencia días</label>
+          <input id="diferencia_dias" name="diferencia_dias" type="number" [(ngModel)]="diferencia_dias" />
+        </div>
+        <div>
+          <label for="desviacion">Desviación</label>
+          <input id="desviacion" name="desviacion" type="number" step="0.0001" [(ngModel)]="desviacion" />
+        </div>
+        <div>
+          <label for="deriva">Deriva</label>
+          <input id="deriva" name="deriva" type="number" step="0.0001" [(ngModel)]="deriva" />
+        </div>
+        <div>
+          <label for="tolerancia_g_intervalo">Tolerancia (g)</label>
+          <input id="tolerancia_g_intervalo" name="tolerancia_g_intervalo" type="number" step="0.0001" [(ngModel)]="tolerancia_g_intervalo" />
+        </div>
+        <div>
+          <label for="intervalo_calibraciones_dias">Intervalo calibraciones (días)</label>
+          <input id="intervalo_calibraciones_dias" name="intervalo_calibraciones_dias" type="number" [(ngModel)]="intervalo_calibraciones_dias" />
+        </div>
+        <div>
+          <label for="intervalo_calibraciones_anios">Intervalo calibraciones (años)</label>
+          <input id="intervalo_calibraciones_anios" name="intervalo_calibraciones_anios" type="number" step="0.0001" [(ngModel)]="intervalo_calibraciones_anios" />
+        </div>
+        <div class="actions">
+          <button class="btn-compact" type="submit">Registrar intervalo</button>
+        </div>
+      </form>
+    </section>
+  </div>
+</div>

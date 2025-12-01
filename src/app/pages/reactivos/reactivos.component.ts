@@ -17,7 +17,7 @@ import { AlphaNumericDirective } from '../../directives/alpha-numeric.directive'
   selector: 'app-reactivos',
   templateUrl: './reactivos.component.html',
   styleUrls: ['./reactivos.component.css'],
-  imports: [CommonModule, FormsModule, RouterModule, NumbersOnlyDirective]
+  imports: [CommonModule, FormsModule, RouterModule, NumbersOnlyDirective, LettersOnlyDirective, AlphaNumericDirective],
 })
 
 export class ReactivosComponent implements OnInit {
