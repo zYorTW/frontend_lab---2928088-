@@ -1,0 +1,1846 @@
+<div class="liba-theme container equipos-page">
+  <h1>
+    <i class="fas fa-clipboard-list"></i>
+    | Solicitudes
+  </h1>
+  
+  <div class="dashboard-cards">
+    <div class="action-card" (click)="toggleFormulario('cliente')" [class.active]="formularioActivo === 'cliente'">
+      <i class="fas fa-user-plus"></i>
+      <span>Agregar Cliente</span>
+    </div>
+    <div class="action-card" (click)="toggleFormulario('solicitud')" [class.active]="formularioActivo === 'solicitud'">
+      <i class="fas fa-clipboard-list"></i>
+      <span>Agregar Solicitud</span>
+    </div>
+    <div class="action-card" (click)="toggleFormulario('oferta')" [class.active]="formularioActivo === 'oferta'">
+      <i class="fas fa-hand-holding-dollar"></i>
+      <span>Registrar Oferta</span>
+    </div>
+    <div class="action-card" (click)="toggleFormulario('revision')" [class.active]="formularioActivo === 'revision'">
+      <i class="fas fa-check-double"></i>
+      <span>Registrar Revisión</span>
+    </div>
+    <div class="action-card" (click)="toggleFormulario('encuesta')" [class.active]="formularioActivo === 'encuesta'">
+      <i class="fas fa-star"></i>
+      <span>Seguimiento Encuesta</span>
+    </div>
+  </div>
+
+  @if (formularioActivo === 'cliente') {
+  <h2>Agregar cliente</h2>
+  
+ <!-- SECCIÓN: Agregar cliente -->
+<section>
+  <form (submit)="createCliente($event)">
+    <div class="form-grid">
+
+      <!-- Nombre -->
+      <div class="form-field">
+        <label for="clienteNombre">Nombre: *</label>
+        <input id="clienteNombre" 
+          [(ngModel)]="clienteNombre" 
+          name="clienteNombre" 
+          required 
+          appLettersOnly
+          (input)="validarCampoClienteEnTiempoReal('nombre', $event)"
+          (blur)="validarCampoClienteEnTiempoReal('nombre', $event)"
+          [class.error]="clienteErrors['nombre']" 
+          placeholder="Ej: Juan Pérez" />
+        @if (clienteErrors['nombre']) {
+          <small class="error-message">
+            ⚠️ {{ clienteErrors['nombre'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Número (readonly pero obligatorio) -->
+      <div class="form-field">
+        <label for="clienteNumero">Consecutivo: *</label>
+        <input id="clienteNumero" 
+          type="number" 
+          [(ngModel)]="clienteNumero" 
+          name="clienteNumero" 
+          required 
+          appNumbersOnly
+          (input)="validarCampoClienteEnTiempoReal('numero', $event)"
+          (blur)="validarCampoClienteEnTiempoReal('numero', $event)"
+          [class.error]="clienteErrors['numero']" 
+          placeholder="Ej: 101" 
+          readonly 
+          aria-readonly="true" 
+          title="Asignado automáticamente" />
+        @if (clienteErrors['numero']) {
+          <small class="error-message">
+            ⚠️ {{ clienteErrors['numero'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Fecha vinculación -->
+      <div class="form-field">
+        <label for="clienteFechaVinc">Fecha vinculación: *</label>
+        <input id="clienteFechaVinc" 
+          type="date" 
+          [(ngModel)]="clienteFechaVinc" 
+          name="clienteFechaVinc" 
+          required
+          (input)="validarCampoClienteEnTiempoReal('fechaVinc', $event)"
+          (blur)="validarCampoClienteEnTiempoReal('fechaVinc', $event)"
+          [class.error]="clienteErrors['fechaVinc']" 
+          placeholder="Ej: 2025-11-24" />
+        @if (clienteErrors['fechaVinc']) {
+          <small class="error-message">
+            ⚠️ {{ clienteErrors['fechaVinc'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Tipo usuario -->
+      <div class="form-field">
+        <label for="clienteTipoUsuario">Tipo cliente: *</label>
+        <select id="clienteTipoUsuario" 
+          [(ngModel)]="clienteTipoUsuario" 
+          name="clienteTipoUsuario" 
+          required
+          (change)="validarCampoClienteEnTiempoReal('tipoUsuario', $event)"
+          (blur)="validarCampoClienteEnTiempoReal('tipoUsuario', $event)"
+          [class.error]="clienteErrors['tipoUsuario']">
+          <option value="">Seleccionar tipo de cliente</option>
+          @for (tipo of tiposCliente; track tipo) {
+            <option [value]="tipo">{{ tipo }}</option>
+          }
+        </select>
+        @if (clienteErrors['tipoUsuario']) {
+          <small class="error-message">
+            ⚠️ {{ clienteErrors['tipoUsuario'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Razón social -->
+      <div class="form-field">
+        <label for="clienteRazonSocial">Razón social: *</label>
+        <input id="clienteRazonSocial" 
+          [(ngModel)]="clienteRazonSocial" 
+          name="clienteRazonSocial" 
+          required 
+          appAlphaNumeric
+          (input)="validarCampoClienteEnTiempoReal('razonSocial', $event)"
+          (blur)="validarCampoClienteEnTiempoReal('razonSocial', $event)"
+          [class.error]="clienteErrors['razonSocial']" 
+          placeholder="Ej: Industrias SENA S.A.S." />
+        @if (clienteErrors['razonSocial']) {
+          <small class="error-message">
+            ⚠️ {{ clienteErrors['razonSocial'] }}
+          </small>
+        }
+      </div>
+
+      <!-- NIT -->
+      <div class="form-field">
+        <label for="clienteNit">NIT: *</label>
+        <input id="clienteNit" 
+          [(ngModel)]="clienteNit" 
+          name="clienteNit" 
+          required
+          (input)="validarCampoClienteEnTiempoReal('nit', $event)"
+          (blur)="validarCampoClienteEnTiempoReal('nit', $event)"
+          [class.error]="clienteErrors['nit']" 
+          placeholder="Ej: 900123456-7" />
+        @if (clienteErrors['nit']) {
+          <small class="error-message">
+            ⚠️ {{ clienteErrors['nit'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Tipo identificación -->
+      <div class="form-field">
+        <label for="clienteTipoId">Tipo identificación: *</label>
+        <select id="clienteTipoId" 
+          [(ngModel)]="clienteTipoId" 
+          name="clienteTipoId" 
+          required
+          (change)="validarCampoClienteEnTiempoReal('tipoId', $event)"
+          (blur)="validarCampoClienteEnTiempoReal('tipoId', $event)"
+          [class.error]="clienteErrors['tipoId']">
+          <option value="">Seleccionar tipo de id</option>
+          @for (tipo of tiposIdentificacion; track tipo.value) {
+            <option [value]="tipo.value">{{ tipo.label }}</option>
+          }
+        </select>
+        @if (clienteErrors['tipoId']) {
+          <small class="error-message">
+            ⚠️ {{ clienteErrors['tipoId'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Número identificación -->
+      <div class="form-field">
+        <label for="clienteIdNum">Número identificación: *</label>
+        <input id="clienteIdNum" 
+          [(ngModel)]="clienteIdNum" 
+          name="clienteIdNum" 
+          required 
+          appAlphaNumeric
+          (input)="validarCampoClienteEnTiempoReal('idNum', $event)"
+          (blur)="validarCampoClienteEnTiempoReal('idNum', $event)"
+          [class.error]="clienteErrors['idNum']" 
+          placeholder="Ej: 12345678" />
+        @if (clienteErrors['idNum']) {
+          <small class="error-message">
+            ⚠️ {{ clienteErrors['idNum'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Sexo -->
+      <div class="form-field">
+        <label for="clienteSexo">Sexo: *</label>
+        <select id="clienteSexo" 
+          [(ngModel)]="clienteSexo" 
+          name="clienteSexo" 
+          required
+          (change)="validarCampoClienteEnTiempoReal('sexo', $event)"
+          (blur)="validarCampoClienteEnTiempoReal('sexo', $event)"
+          [class.error]="clienteErrors['sexo']">
+          <option value="">Seleccione el sexo</option>
+          @for (sexo of opcionesSexo; track sexo.value) {
+            <option [value]="sexo.value">{{ sexo.label }}</option>
+          }
+        </select>
+        @if (clienteErrors['sexo']) {
+          <small class="error-message">
+            ⚠️ {{ clienteErrors['sexo'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Tipo de comunidad -->
+      <div class="form-field">
+        <label for="clienteTipoPobl">Tipo de comunidad: *</label>
+        <select id="clienteTipoPobl" 
+          [(ngModel)]="clienteTipoPobl" 
+          name="clienteTipoPobl" 
+          required
+          (ngModelChange)="handleTipoPoblChange($event)"
+          (change)="validarCampoClienteEnTiempoReal('tipoPobl', $event)"
+          (blur)="validarCampoClienteEnTiempoReal('tipoPobl', $event)"
+          [class.error]="clienteErrors['tipoPobl']">
+          <option value="">Seleccionar tipo de comunidad</option>
+          @for (comunidad of tiposComunidad; track comunidad) {
+            <option [value]="comunidad">{{ comunidad }}</option>
+          }
+          @for (opt of clienteTipoPoblCustomOptions; track opt) {
+            <option [value]="opt">{{ opt }}</option>
+          }
+        </select>
+        @if (clienteErrors['tipoPobl']) {
+          <small class="error-message">
+            ⚠️ {{ clienteErrors['tipoPobl'] }}
+          </small>
+        }
+      </div>
+
+      @if (showTipoPoblModal) {
+        <div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:9999;background:rgba(0,0,0,0.35)">
+          <div style="background:#fff;padding:16px;border-radius:6px;min-width:320px;max-width:90%">
+            <h3>Especificar comunidad</h3>
+            <textarea [(ngModel)]="modalTipoPoblText" name="modalTipoPoblText" rows="4" style="width:100%;box-sizing:border-box"></textarea>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+              <button type="button" (click)="confirmTipoPoblModal()">Guardar</button>
+              <button type="button" (click)="cancelTipoPoblModal()">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Dirección -->
+      <div class="form-field">
+        <label for="clienteDireccion">Dirección: *</label>
+        <input id="clienteDireccion" 
+          [(ngModel)]="clienteDireccion" 
+          name="clienteDireccion" 
+          required 
+          appAlphaNumeric
+          (input)="validarCampoClienteEnTiempoReal('direccion', $event)"
+          (blur)="validarCampoClienteEnTiempoReal('direccion', $event)"
+          [class.error]="clienteErrors['direccion']" 
+          placeholder="Ej: Calle 123 #45-67" />
+        @if (clienteErrors['direccion']) {
+          <small class="error-message">
+            ⚠️ {{ clienteErrors['direccion'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Departamento -->
+      <div class="form-field">
+        <label for="clienteDepartamento">Departamento: *</label>
+        <select id="clienteDepartamento" 
+          [(ngModel)]="clienteIdDepartamento" 
+          name="clienteIdDepartamento" 
+          required
+          (change)="onDepartamentoChange(); validarCampoClienteEnTiempoReal('departamento', $event)"
+          (blur)="validarCampoClienteEnTiempoReal('departamento', $event)"
+          [class.error]="clienteErrors['departamento']">
+          <option value="">Seleccionar departamento</option>
+          @for (dep of departamentos(); track dep.codigo) {
+            <option [value]="dep.codigo">{{ dep.nombre }}</option>
+          }
+        </select>
+        @if (clienteErrors['departamento']) {
+          <small class="error-message">
+            ⚠️ {{ clienteErrors['departamento'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Ciudad -->
+      <div class="form-field">
+        <label for="clienteCiudad">Ciudad: *</label>
+        <select id="clienteCiudad" 
+          [(ngModel)]="clienteIdCiudad" 
+          name="clienteIdCiudad" 
+          required
+          (change)="validarCampoClienteEnTiempoReal('ciudad', $event)"
+          (blur)="validarCampoClienteEnTiempoReal('ciudad', $event)"
+          [class.error]="clienteErrors['ciudad']">
+          <option value="">Seleccionar ciudad</option>
+          @for (ciudad of ciudades(); track ciudad.codigo) {
+            <option [value]="ciudad.codigo">{{ ciudad.nombre }}</option>
+          }
+        </select>
+        @if (clienteErrors['ciudad']) {
+          <small class="error-message">
+            ⚠️ {{ clienteErrors['ciudad'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Celular -->
+      <div class="form-field">
+        <label for="clienteCelular">Celular: *</label>
+        <input id="clienteCelular" 
+          [(ngModel)]="clienteCelular" 
+          name="clienteCelular" 
+          required 
+          appNumbersOnly
+          (input)="validarCampoClienteEnTiempoReal('celular', $event)"
+          (blur)="validarCampoClienteEnTiempoReal('celular', $event)"
+          [class.error]="clienteErrors['celular']" 
+          placeholder="Ej: 3001234567" />
+        @if (clienteErrors['celular']) {
+          <small class="error-message">
+            ⚠️ {{ clienteErrors['celular'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Teléfono (NO obligatorio) -->
+      <div class="form-field">
+        <label for="clienteTelefono">Teléfono:</label>
+        <input id="clienteTelefono" 
+          [(ngModel)]="clienteTelefono" 
+          name="clienteTelefono" 
+          appNumbersOnly
+          (input)="validarCampoClienteEnTiempoReal('telefono', $event)"
+          (blur)="validarCampoClienteEnTiempoReal('telefono', $event)"
+          [class.error]="clienteErrors['telefono']" 
+          placeholder="Ej: 6011234567" />
+        @if (clienteErrors['telefono']) {
+          <small class="error-message">
+            ⚠️ {{ clienteErrors['telefono'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Correo -->
+      <div class="form-field">
+        <label for="clienteEmail">Correo: *</label>
+        <input id="clienteEmail" 
+          [(ngModel)]="clienteEmail" 
+          name="clienteEmail" 
+          required
+          (input)="validarCampoClienteEnTiempoReal('email', $event)"
+          (blur)="validarCampoClienteEnTiempoReal('email', $event)"
+          [class.error]="clienteErrors['email']" 
+          placeholder="Ej: correo@ejemplo.com" />
+        @if (clienteErrors['email']) {
+          <small class="error-message">
+            ⚠️ {{ clienteErrors['email'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Tipo vinculación -->
+      <div class="form-field">
+        <label for="clienteTipoVinc">Tipo vinculación: *</label>
+        <input id="clienteTipoVinc" 
+          [(ngModel)]="clienteTipoVinc" 
+          name="clienteTipoVinc" 
+          required 
+          appLettersOnly
+          (input)="validarCampoClienteEnTiempoReal('tipoVinc', $event)"
+          (blur)="validarCampoClienteEnTiempoReal('tipoVinc', $event)"
+          [class.error]="clienteErrors['tipoVinc']" 
+          placeholder="Ej: Contrato, Convenio" />
+        @if (clienteErrors['tipoVinc']) {
+          <small class="error-message">
+            ⚠️ {{ clienteErrors['tipoVinc'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Registro realizado por -->
+      <div class="form-field">
+        <label for="clienteRegistroPor">Registro realizado por: *</label>
+        <input id="clienteRegistroPor" 
+          [(ngModel)]="clienteRegistroPor" 
+          name="clienteRegistroPor" 
+          required 
+          appLettersOnly
+          (input)="validarCampoClienteEnTiempoReal('registroPor', $event)"
+          (blur)="validarCampoClienteEnTiempoReal('registroPor', $event)"
+          [class.error]="clienteErrors['registroPor']" 
+          placeholder="Ej: Nombre/Cargo" />
+        @if (clienteErrors['registroPor']) {
+          <small class="error-message">
+            ⚠️ {{ clienteErrors['registroPor'] }}
+          </small>
+        }
+      </div>
+      
+    </div>
+    
+    <!-- Observaciones (NO obligatorio) -->
+    <div class="form-grid">
+      <div class="form-field full">
+        <label for="clienteObservaciones">Observaciones:</label>
+        <textarea id="clienteObservaciones" 
+          [(ngModel)]="clienteObservaciones" 
+          name="clienteObservaciones"
+          (input)="validarCampoClienteEnTiempoReal('observaciones', $event)"
+          (blur)="validarCampoClienteEnTiempoReal('observaciones', $event)"
+          [class.error]="clienteErrors['observaciones']" 
+          placeholder="Observaciones adicionales"></textarea>
+        @if (clienteErrors['observaciones']) {
+          <small class="error-message">⚠️ {{ clienteErrors['observaciones'] }}</small>
+        }
+      </div>
+    </div>
+    
+    <div class="form-actions">
+      <button type="submit">Agregar cliente</button>
+    </div>
+  </form>
+</section>
+  }
+  
+<!-- SECCIÓN: AGREGAR SOLICITUD-->
+@if (formularioActivo === 'solicitud') {
+<h2>Agregar solicitud</h2>
+<section>
+  <form (submit)="createSolicitud($event)">
+    <div class="form-grid">
+
+      <!-- Consecutivo (obligatorio pero readonly) -->
+      <div class="form-field">
+        <label for="solicitudConsecutivo">Consecutivo: *</label>
+        <input id="solicitudConsecutivo" 
+          type="number" 
+          [(ngModel)]="solicitudConsecutivo" 
+          name="solicitudConsecutivo" 
+          required
+          (input)="validarCampoSolicitudEnTiempoReal('consecutivo', $event)"
+          (blur)="validarCampoSolicitudEnTiempoReal('consecutivo', $event)"
+          [class.error]="solicitudErrors['consecutivo']"
+          placeholder="Auto" 
+          readonly 
+          aria-readonly="true" 
+          title="Asignado automáticamente" />
+        @if (solicitudErrors['consecutivo']) {
+          <small class="error-message">
+            ⚠️ {{ solicitudErrors['consecutivo'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Cliente -->
+      <div class="form-field">
+        <label for="solicitudClienteId">Cliente: *</label>
+        <select id="solicitudClienteId" 
+          [(ngModel)]="solicitudClienteId" 
+          name="solicitudClienteId" 
+          required
+          (ngModelChange)="onSelectSolicitudCliente($event)"
+          (change)="validarCampoSolicitudEnTiempoReal('clienteId', $event)"
+          (blur)="validarCampoSolicitudEnTiempoReal('clienteId', $event)"
+          [class.error]="solicitudErrors['clienteId']">
+          <option value="">Seleccionar cliente</option>
+          @for (u of clientes(); track u.id_cliente) {
+            <option [value]="u.id_cliente">
+              {{ u.nombre_solicitante }} ({{ u.numero_identificacion }})
+            </option>
+          }
+        </select>
+        @if (solicitudErrors['clienteId']) {
+          <small class="error-message">
+            ⚠️ {{ solicitudErrors['clienteId'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Tipo de solicitud -->
+      <div class="form-field">
+        <label for="solicitudTipo">Tipo de solicitud: *</label>
+        <select id="solicitudTipo" 
+          [(ngModel)]="solicitudTipo" 
+          name="solicitudTipo" 
+          required
+          (change)="validarCampoSolicitudEnTiempoReal('tipo', $event); computeNumeroFrontPreview()"
+          (blur)="validarCampoSolicitudEnTiempoReal('tipo', $event)"
+          [class.error]="solicitudErrors['tipo']">
+          <option value="">Seleccionar tipo de solicitud</option>
+          @for (tipo of tiposSolicitud; track tipo.value) {
+            <option [value]="tipo.value">{{ tipo.label }}</option>
+          }
+        </select>
+        @if (solicitudErrors['tipo']) {
+          <small class="error-message">
+            ⚠️ {{ solicitudErrors['tipo'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Nombre de muestra/producto -->
+      <div class="form-field">
+        <label for="solicitudNombre">Nombre de la muestra: *</label>
+        <input id="solicitudNombre" 
+          [(ngModel)]="solicitudNombre" 
+          name="solicitudNombre" 
+          required 
+          appAlphaNumeric
+          (input)="validarCampoSolicitudEnTiempoReal('nombre', $event)"
+          (blur)="validarCampoSolicitudEnTiempoReal('nombre', $event)"
+          [class.error]="solicitudErrors['nombre']" 
+          placeholder="Ej: Suero lácteo" />
+        @if (solicitudErrors['nombre']) {
+          <small class="error-message">
+            ⚠️ {{ solicitudErrors['nombre'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Lote -->
+      <div class="form-field">
+  <label for="solicitudLote">Lote del producto: *</label>
+  <input id="solicitudLote" 
+    [(ngModel)]="solicitudLote" 
+    name="solicitudLote" 
+    required 
+    appAlphaNumeric
+    (input)="validarCampoSolicitudEnTiempoReal('lote', $event)"
+    (blur)="validarCampoSolicitudEnTiempoReal('lote', $event)"
+    [class.error]="solicitudErrors['lote']" 
+    placeholder="Ej: L202501" 
+    title="3-20 caracteres: solo letras (A-Z, a-z), números y guiones" />
+  @if (solicitudErrors['lote']) {
+    <small class="error-message">
+      ⚠️ {{ solicitudErrors['lote'] }}
+    </small>
+  }
+</div>
+
+      <!-- Fecha de solicitud -->
+      <div class="form-field">
+        <label for="solicitudFechaSolicitud">Fecha de solicitud: *</label>
+        <input id="solicitudFechaSolicitud" 
+          type="date" 
+          [(ngModel)]="solicitudFechaSolicitud" 
+          name="solicitudFechaSolicitud" 
+          required
+          (input)="validarCampoSolicitudEnTiempoReal('fechaSolicitud', $event); computeNumeroFrontPreview()"
+          (blur)="validarCampoSolicitudEnTiempoReal('fechaSolicitud', $event)"
+          [class.error]="solicitudErrors['fechaSolicitud']" />
+        @if (solicitudErrors['fechaSolicitud']) {
+          <small class="error-message">
+            ⚠️ {{ solicitudErrors['fechaSolicitud'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Preview código -->
+      <div class="form-field">
+        <label for="solicitudNumeroFrontPreview">Código (preview):</label>
+        <input id="solicitudNumeroFrontPreview" 
+          [value]="solicitudNumeroFrontPreview" 
+          name="solicitudNumeroFrontPreview" 
+          readonly 
+          aria-readonly="true" />
+      </div>
+
+      <!-- Fecha de vencimiento -->
+      <div class="form-field">
+        <label for="solicitudFechaVenc">Fecha de vencimiento: *</label>
+        <input id="solicitudFechaVenc" 
+          type="date" 
+          [(ngModel)]="solicitudFechaVenc" 
+          name="solicitudFechaVenc" 
+          required
+          (input)="validarCampoSolicitudEnTiempoReal('fechaVenc', $event)"
+          (blur)="validarCampoSolicitudEnTiempoReal('fechaVenc', $event)"
+          [class.error]="solicitudErrors['fechaVenc']" />
+        @if (solicitudErrors['fechaVenc']) {
+          <small class="error-message">
+            ⚠️ {{ solicitudErrors['fechaVenc'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Tipo de muestra -->
+      <div class="form-field">
+        <label for="solicitudTipoMuestra">Tipo de muestra: *</label>
+        <input id="solicitudTipoMuestra" 
+          [(ngModel)]="solicitudTipoMuestra" 
+          name="solicitudTipoMuestra" 
+          required 
+          appLettersOnly
+          (input)="validarCampoSolicitudEnTiempoReal('tipoMuestra', $event)"
+          (blur)="validarCampoSolicitudEnTiempoReal('tipoMuestra', $event)"
+          [class.error]="solicitudErrors['tipoMuestra']" 
+          placeholder="Ej: Bebida Alcohólica, jugo de caña" />
+        @if (solicitudErrors['tipoMuestra']) {
+          <small class="error-message">
+            ⚠️ {{ solicitudErrors['tipoMuestra'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Tipo de empaque -->
+      <div class="form-field">
+        <label for="solicitudCondEmpaque">Tipo de empaque: *</label>
+        <select id="solicitudCondEmpaque" 
+          [(ngModel)]="solicitudCondEmpaque" 
+          name="solicitudCondEmpaque" 
+          required
+          (ngModelChange)="handleTipoEmpaqueChange($event)"
+          (change)="validarCampoSolicitudEnTiempoReal('condEmpaque', $event)"
+          (blur)="validarCampoSolicitudEnTiempoReal('condEmpaque', $event)"
+          [class.error]="solicitudErrors['condEmpaque']">
+          <option value="">Seleccionar tipo de empaque</option>
+          @for (empaque of tiposEmpaque; track empaque) {
+            <option [value]="empaque">{{ empaque }}</option>
+          }
+          @for (opt of solicitudTipoEmpaqueCustomOptions; track opt) {
+            <option [value]="opt">{{ opt }}</option>
+          }
+        </select>
+        @if (solicitudErrors['condEmpaque']) {
+          <small class="error-message">
+            ⚠️ {{ solicitudErrors['condEmpaque'] }}
+          </small>
+        }
+      </div>
+
+      @if (showTipoEmpaqueModal) {
+        <div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:9999;background:rgba(0,0,0,0.35)">
+          <div style="background:#fff;padding:16px;border-radius:6px;min-width:320px;max-width:90%">
+            <h3>Especificar tipo de empaque</h3>
+            <textarea [(ngModel)]="modalTipoEmpaqueText" name="modalTipoEmpaqueText" rows="4" style="width:100%;box-sizing:border-box"></textarea>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+              <button type="button" (click)="confirmTipoEmpaqueModal()">Guardar</button>
+              <button type="button" (click)="cancelTipoEmpaqueModal()">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Tipo de análisis -->
+      <div class="form-field">
+        <label for="solicitudTipoAnalisis">Tipo de análisis requerido: *</label>
+        <select id="solicitudTipoAnalisis" 
+          [(ngModel)]="solicitudTipoAnalisis" 
+          name="solicitudTipoAnalisis" 
+          required
+          (ngModelChange)="handleTipoAnalisisChange($event)"
+          (change)="validarCampoSolicitudEnTiempoReal('tipoAnalisis', $event)"
+          (blur)="validarCampoSolicitudEnTiempoReal('tipoAnalisis', $event)"
+          [class.error]="solicitudErrors['tipoAnalisis']">
+          <option value="">Seleccionar tipo de análisis</option>
+          @for (analisis of tiposAnalisis; track analisis) {
+            <option [value]="analisis">{{ analisis }}</option>
+          }
+          @for (opt of solicitudTipoAnalisisCustomOptions; track opt) {
+            <option [value]="opt">{{ opt }}</option>
+          }
+        </select>
+        @if (solicitudErrors['tipoAnalisis']) {
+          <small class="error-message">
+            ⚠️ {{ solicitudErrors['tipoAnalisis'] }}
+          </small>
+        }
+      </div>
+
+      @if (showTipoAnalisisModal) {
+        <div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:9999;background:rgba(0,0,0,0.35)">
+          <div style="background:#fff;padding:16px;border-radius:6px;min-width:320px;max-width:90%">
+            <h3>Especificar análisis</h3>
+            <textarea [(ngModel)]="modalTipoAnalisisText" name="modalTipoAnalisisText" rows="4" style="width:100%;box-sizing:border-box"></textarea>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+              <button type="button" (click)="confirmTipoAnalisisModal()">Guardar</button>
+              <button type="button" (click)="cancelTipoAnalisisModal()">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Cantidad de muestras -->
+      <div class="form-field">
+        <label for="solicitudCantidad">Cantidad de muestras: *</label>
+        <input id="solicitudCantidad" 
+          type="number" 
+          [(ngModel)]="solicitudCantidad" 
+          name="solicitudCantidad" 
+          required 
+          appNumbersOnly
+          min="1" 
+          max="1000"
+          (input)="validarCampoSolicitudEnTiempoReal('cantidad', $event)"
+          (blur)="validarCampoSolicitudEnTiempoReal('cantidad', $event)"
+          [class.error]="solicitudErrors['cantidad']" 
+          placeholder="Ej: 3" />
+        @if (solicitudErrors['cantidad']) {
+          <small class="error-message">
+            ⚠️ {{ solicitudErrors['cantidad'] }}
+          </small>
+        }
+      </div>
+<!-- Fecha estimada de entrega -->
+
+<div class="form-field">
+  <label for="solicitudFechaEstimada">Fecha estimada de entrega: *</label>
+  <input id="solicitudFechaEstimada" type="date" [(ngModel)]="solicitudFechaEstimada" name="solicitudFechaEstimada"
+    required (input)="validarCampoSolicitudEnTiempoReal('fechaEstimada', $event)"
+    (blur)="validarCampoSolicitudEnTiempoReal('fechaEstimada', $event)"
+    [class.error]="solicitudErrors['fechaEstimada']" />
+  @if (solicitudErrors['fechaEstimada']) {
+  <small class="error-message">
+    ⚠️ {{ solicitudErrors['fechaEstimada'] }}
+  </small>
+  }
+</div>
+<!-- Requiere varios análisis -->
+      <div class="form-field">
+        <label for="solicitudRequiereVarios">¿Requiere varios análisis? *</label>
+        <select id="solicitudRequiereVarios" 
+          [(ngModel)]="solicitudRequiereVarios" 
+          name="solicitudRequiereVarios" 
+          required
+          (change)="validarCampoSolicitudEnTiempoReal('requiereVarios', $event)"
+          (blur)="validarCampoSolicitudEnTiempoReal('requiereVarios', $event)"
+          [class.error]="solicitudErrors['requiereVarios']">
+          <option value="">Seleccionar opción</option>
+          <option [ngValue]="true">Sí</option>
+          <option [ngValue]="false">No</option>
+        </select>
+        @if (solicitudErrors['requiereVarios']) {
+          <small class="error-message">
+            ⚠️ {{ solicitudErrors['requiereVarios'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Solicitud recibida -->
+      <div class="form-field">
+        <label for="solicitudRecibida">Solicitud recibida a través de: *</label>
+        <input id="solicitudRecibida" 
+          class="form-control" 
+          type="text" 
+          [(ngModel)]="solicitudRecibida" 
+          name="solicitudRecibida" 
+          required 
+          appLettersOnly
+          (input)="validarCampoSolicitudEnTiempoReal('solicitudRecibida', $event)"
+          (blur)="validarCampoSolicitudEnTiempoReal('solicitudRecibida', $event)"
+          [class.error]="solicitudErrors['solicitudRecibida']"
+          placeholder="Ej: Correo, Presencial" />
+        @if (solicitudErrors['solicitudRecibida']) {
+          <small class="error-message">
+            ⚠️ {{ solicitudErrors['solicitudRecibida'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Recibe personal -->
+      <div class="form-field">
+        <label for="solicitudRecibePersonal">Recibe personal: *</label>
+        <input id="solicitudRecibePersonal" 
+          [(ngModel)]="solicitudRecibePersonal" 
+          name="solicitudRecibePersonal" 
+          required 
+          appLettersOnly
+          (input)="validarCampoSolicitudEnTiempoReal('recibePersonal', $event)"
+          (blur)="validarCampoSolicitudEnTiempoReal('recibePersonal', $event)"
+          [class.error]="solicitudErrors['recibePersonal']"
+          placeholder="Nombre de quien recibe" />
+        @if (solicitudErrors['recibePersonal']) {
+          <small class="error-message">
+            ⚠️ {{ solicitudErrors['recibePersonal'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Cargo personal -->
+      <div class="form-field">
+        <label for="solicitudCargoPersonal">Cargo del personal: *</label>
+        <input id="solicitudCargoPersonal" 
+          [(ngModel)]="solicitudCargoPersonal" 
+          name="solicitudCargoPersonal" 
+          required 
+          appLettersOnly
+          (input)="validarCampoSolicitudEnTiempoReal('cargoPersonal', $event)"
+          (blur)="validarCampoSolicitudEnTiempoReal('cargoPersonal', $event)"
+          [class.error]="solicitudErrors['cargoPersonal']"
+          placeholder="Ej: Auxiliar de laboratorio" />
+        @if (solicitudErrors['cargoPersonal']) {
+          <small class="error-message">
+            ⚠️ {{ solicitudErrors['cargoPersonal'] }}
+          </small>
+        }
+      </div>
+
+    </div>
+    
+    <!-- Observaciones (NO obligatorio) -->
+    <div class="form-grid">
+      <div class="form-field full">
+        <label for="solicitudObservaciones">Observaciones:</label>
+        <textarea id="solicitudObservaciones" 
+          [(ngModel)]="solicitudObservaciones" 
+          name="solicitudObservaciones"
+          (input)="validarCampoSolicitudEnTiempoReal('observaciones', $event)"
+          (blur)="validarCampoSolicitudEnTiempoReal('observaciones', $event)"
+          [class.error]="solicitudErrors['observaciones']"
+          placeholder="Observaciones de la solicitud"></textarea>
+        @if (solicitudErrors['observaciones']) {
+          <small class="error-message">⚠️ {{ solicitudErrors['observaciones'] }}</small>
+        }
+      </div>
+    </div>
+    
+    <div class="form-actions">
+      <button type="submit">Agregar solicitud</button>
+    </div>
+  </form>
+</section>
+}
+
+  <!-- SECCIÓN: AGREGAR OFERTA -->
+@if (formularioActivo === 'oferta') {
+<h2>Agregar oferta</h2>
+<section>
+  <form (submit)="createOferta($event)">
+    <div class="form-grid">
+
+      <!-- Solicitud -->
+      <div class="form-field">
+        <label for="ofertaSolicitudId">Solicitud: *</label>
+        <select id="ofertaSolicitudId" 
+          [(ngModel)]="ofertaSolicitudId" 
+          name="ofertaSolicitudId" 
+          required
+          (ngModelChange)="onSelectSolicitudOferta($event)"
+          (change)="validarCampoOfertaEnTiempoReal('solicitudId', $event)"
+          (blur)="validarCampoOfertaEnTiempoReal('solicitudId', $event)"
+          [class.error]="ofertaErrors['solicitudId']">
+          <option value="">Seleccionar solicitud</option>
+          @for (s of solicitudesFiltradas(); track s.solicitud_id) {
+            <option [value]="s.solicitud_id">
+              {{ s.nombre_solicitante }} - {{ s.numero_solicitud_front || s.solicitud_id }}
+            </option>
+          }
+        </select>
+        @if (ofertaErrors['solicitudId']) {
+          <small class="error-message">
+            ⚠️ {{ ofertaErrors['solicitudId'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Valor -->
+      <div class="form-field">
+        <label for="ofertaValor">Valor: *</label>
+        <input id="ofertaValor" 
+          type="text" 
+          [ngModel]="ofertaValorDisplay" 
+          (ngModelChange)="onOfertaValorInput($event)"
+          (focus)="onOfertaValorFocus()" 
+          (blur)="onOfertaValorBlur()" 
+          name="ofertaValor" 
+          required
+          (input)="validarCampoOfertaEnTiempoReal('valor', $event)"
+          (blur)="validarCampoOfertaEnTiempoReal('valor', $event)"
+          [class.error]="ofertaErrors['valor']" 
+          placeholder="$ 0" />
+        @if (ofertaValorError) {
+          <small class="error-message">⚠️ {{ ofertaValorError }}</small>
+        }
+        @if (ofertaErrors['valor']) {
+          <small class="error-message">
+            ⚠️ {{ ofertaErrors['valor'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Fecha de envío -->
+      <div class="form-field">
+        <label for="ofertaFechaEnvio">Fecha de envío de la oferta: *</label>
+        <input id="ofertaFechaEnvio" 
+          type="date" 
+          [(ngModel)]="ofertaFechaEnvio" 
+          name="ofertaFechaEnvio" 
+          required
+          (input)="validarCampoOfertaEnTiempoReal('fechaEnvio', $event)"
+          (blur)="validarCampoOfertaEnTiempoReal('fechaEnvio', $event)"
+          [class.error]="ofertaErrors['fechaEnvio']" />
+        @if (ofertaErrors['fechaEnvio']) {
+          <small class="error-message">
+            ⚠️ {{ ofertaErrors['fechaEnvio'] }}
+          </small>
+        }
+      </div>
+
+      <!-- ¿Se generó cotización? -->
+      <div class="form-field">
+        <label for="ofertaGeneroCotizacion">¿Se generó cotización? *</label>
+        <select id="ofertaGeneroCotizacion" 
+          [(ngModel)]="ofertaGeneroCotizacion" 
+          name="ofertaGeneroCotizacion" 
+          required
+          (change)="validarCampoOfertaEnTiempoReal('generoCotizacion', $event)"
+          (blur)="validarCampoOfertaEnTiempoReal('generoCotizacion', $event)"
+          [class.error]="ofertaErrors['generoCotizacion']">
+          <option value="">Seleccionar opción</option>
+          <option [ngValue]="true">Sí</option>
+          <option [ngValue]="false">No</option>
+        </select>
+        @if (ofertaErrors['generoCotizacion']) {
+          <small class="error-message">
+            ⚠️ {{ ofertaErrors['generoCotizacion'] }}
+          </small>
+        }
+      </div>
+
+      <!-- ¿Se realizó seguimiento? -->
+      <div class="form-field">
+        <label for="ofertaRealizoSeguimiento">¿Se realizó seguimiento a la oferta? *</label>
+        <select id="ofertaRealizoSeguimiento" 
+          [(ngModel)]="ofertaRealizoSeguimiento" 
+          name="ofertaRealizoSeguimiento" 
+          required
+          (change)="validarCampoOfertaEnTiempoReal('realizoSeguimiento', $event)"
+          (blur)="validarCampoOfertaEnTiempoReal('realizoSeguimiento', $event)"
+          [class.error]="ofertaErrors['realizoSeguimiento']">
+          <option value="">Seleccionar opción</option>
+          <option [ngValue]="true">Sí</option>
+          <option [ngValue]="false">No</option>
+        </select>
+        @if (ofertaErrors['realizoSeguimiento']) {
+          <small class="error-message">
+            ⚠️ {{ ofertaErrors['realizoSeguimiento'] }}
+          </small>
+        }
+      </div>
+    </div>
+    
+    <!-- Observación (NO obligatorio) -->
+    <div class="form-grid">
+      <div class="form-field full">
+        <label for="ofertaObservacion">Observación:</label>
+        <textarea id="ofertaObservacion" 
+          [(ngModel)]="ofertaObservacion" 
+          name="ofertaObservacion"
+          (input)="validarCampoOfertaEnTiempoReal('observacion', $event)"
+          (blur)="validarCampoOfertaEnTiempoReal('observacion', $event)"
+          [class.error]="ofertaErrors['observacion']" 
+          placeholder="Observaciones sobre la oferta"></textarea>
+        @if (ofertaErrors['observacion']) {
+          <small class="error-message">⚠️ {{ ofertaErrors['observacion'] }}</small>
+        }
+      </div>
+    </div>
+    
+    <div class="form-actions">
+      <button type="submit">Agregar oferta</button>
+    </div>
+  </form>
+</section>
+}
+
+  <!-- SECCIÓN: AGREGAR RESULTADOS -->
+@if (formularioActivo === 'revision') {
+<h2>Revisión de la oferta</h2>
+<section>
+  <form (submit)="createResultado($event)">
+    <div class="form-grid">
+
+      <!-- Solicitud -->
+      <div class="form-field">
+        <label for="resultadoSolicitudId">Solicitud: *</label>
+        <select id="resultadoSolicitudId" 
+          [(ngModel)]="resultadoSolicitudId" 
+          name="resultadoSolicitudId" 
+          required
+          (change)="validarCampoResultadoEnTiempoReal('solicitudId', $event)"
+          (blur)="validarCampoResultadoEnTiempoReal('solicitudId', $event)"
+          [class.error]="resultadoErrors['solicitudId']">
+          <option value="">Seleccionar solicitud</option>
+          @for (s of solicitudesFiltradas(); track s.solicitud_id) {
+            <option [value]="s.solicitud_id">
+              {{ s.nombre_solicitante }} - {{ s.numero_solicitud_front || s.solicitud_id }}
+            </option>
+          }
+        </select>
+        @if (resultadoErrors['solicitudId']) {
+          <small class="error-message">
+            ⚠️ {{ resultadoErrors['solicitudId'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Fecha límite -->
+      <div class="form-field">
+        <label for="resultadoFechaLimite">Fecha límite para la entrega: *</label>
+        <input id="resultadoFechaLimite" 
+          type="date" 
+          [(ngModel)]="resultadoFechaLimite" 
+          name="resultadoFechaLimite" 
+          required
+          (input)="validarCampoResultadoEnTiempoReal('fechaLimite', $event)"
+          (blur)="validarCampoResultadoEnTiempoReal('fechaLimite', $event)"
+          [class.error]="resultadoErrors['fechaLimite']" />
+        @if (resultadoErrors['fechaLimite']) {
+          <small class="error-message">
+            ⚠️ {{ resultadoErrors['fechaLimite'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Fecha de envío -->
+      <div class="form-field">
+        <label for="resultadoFechaEnvio">Fecha de envío de resultados: *</label>
+        <input id="resultadoFechaEnvio" 
+          type="date" 
+          [(ngModel)]="resultadoFechaEnvio" 
+          name="resultadoFechaEnvio" 
+          required
+          (input)="validarCampoResultadoEnTiempoReal('fechaEnvio', $event)"
+          (blur)="validarCampoResultadoEnTiempoReal('fechaEnvio', $event)"
+          [class.error]="resultadoErrors['fechaEnvio']" />
+        @if (resultadoErrors['fechaEnvio']) {
+          <small class="error-message">
+            ⚠️ {{ resultadoErrors['fechaEnvio'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Viabilidad del servicio -->
+      <div class="form-field">
+        <label for="resultadoServicioViable">¿El servicio es viable? *</label>
+        <select id="resultadoServicioViable" 
+          [(ngModel)]="resultadoServicioViable" 
+          name="resultadoServicioViable" 
+          required
+          (change)="validarCampoResultadoEnTiempoReal('servicioViable', $event)"
+          (blur)="validarCampoResultadoEnTiempoReal('servicioViable', $event)"
+          [class.error]="resultadoErrors['servicioViable']">
+          <option value="">Seleccionar opción</option>
+          <option [ngValue]="true">Sí</option>
+          <option [ngValue]="false">No</option>
+        </select>
+        @if (resultadoErrors['servicioViable']) {
+          <small class="error-message">
+            ⚠️ {{ resultadoErrors['servicioViable'] }}
+          </small>
+        }
+      </div>
+    </div>
+    
+    <div class="form-actions">
+      <button type="submit">Completado</button>
+    </div>
+  </form>
+</section>
+}
+
+ <!-- SECCIÓN: AGREGAR ENCUESTA -->
+@if (formularioActivo === 'encuesta') {
+<h2>Seguimiento Encuesta</h2>
+<section>
+  <form (submit)="createEncuesta($event)">
+    <div class="form-grid">
+
+      <!-- Solicitud -->
+      <div class="form-field">
+        <label for="encuestaSolicitudId">Solicitud: *</label>
+        <select id="encuestaSolicitudId" 
+          [(ngModel)]="encuestaSolicitudId" 
+          name="encuestaSolicitudId" 
+          required
+          (change)="validarCampoEncuestaEnTiempoReal('solicitudId', $event)"
+          (blur)="validarCampoEncuestaEnTiempoReal('solicitudId', $event)"
+          [class.error]="encuestaErrors['solicitudId']">
+          <option value="">Seleccionar solicitud</option>
+          @for (s of solicitudesFiltradas(); track s.solicitud_id) {
+            <option [value]="s.solicitud_id">
+              {{ s.nombre_solicitante }} - {{ s.numero_solicitud_front || s.solicitud_id }}
+            </option>
+          }
+        </select>
+        @if (encuestaErrors['solicitudId']) {
+          <small class="error-message">
+            ⚠️ {{ encuestaErrors['solicitudId'] }}
+          </small>
+        }
+      </div>
+
+      <!-- Fecha de encuesta -->
+      <div class="form-field">
+        <label for="encuestaFecha">Fecha de envio de la encuesta: *</label>
+        <input id="encuestaFecha" 
+          type="date" 
+          [(ngModel)]="encuestaFecha" 
+          name="encuestaFecha" 
+          required
+          (input)="validarCampoEncuestaEnTiempoReal('fecha', $event)"
+          (blur)="validarCampoEncuestaEnTiempoReal('fecha', $event)"
+          [class.error]="encuestaErrors['fecha']" />
+        @if (encuestaErrors['fecha']) {
+          <small class="error-message">
+            ⚠️ {{ encuestaErrors['fecha'] }}
+          </small>
+        }
+      </div>
+
+      <!-- ¿Recomendaría el servicio?
+      <div class="form-field">
+        <label for="encuestaRecomendaria">Recomendaría el servicio *</label>
+        <select id="encuestaRecomendaria" 
+          [(ngModel)]="encuestaRecomendaria" 
+          name="encuestaRecomendaria" 
+          required
+          (change)="validarCampoEncuestaEnTiempoReal('recomendaria', $event)"
+          (blur)="validarCampoEncuestaEnTiempoReal('recomendaria', $event)"
+          [class.error]="encuestaErrors['recomendaria']">
+          <option value="">Seleccionar opción</option>
+          <option [ngValue]="true">Sí</option>
+          <option [ngValue]="false">No</option>
+        </select>
+        @if (encuestaErrors['recomendaria']) {
+          <small class="error-message">
+            ⚠️ {{ encuestaErrors['recomendaria'] }}
+          </small>
+        }
+      </div> -->
+
+      <!-- ¿El cliente respondió? -->
+      <div class="form-field">
+        <label for="encuestaClienteRespondio">El cliente respondió la encuesta *</label>
+        <select id="encuestaClienteRespondio" 
+          [(ngModel)]="encuestaClienteRespondio" 
+          name="encuestaClienteRespondio" 
+          required
+          (change)="validarCampoEncuestaEnTiempoReal('clienteRespondio', $event)"
+          (blur)="validarCampoEncuestaEnTiempoReal('clienteRespondio', $event)"
+          [class.error]="encuestaErrors['clienteRespondio']">
+          <option value="">Seleccionar opción</option>
+          <option [ngValue]="true">Sí</option>
+          <option [ngValue]="false">No</option>
+        </select>
+        @if (encuestaErrors['clienteRespondio']) {
+          <small class="error-message">
+            ⚠️ {{ encuestaErrors['clienteRespondio'] }}
+          </small>
+        }
+      </div>
+
+      <!-- NUEVO CAMPO: Fecha realización (solo visible si clienteRespondio = true) -->
+      @if (encuestaClienteRespondio === true) {
+      <div class="form-field">
+        <label for="encuestaFechaRealizacion">Fecha en que se realizó la encuesta: *</label>
+        <input id="encuestaFechaRealizacion" type="date" [(ngModel)]="encuestaFechaRealizacion"
+          name="encuestaFechaRealizacion" required (input)="validarCampoEncuestaEnTiempoReal('fechaRealizacion', $event)"
+          (blur)="validarCampoEncuestaEnTiempoReal('fechaRealizacion', $event)"
+          [class.error]="encuestaErrors['fechaRealizacion']" />
+        @if (encuestaErrors['fechaRealizacion']) {
+        <small class="error-message">
+          ⚠️ {{ encuestaErrors['fechaRealizacion'] }}
+        </small>
+        }
+      </div>
+      }
+
+      <!-- ¿Se solicitó nueva encuesta? -->
+      <div class="form-field">
+        <label for="encuestaSolicitoNueva">Se solicitó nueva encuesta *</label>
+        <select id="encuestaSolicitoNueva" 
+          [(ngModel)]="encuestaSolicitoNueva" 
+          name="encuestaSolicitoNueva" 
+          required
+          (change)="validarCampoEncuestaEnTiempoReal('solicitoNueva', $event)"
+          (blur)="validarCampoEncuestaEnTiempoReal('solicitoNueva', $event)"
+          [class.error]="encuestaErrors['solicitoNueva']">
+          <option value="">Seleccionar opción</option>
+          <option [ngValue]="true">Sí</option>
+          <option [ngValue]="false">No</option>
+        </select>
+        @if (encuestaErrors['solicitoNueva']) {
+          <small class="error-message">
+            ⚠️ {{ encuestaErrors['solicitoNueva'] }}
+          </small>
+        }
+      </div>
+    </div>
+
+    <!-- Comentarios (NO obligatorio) -->
+    <div class="form-grid">
+      <div class="form-field full">
+        <label for="encuestaComentarios">Comentarios:</label>
+        <textarea id="encuestaComentarios" 
+          [(ngModel)]="encuestaComentarios" 
+          name="encuestaComentarios"
+          (input)="validarCampoEncuestaEnTiempoReal('comentarios', $event)"
+          (blur)="validarCampoEncuestaEnTiempoReal('comentarios', $event)"
+          [class.error]="encuestaErrors['comentarios']" 
+          placeholder="Comentarios del cliente"></textarea>
+        @if (encuestaErrors['comentarios']) {
+          <small class="error-message">⚠️ {{ encuestaErrors['comentarios'] }}</small>
+        }
+      </div>
+    </div>
+    
+    <div class="form-actions">
+      <button type="submit">Agregar encuesta</button>
+    </div>
+  </form>
+</section>
+}
+
+  <!-- El resto del HTML permanece igual (listas de solicitudes, clientes, modales) -->
+  <!-- SECCIÓN: Lista rápida de solicitudes -->
+  <h2>Catalogo de Solicitudes</h2>
+  <section>
+    <div class="search-container">
+      <label for="solicitudesQ">
+        Buscar solicitud (ID, código, nombre, tipo, muestra, análisis o cliente):
+      </label>
+      <input id="solicitudesQ" [(ngModel)]="solicitudesQ" (input)="filtrarSolicitudes()"
+        placeholder="Escribe para buscar..." />
+
+      <!-- Mostrar contador de resultados -->
+      @if (solicitudesFiltradas().length > 0 || solicitudesQ.trim()) {
+        <small class="result-counter">
+          Mostrando {{ solicitudesFiltradas().length }} de {{ solicitudes().length }} solicitudes
+        </small>
+      }
+
+      <!-- Mensaje cuando no hay resultados -->
+      @if (solicitudesQ.trim() && solicitudesFiltradas().length === 0) {
+        <small class="no-results">
+          ⚠️ No se encontraron solicitudes con el término "{{ solicitudesQ }}"
+        </small>
+      }
+    </div>
+
+    <div class="equipos-grid">
+      @if (cargando()) {
+        <div class="sin-equipos">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Cargando solicitudes...</p>
+        </div>
+      }
+
+      @if (!cargando()) {
+        <div class="fade-in">
+        @for (s of solicitudesFiltradas(); track s.solicitud_id) {
+          <article class="equipo-card" 
+                 (click)="toggleExpandSolicitud(s)" 
+                 [attr.aria-expanded]="isSolicitudExpanded(s)" 
+                 tabindex="0">
+          <div class="card-top">
+            <div class="tags">
+              <span class="tag"><strong>Código:</strong> {{ s.numero_solicitud_front || '—' }}</span>
+              <span class="tag"><strong>ID:</strong> {{ s.solicitud_id }}</span>
+              <span class="tag"><strong>Cliente:</strong> {{ s.nombre_solicitante || '—' }}</span>
+              <span class="tag"><strong>Tipo:</strong> {{ s.tipo_solicitud || '—' }}</span>
+              <span class="tag"><strong>Muestra:</strong> {{ s.nombre_muestra || '—' }}</span>
+            </div>
+            <div class="pdf-actions">
+              @if (canDelete()) {
+                <button type="button" class="pdf-btn edit"
+                  title="Editar solicitud"
+                  aria-label="Editar solicitud"
+                  (click)="editSolicitudOpen(s); $event.stopPropagation()">
+                  <svg viewBox="0 0 24 24" class="icon" aria-hidden="true">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25Z" fill="currentColor" />
+                    <path d="M20.71 7.04a1 1 0 0 0 0-1.41L18.37 3.29a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83Z" fill="currentColor" />
+                  </svg>
+                </button>
+                <button type="button" class="pdf-btn delete" 
+                        title="Eliminar solicitud" 
+                        aria-label="Eliminar solicitud" 
+                        (click)="deleteSolicitud(s.solicitud_id); $event.stopPropagation()">
+                  <svg viewBox="0 0 24 24" class="icon" aria-hidden="true">
+                    <path d="M6 6l12 12M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  </svg>
+                </button>
+              }
+            </div>
+          </div>
+          <div class="card-name">
+            <div class="name-line">{{ s.numero_solicitud_front || '' }} · {{ s.nombre_muestra || s.tipo_solicitud || ('#' + s.solicitud_id) }}</div>
+            <div class="meta-line">
+              <span class="chip">Cliente: {{ s.nombre_solicitante || '—' }}</span>
+              <span class="chip">Tipo: {{ s.tipo_solicitud || '—' }}</span>
+            </div>
+            <span class="toggle-icon" [class.open]="isSolicitudExpanded(s)" aria-hidden="true">▾</span>
+          </div>
+          
+          @if (isSolicitudExpanded(s)) {
+            <div class="equipo-detalles" (click)="$event.stopPropagation()">
+              <div class="equipo-tabs-menu">
+                @for (tab of solicitudTabs; track tab.key) {
+                  <button type="button" 
+                          class="tab-btn" 
+                          [class.active]="activeSolicitudTab[s.solicitud_id] === tab.key" 
+                          (click)="selectSolicitudTab(s.solicitud_id, tab.key); $event.stopPropagation()">
+                    {{ tab.label }}
+                    @if (hasTabCompleted(s, tab.key)) {
+                      <i class="fas fa-check-circle done-icon" aria-hidden="true" title="Completado"></i>
+                    }
+                  </button>
+                }
+              </div>
+              
+              <div class="detalle-grid-compacto">
+                @switch (activeSolicitudTab[s.solicitud_id]) {
+                  @case ('detalle') {
+                    <div class="detalle-item-full">
+                      <div class="seccion-titulo">Muestra y análisis</div>
+                      <div class="detalle-grid-compacto">
+                        <div class="detalle-item">
+                          <div class="detalle-label">Tipo muestra</div>
+                          <span>{{ s.tipo_muestra || '—' }}</span>
+                        </div>
+                        <div class="detalle-item">
+                          <div class="detalle-label">Análisis requerido</div>
+                          <span>{{ s.analisis_requerido || '—' }}</span>
+                        </div>
+                        <div class="detalle-item">
+                          <div class="detalle-label">Tipo empaque</div>
+                          <span>{{ s.tipo_empaque || '—' }}</span>
+                        </div>
+                        <div class="detalle-item">
+                          <div class="detalle-label">Lote producto</div>
+                          <span>{{ s.lote_producto || '—' }}</span>
+                        </div>
+                        <div class="detalle-item">
+                          <div class="detalle-label">Cant. muestras</div>
+                          <span>{{ s.cant_muestras || '—' }}</span>
+                        </div>
+                        <div class="detalle-item">
+                          <div class="detalle-label">Requiere análisis</div>
+                          <span>{{ s.req_analisis ? 'Sí' : 'No' }}</span>
+                        </div>
+                        <div class="detalle-item detalle-item-full">
+                          <div class="detalle-label">Observaciones</div>
+                          <span>{{ s.observaciones || '—' }}</span>
+                        </div>
+                        
+                        <div class="detalle-item-full seccion-titulo">Fechas</div>
+                        <div class="detalle-item">
+                          <div class="detalle-label">Solicitud</div>
+                          <span>{{ formatValue(s.fecha_solicitud) }}</span>
+                        </div>
+                        <div class="detalle-item">
+                          <div class="detalle-label">Vencimiento</div>
+                          <span>{{ formatValue(s.fecha_vencimiento_muestra) }}</span>
+                        </div>
+                        <div class="detalle-item">
+                          <div class="detalle-label">Entrega estimada</div>
+                          <span>{{ formatValue(s.fecha_entrega_muestra) }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                  
+                  @case ('oferta') {
+                    <div class="detalle-item-full">
+                      <div class="seccion-titulo">Oferta</div>
+                      <div class="detalle-grid-compacto">
+                        <div class="detalle-item">
+                          <div class="detalle-label">¿Generó cotización?</div>
+                          <span>{{ s.genero_cotizacion === null || s.genero_cotizacion === undefined ? '—' : (s.genero_cotizacion ? 'Sí' : 'No') }}</span>
+                        </div>
+                        <div class="detalle-item">
+                          <div class="detalle-label">Valor cotización</div>
+                          <span>{{ formatCurrency(s.valor_cotizacion) }}</span>
+                        </div>
+                        <div class="detalle-item">
+                          <div class="detalle-label">Fecha envío oferta</div>
+                          <span>{{ formatValue(s.fecha_envio_oferta) }}</span>
+                        </div>
+                        <div class="detalle-item">
+                          <div class="detalle-label">Seguimiento oferta</div>
+                          <span>{{ s.realizo_seguimiento_oferta === null || s.realizo_seguimiento_oferta === undefined ? '—' : (s.realizo_seguimiento_oferta ? 'Sí' : 'No') }}</span>
+                        </div>
+                        <div class="detalle-item detalle-item-full">
+                          <div class="detalle-label">Observación</div>
+                          <span>{{ s.observacion_oferta || '—' }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                  
+                  @case ('revision') {
+                    <div class="detalle-item-full">
+                      <div class="seccion-titulo">Revisión</div>
+                      <div class="detalle-grid-compacto">
+                        <div class="detalle-item">
+                          <div class="detalle-label">Fecha límite entrega</div>
+                          <span>{{ formatValue(s.fecha_limite_entrega) }}</span>
+                        </div>
+                        <div class="detalle-item">
+                          <div class="detalle-label">Fecha envío resultados</div>
+                          <span>{{ formatValue(s.fecha_envio_resultados) }}</span>
+                        </div>
+                        <div class="detalle-item">
+                          <div class="detalle-label">Servicio viable</div>
+                          <span>{{ s.servicio_es_viable === null || s.servicio_es_viable === undefined ? '—' : (s.servicio_es_viable ? 'Sí' : 'No') }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                  
+                  @case ('encuesta') {
+                    <div class="detalle-item-full">
+                      <div class="seccion-titulo">Encuesta</div>
+                      <div class="detalle-grid-compacto">
+                        <div class="detalle-item">
+                          <div class="detalle-label">Fecha encuesta</div>
+                          <span>{{ formatValue(s.fecha_encuesta) }}</span>
+                        </div>
+                        <!-- <div class="detalle-item">
+                          <div class="detalle-label">Recomendaría servicio</div>
+                          <span>{{ s.recomendaria_servicio === null || s.recomendaria_servicio === undefined ? '—' : (s.recomendaria_servicio ? 'Sí' : 'No') }}</span>
+                        </div> -->
+                        <div class="detalle-item">
+                          <div class="detalle-label">Cliente respondió</div>
+                          <span>{{ s.cliente_respondio === null || s.cliente_respondio === undefined ? '—' : (s.cliente_respondio ? 'Sí' : 'No')
+                            }}</span>
+                          </div>
+                          <!-- NUEVO EN TARJETA: Fecha realización -->
+                          @if (s.cliente_respondio === 1 || s.cliente_respondio === true) {
+                          <div class="detalle-item">
+                            <div class="detalle-label">Fecha realización</div>
+                            <span>{{ formatValue(s.fecha_realizacion_encuesta) || '—' }}</span>
+                          </div>
+                          }
+                          <div class="detalle-item">
+                            <div class="detalle-label">Solicitó nueva encuesta</div>
+                            <span>{{ s.solicito_nueva_encuesta === null || s.solicito_nueva_encuesta === undefined ? '—' :
+                              (s.solicito_nueva_encuesta ? 'Sí' : 'No') }}</span>
+                          </div>
+                          <div class="detalle-item detalle-item-full">        <div class="detalle-label">Comentarios</div>
+                          <span>{{ s.comentarios || '—' }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                }
+              </div>
+            </div>
+          }
+        </article>
+        }
+        </div>
+
+        @if (solicitudesFiltradas().length === 0) {
+          <p class="sin-equipos">No hay solicitudes para mostrar</p>
+        }
+      }
+    </div>
+  </section>
+
+  <!-- Modal editar Cliente -->
+  @if (editClienteModalOpen) {
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;z-index:9999">
+      <div style="background:#fff;padding:16px;border-radius:8px;min-width:360px;max-width:90%">
+        <h3>Editar cliente</h3>
+        <div class="form-grid">
+          <div class="form-field"><label>Nombre</label><input [(ngModel)]="editClienteNombre" /></div>
+          <div class="form-field"><label>Razón social</label><input [(ngModel)]="editClienteRazonSocial" /></div>
+          <div class="form-field"><label>NIT</label><input [(ngModel)]="editClienteNit" /></div>
+          <div class="form-field"><label>Tipo cliente</label>
+            <select [(ngModel)]="editClienteTipoUsuario">
+              <option value="">Seleccionar tipo de cliente</option>
+              @for (tipo of tiposCliente; track tipo) {
+                <option [value]="tipo">{{ tipo }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-field"><label>Tipo identificación</label>
+            <select [(ngModel)]="editClienteTipoId">
+              <option value="">Seleccionar tipo de id</option>
+              @for (tipo of tiposIdentificacion; track tipo.value) {
+                <option [value]="tipo.value">{{ tipo.label }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-field"><label>Número identificación</label><input [(ngModel)]="editClienteNumeroIdentificacion" /></div>
+          <div class="form-field"><label>Sexo</label>
+            <select [(ngModel)]="editClienteSexo">
+              <option value="">Seleccione el sexo</option>
+              @for (sexo of opcionesSexo; track sexo.value) {
+                <option [value]="sexo.value">{{ sexo.label }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-field"><label>Tipo comunidad</label>
+            <select [(ngModel)]="editClienteTipoPobl">
+              <option value="">Seleccionar tipo de comunidad</option>
+              @for (comunidad of tiposComunidad; track comunidad) {
+                <option [value]="comunidad">{{ comunidad }}</option>
+              }
+              @for (opt of clienteTipoPoblCustomOptions; track opt) {
+                <option [value]="opt">{{ opt }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-field"><label>Correo</label><input [(ngModel)]="editClienteCorreo" /></div>
+          <div class="form-field"><label>Celular</label><input [(ngModel)]="editClienteCelular" /></div>
+          <div class="form-field"><label>Teléfono</label><input [(ngModel)]="editClienteTelefono" /></div>
+          <div class="form-field span-full"><label>Dirección</label><input [(ngModel)]="editClienteDireccion" /></div>
+          <div class="form-field"><label>Departamento</label>
+            <select [(ngModel)]="editClienteDep" (change)="onEditDepChange()">
+              <option value="">Seleccionar departamento</option>
+              @for (dep of departamentos(); track dep.codigo) {
+                <option [value]="dep.codigo">{{ dep.nombre }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-field"><label>Ciudad</label>
+            <select [(ngModel)]="editClienteCiudad">
+              <option value="">Seleccionar ciudad</option>
+              @for (ciudad of ciudades(); track ciudad.codigo) {
+                <option [value]="ciudad.codigo">{{ ciudad.nombre }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-field"><label>Fecha vinculación</label><input type="date" [(ngModel)]="editClienteFechaVinculacion" /></div>
+          <div class="form-field"><label>Tipo vinculación</label><input [(ngModel)]="editClienteTipoVinculacion" /></div>
+          <div class="form-field span-full"><label>Registro por</label><input [(ngModel)]="editClienteRegistroPor" /></div>
+          <div class="form-field span-full"><label>Observaciones</label><textarea rows="3" [(ngModel)]="editClienteObservaciones"></textarea></div>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+          <button type="button" (click)="saveEditCliente()">Guardar</button>
+          <button type="button" (click)="closeEditClienteModal()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal editar Solicitud -->
+  @if (editSolicitudModalOpen || editSolicitudModalClosing) {
+    <div class="modal-overlay" [class.closing]="editSolicitudModalClosing" (click)="closeEditSolicitudModal()">
+      <div class="edit-modal" [class.closing]="editSolicitudModalClosing" (click)="$event.stopPropagation()">
+        <h3>Editar solicitud</h3>
+        <div>
+          <div class="equipo-tabs-menu">
+            <button type="button" class="tab-btn" [class.active]="editSolicitudActiveTab === 'solicitud'" (click)="editSolicitudActiveTab = 'solicitud'">Solicitud</button>
+            <button type="button" class="tab-btn" [class.active]="editSolicitudActiveTab === 'oferta'" (click)="editSolicitudActiveTab = 'oferta'">Oferta</button>
+            <button type="button" class="tab-btn" [class.active]="editSolicitudActiveTab === 'revision'" (click)="editSolicitudActiveTab = 'revision'">Revisión</button>
+            <button type="button" class="tab-btn" [class.active]="editSolicitudActiveTab === 'encuesta'" (click)="editSolicitudActiveTab = 'encuesta'">Encuesta</button>
+            <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+              <button type="button" class="tab-btn" (click)="saveAllEditSolicitud()">Guardar</button>
+            </div>
+          </div>
+
+          <div style="margin-top:12px">
+            @if (editSolicitudActiveTab === 'solicitud') {
+              <div class="form-grid">
+                <div class="form-field"><label>Nombre muestra</label><input [(ngModel)]="editSolicitudNombreMuestra" /></div>
+                <div class="form-field"><label>Tipo solicitud</label>
+                  <select [(ngModel)]="editSolicitudTipo">
+                    <option value="">Seleccionar tipo de solicitud</option>
+                    @for (tipo of tiposSolicitud; track tipo.value) {
+                      <option [value]="tipo.value">{{ tipo.label }}</option>
+                    }
+                  </select>
+                </div>
+                <div class="form-field"><label>Lote del producto</label><input [(ngModel)]="editSolicitudLote" /></div>
+                <div class="form-field"><label>Tipo de muestra</label><input [(ngModel)]="editSolicitudTipoMuestra" /></div>
+                <div class="form-field"><label>Tipo de empaque</label>
+                  <select [(ngModel)]="editSolicitudTipoEmpaque">
+                    <option value="">Seleccionar empaque</option>
+                    @for (e of tiposEmpaque; track e) {
+                      <option [value]="e">{{ e }}</option>
+                    }
+                  </select>
+                </div>
+                <div class="form-field"><label>Análisis requerido</label>
+                  <select [(ngModel)]="editSolicitudAnalisisRequerido">
+                    <option value="">Seleccionar análisis</option>
+                    @for (a of tiposAnalisis; track a) {
+                      <option [value]="a">{{ a }}</option>
+                    }
+                  </select>
+                </div>
+                <div class="form-field"><label>Requiere análisis adicional</label>
+                  <select [(ngModel)]="editSolicitudReqAnalisis">
+                    <option [ngValue]="null">—</option>
+                    <option [ngValue]="true">Sí</option>
+                    <option [ngValue]="false">No</option>
+                  </select>
+                </div>
+                <div class="form-field"><label>Cantidad de muestras</label><input type="number" min="0" [(ngModel)]="editSolicitudCantMuestras" /></div>
+                <div class="form-field"><label>Solicitud recibida a través de</label><input [(ngModel)]="editSolicitudSolicitudRecibida" /></div>
+                <div class="form-field"><label>Fecha entrega</label><input type="date" [(ngModel)]="editSolicitudFechaEntrega" /></div>
+                <div class="form-field"><label>Recibe (personal)</label><input [(ngModel)]="editSolicitudRecibePersonal" /></div>
+                <div class="form-field"><label>Cargo (personal)</label><input [(ngModel)]="editSolicitudCargoPersonal" /></div>
+                <div class="form-field span-full"><label>Observaciones</label><textarea rows="3" [(ngModel)]="editSolicitudObservaciones" (input)="autoResizeTextarea($event)"></textarea></div>
+              </div>
+            }
+
+            @if (editSolicitudActiveTab === 'oferta') {
+              <div class="form-grid">
+                <div class="form-field"><label>¿Generó cotización?</label>
+                  <select [(ngModel)]="editOfertaGeneroCotizacion">
+                    <option [ngValue]="null">—</option>
+                    <option [ngValue]="true">Sí</option>
+                    <option [ngValue]="false">No</option>
+                  </select>
+                </div>
+                <div class="form-field"><label>Valor cotización</label><input type="number" [(ngModel)]="editOfertaValorCotizacion" step="0.01" /></div>
+                <div class="form-field"><label>Fecha envío oferta</label><input type="date" [(ngModel)]="editOfertaFechaEnvio" /></div>
+                <div class="form-field"><label>Seguimiento oferta</label>
+                  <select [(ngModel)]="editOfertaRealizoSeguimiento">
+                    <option [ngValue]="null">—</option>
+                    <option [ngValue]="true">Sí</option>
+                    <option [ngValue]="false">No</option>
+                  </select>
+                </div>
+                <div class="form-field span-full"><label>Observación oferta</label><textarea [(ngModel)]="editOfertaObservacion" (input)="autoResizeTextarea($event)"></textarea></div>
+              </div>
+            }
+
+            @if (editSolicitudActiveTab === 'revision') {
+              <div class="form-grid">
+                <div class="form-field"><label>Fecha límite entrega</label><input type="date" [(ngModel)]="editRevisionFechaLimite" /></div>
+                <!-- Código informe resultados removed per request -->
+                <div class="form-field"><label>Fecha envío resultados</label><input type="date" [(ngModel)]="editRevisionFechaEnvio" /></div>
+                <div class="form-field"><label>Servicio viable</label>
+                  <select [(ngModel)]="editRevisionServicioViable">
+                    <option [ngValue]="null">—</option>
+                    <option [ngValue]="true">Sí</option>
+                    <option [ngValue]="false">No</option>
+                  </select>
+                </div>
+              </div>
+            }
+
+            @if (editSolicitudActiveTab === 'encuesta') {
+              <div class="form-grid">
+                <div class="form-field"><label>Fecha encuesta</label><input type="date" [(ngModel)]="editEncuestaFecha" /></div>
+                <!-- <div class="form-field"><label>Recomendaría servicio</label>
+                  <select [(ngModel)]="editEncuestaRecomendaria">
+                    <option [ngValue]="null">—</option>
+                    <option [ngValue]="true">Sí</option>
+                    <option [ngValue]="false">No</option>
+                  </select>
+                </div> -->
+                <div class="form-field"><label>Cliente respondió</label>
+                  <select [(ngModel)]="editEncuestaClienteRespondio">
+                    <option [ngValue]="null">—</option>
+                    <option [ngValue]="true">Sí</option>
+                    <option [ngValue]="false">No</option>
+                  </select>
+                </div>
+                
+                <!-- NUEVO CAMPO EN MODAL: Fecha realización -->
+                @if (editEncuestaClienteRespondio === true) {
+                <div class="form-field"><label>Fecha realización encuesta</label>
+                  <input type="date" [(ngModel)]="editEncuestaFechaRealizacion" />
+                </div>
+                }
+                
+                <div class="form-field"><label>Solicitó nueva encuesta</label>      <select [(ngModel)]="editEncuestaSolicitoNueva">
+                    <option [ngValue]="null">—</option>
+                    <option [ngValue]="true">Sí</option>
+                    <option [ngValue]="false">No</option>
+                  </select>
+                </div>
+                <div class="form-field span-full"><label>Comentarios</label><textarea [(ngModel)]="editEncuestaComentarios" (input)="autoResizeTextarea($event)"></textarea></div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- SECCIÓN: Lista de clientes -->
+  <h2>Catalogo de Clientes</h2>
+  <section>
+    <div class="search-container">
+      <label for="clientesQ">
+        Buscar cliente (nombre, correo, identificación, ciudad, departamento, celular):
+      </label>
+      <input id="clientesQ" [(ngModel)]="clientesQ" (input)="filtrarClientes()" placeholder="Escribe para buscar..." />
+
+      <!-- Mostrar contador de resultados -->
+      @if (clientesFiltrados().length > 0 || clientesQ.trim()) {
+        <small class="result-counter">
+          👥 Mostrando {{ clientesFiltrados().length }} de {{ clientes().length }} clientes
+        </small>
+      }
+
+      <!-- Mensaje cuando no hay resultados -->
+      @if (clientesQ.trim() && clientesFiltrados().length === 0) {
+        <small class="no-results">
+          ⚠️ No se encontraron clientes con el término "{{ clientesQ }}"
+        </small>
+      }
+    </div>
+
+    <div class="equipos-grid">
+      @if (cargando()) {
+        <div class="sin-equipos">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Cargando clientes...</p>
+        </div>
+      }
+
+      @if (!cargando()) {
+        <div class="fade-in">
+        @for (u of clientesFiltrados(); track u.id_cliente) {
+          <article class="equipo-card" 
+                   (click)="toggleClienteDetails(u.id_cliente)" 
+                   [attr.aria-expanded]="detallesVisibles[u.id_cliente] ? 'true' : 'false'" 
+                   tabindex="0">
+          <div class="card-top">
+            <div class="tags">
+              <span class="tag"><strong>ID:</strong> {{ u.numero || u.numero_cliente || u.id_cliente }}</span>
+              <span class="tag"><strong>Identificación:</strong> {{ u.numero_identificacion || '—' }}</span>
+              <span class="tag"><strong>Ciudad:</strong> {{ resolveCiudad(u) }}</span>
+              <span class="tag"><strong>Celular:</strong> {{ u.celular || '—' }}</span>
+            </div>
+            <div class="pdf-actions">
+              @if (canDelete()) {
+                <button type="button" class="pdf-btn edit"
+                        title="Editar cliente"
+                        aria-label="Editar cliente"
+                        (click)="$event.stopPropagation(); editCliente(u)">
+                  <svg viewBox="0 0 24 24" class="icon" aria-hidden="true">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25Z" fill="currentColor" />
+                    <path d="M20.71 7.04a1 1 0 0 0 0-1.41L18.37 3.29a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83Z" fill="currentColor" />
+                  </svg>
+                </button>
+                <button type="button" class="pdf-btn delete" 
+                        title="Eliminar cliente" 
+                        aria-label="Eliminar cliente" 
+                        (click)="$event.stopPropagation(); deleteCliente(u.id_cliente)">
+                  <svg viewBox="0 0 24 24" class="icon" aria-hidden="true">
+                    <path d="M6 6l12 12M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  </svg>
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="card-name">
+            <div class="name-line">{{ u.nombre_solicitante || u.razon_social || ('Cliente ' + (u.numero || u.numero_cliente || u.id_cliente)) }}</div>
+            <div class="meta-line">
+              <span class="chip">Tipo: {{ u.tipo_usuario || '—' }}</span>
+              <span class="chip">Correo: {{ u.correo_electronico || '—' }}</span>
+            </div>
+            <span class="toggle-icon" [class.open]="detallesVisibles[u.id_cliente]" aria-hidden="true">▾</span>
+          </div>
+
+          @if (detallesVisibles[u.id_cliente]) {
+            <div class="equipo-detalles" (click)="$event.stopPropagation()">
+              <div class="detalle-grid-compacto">
+                <div class="detalle-item">
+                  <div class="detalle-label">Nombre</div>
+                  <span>{{ u.nombre_solicitante || '—' }}</span>
+                </div>
+                <div class="detalle-item">
+                  <div class="detalle-label">Razón social</div>
+                  <span>{{ u.razon_social || '—' }}</span>
+                </div>
+                <div class="detalle-item">
+                  <div class="detalle-label">NIT</div>
+                  <span>{{ u.nit || '—' }}</span>
+                </div>
+                <div class="detalle-item">
+                  <div class="detalle-label">Identificación</div>
+                  <span>{{ u.numero_identificacion || '—' }}</span>
+                </div>
+                <div class="detalle-item">
+                  <div class="detalle-label">Departamento</div>
+                  <span>{{ resolveDepartamento(u) }}</span>
+                </div>
+                <div class="detalle-item">
+                  <div class="detalle-label">Ciudad</div>
+                  <span>{{ resolveCiudad(u) }}</span>
+                </div>
+                <div class="detalle-item">
+                  <div class="detalle-label">Dirección</div>
+                  <span>{{ u.direccion || '—' }}</span>
+                </div>
+                <div class="detalle-item">
+                  <div class="detalle-label">Correo</div>
+                  <span>{{ u.correo_electronico || '—' }}</span>
+                </div>
+                <div class="detalle-item">
+                  <div class="detalle-label">Celular</div>
+                  <span>{{ u.celular || '—' }}</span>
+                </div>
+                <div class="detalle-item">
+                  <div class="detalle-label">Teléfono</div>
+                  <span>{{ u.telefono || '—' }}</span>
+                </div>
+                <div class="detalle-item">
+                  <div class="detalle-label">Tipo cliente</div>
+                  <span>{{ u.tipo_usuario || '—' }}</span>
+                </div>
+                <div class="detalle-item">
+                  <div class="detalle-label">Fecha vinculación</div>
+                  <span>{{ u.fecha_vinculacion || '—' }}</span>
+                </div>
+                <div class="detalle-item detalle-item-full">
+                  <div class="detalle-label">Observaciones</div>
+                  <span>{{ u.observaciones || '—' }}</span>
+                </div>
+              </div>
+            </div>
+          }
+        </article>
+        }
+
+        @empty {
+          <p class="sin-equipos">No hay clientes para mostrar</p>
+        }
+        </div>
+      }
+    </div>
+  </section>
+</div>
+
+<!-- Global toast -->
+@if (lastCopiedMessage) {
+  <div class="global-toast">{{ lastCopiedMessage }}</div>
+}

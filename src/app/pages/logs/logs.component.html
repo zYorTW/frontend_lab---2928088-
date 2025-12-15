@@ -1,0 +1,283 @@
+<div class="liba-theme container logs-page">
+    
+<h1>
+    <i class="fas fa-clipboard-check"></i>
+    | Sistema de Auditoría
+  </h1>
+    <!-- Tabs de navegación -->
+    <div class="tabs-container">
+        <button 
+            [class.active]="activaTab === 'acciones'" 
+            (click)="cambiarTab('acciones')"
+            class="tab-btn">
+            Logs de Acciones
+        </button>
+        <button 
+            [class.active]="activaTab === 'movimientos'" 
+            (click)="cambiarTab('movimientos')"
+            class="tab-btn">
+            Movimientos de Inventario
+        </button>
+        <button 
+            [class.active]="activaTab === 'estadisticas'" 
+            (click)="cambiarTab('estadisticas')"
+            class="tab-btn">
+            Estadísticas
+        </button>
+    </div>
+
+    <!-- Tab: Logs de Acciones -->
+    @if (activaTab === 'acciones') {
+    <section>
+        <h2>Historial de Acciones del Sistema</h2>
+        
+        <!-- Filtros -->
+        <div class="filters-grid">
+            <div>
+                <label for="filtroModulo">Módulo</label>
+                <select id="filtroModulo" 
+                        [(ngModel)]="filtrosAcciones.modulo" 
+                        (change)="aplicarFiltrosAcciones()">
+                    <option value="">Todos los módulos</option>
+                    @for (modulo of modulos; track modulo) {
+                        <option [value]="modulo">{{ modulo }}</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <label for="filtroAccion">Acción</label>
+                <select id="filtroAccion" 
+                        [(ngModel)]="filtrosAcciones.accion" 
+                        (change)="aplicarFiltrosAcciones()">
+                    <option value="">Todas las acciones</option>
+                    @for (accion of acciones; track accion) {
+                        <option [value]="accion">{{ accion }}</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <label for="filtroFechaDesde">Fecha desde</label>
+                <input id="filtroFechaDesde" type="date" 
+                       [(ngModel)]="filtrosAcciones.fecha_desde" 
+                       (change)="aplicarFiltrosAcciones()" />
+            </div>
+            <div>
+                <label for="filtroFechaHasta">Fecha hasta</label>
+                <input id="filtroFechaHasta" type="date" 
+                       [(ngModel)]="filtrosAcciones.fecha_hasta" 
+                       (change)="aplicarFiltrosAcciones()" />
+            </div>
+<div class="reset-cell">
+    <label>&nbsp;</label> <!-- Label vacío para mantener simetría -->
+    <button type="button" class="btn-reset-filtros" (click)="limpiarFiltrosAcciones()">
+        Limpiar Filtros
+    </button>
+</div>
+        </div>
+
+        <!-- Tabla de logs -->
+        @if (cargandoAcciones) {
+            <div class="loading-state">
+                <p>Cargando logs...</p>
+            </div>
+        } @else {
+            <div class="table-container">
+                <table class="logs-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha/Hora</th>
+                            <th>Usuario</th>
+                            <th>Módulo</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (log of logsAcciones; track log.id_log_accion) {
+                        <tr>
+                            <td>{{ formatearFecha(log.fecha) }}</td>
+                            <td>{{ log.usuario_nombre || log.usuario_email || 'N/A' }}</td>
+                            <td>{{ log.modulo }}</td>
+                            <td>
+                                <span class="status-badge" [ngClass]="getClaseAccion(log.accion)">
+                                    {{ log.accion }}
+                                </span>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginación -->
+            @if (paginacionAcciones.pages > 1) {
+            <div class="pagination">
+                <button (click)="cambiarPaginaAcciones(paginacionAcciones.page - 1)" 
+                        [disabled]="paginacionAcciones.page <= 1">
+                    Anterior
+                </button>
+                <span>Página {{ paginacionAcciones.page }} de {{ paginacionAcciones.pages }}</span>
+                <button (click)="cambiarPaginaAcciones(paginacionAcciones.page + 1)" 
+                        [disabled]="paginacionAcciones.page >= paginacionAcciones.pages">
+                    Siguiente
+                </button>
+            </div>
+            }
+        }
+    </section>
+    }
+
+    <!-- Tab: Movimientos de Inventario -->
+    @if (activaTab === 'movimientos') {
+    <section>
+        <h2>Movimientos de Inventario</h2>
+        
+        <!-- Filtros -->
+        <div class="filters-grid">
+            <div>
+                <label for="filtroProductoTipo">Tipo de Producto</label>
+                <select id="filtroProductoTipo" 
+                        [(ngModel)]="filtrosMovimientos.producto_tipo" 
+                        (change)="aplicarFiltrosMovimientos()">
+                    <option value="">Todos los tipos</option>
+                    @for (tipo of tiposProducto; track tipo) {
+                        <option [value]="tipo">{{ tipo }}</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <label for="filtroTipoMovimiento">Tipo de Movimiento</label>
+                <select id="filtroTipoMovimiento" 
+                        [(ngModel)]="filtrosMovimientos.tipo_movimiento" 
+                        (change)="aplicarFiltrosMovimientos()">
+                    <option value="">Todos los movimientos</option>
+                    @for (movimiento of tiposMovimiento; track movimiento) {
+                        <option [value]="movimiento">{{ movimiento }}</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <label for="filtroMovFechaDesde">Fecha desde</label>
+                <input id="filtroMovFechaDesde" type="date" 
+                       [(ngModel)]="filtrosMovimientos.fecha_desde" 
+                       (change)="aplicarFiltrosMovimientos()" />
+            </div>
+            <div>
+                <label for="filtroMovFechaHasta">Fecha hasta</label>
+                <input id="filtroMovFechaHasta" type="date" 
+                       [(ngModel)]="filtrosMovimientos.fecha_hasta" 
+                       (change)="aplicarFiltrosMovimientos()" />
+            </div>
+<div class="reset-cell">
+    <label>&nbsp;</label> <!-- Label vacío para mantener simetría -->
+    <button type="button" class="btn-reset-filtros" (click)="limpiarFiltrosAcciones()">
+        Limpiar Filtros
+    </button>
+</div>
+        </div>
+
+        <!-- Tabla de movimientos -->
+        @if (cargandoMovimientos) {
+            <div class="loading-state">
+                <p>Cargando movimientos...</p>
+            </div>
+        } @else {
+            <div class="table-container">
+                <table class="logs-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha/Hora</th>
+                            <th>Usuario</th>
+                            <th>Tipo Producto</th>
+                            <th>Referencia</th>
+                            <th>Tipo Movimiento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (movimiento of movimientosInventario; track movimiento.id_movimiento) {
+                        <tr>
+                            <td>{{ formatearFecha(movimiento.fecha) }}</td>
+                            <td>{{ movimiento.usuario_nombre || 'N/A' }}</td>
+                            <td>{{ movimiento.producto_tipo }}</td>
+                            <td>{{ movimiento.producto_referencia }}</td>
+                            <td>
+                                <span class="status-badge" [ngClass]="getClaseMovimiento(movimiento.tipo_movimiento)">
+                                    {{ movimiento.tipo_movimiento }}
+                                </span>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginación -->
+            @if (paginacionMovimientos.pages > 1) {
+            <div class="pagination">
+                <button (click)="cambiarPaginaMovimientos(paginacionMovimientos.page - 1)" 
+                        [disabled]="paginacionMovimientos.page <= 1">
+                    Anterior
+                </button>
+                <span>Página {{ paginacionMovimientos.page }} de {{ paginacionMovimientos.pages }}</span>
+                <button (click)="cambiarPaginaMovimientos(paginacionMovimientos.page + 1)" 
+                        [disabled]="paginacionMovimientos.page >= paginacionMovimientos.pages">
+                    Siguiente
+                </button>
+            </div>
+            }
+        }
+    </section>
+    }
+
+    <!-- Tab: Estadísticas -->
+    @if (activaTab === 'estadisticas') {
+    <section>
+        <h2>Estadísticas de Actividad</h2>
+        
+        @if (cargandoEstadisticas) {
+            <div class="loading-state">
+                <p>Cargando estadísticas...</p>
+            </div>
+        } @else if (estadisticas) {
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Actividad por Módulo (Últimos 30 días)</h3>
+                    <div class="stat-list">
+                        @for (stat of estadisticas.estadisticas; track stat.modulo) {
+                        <div class="stat-item">
+                            <span class="stat-label">{{ stat.modulo }}</span>
+                            <span class="stat-value">{{ stat.cantidad }} acciones</span>
+                        </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <h3>Acciones Más Frecuentes (Últimos 7 días)</h3>
+                    <div class="stat-list">
+                        @for (accion of estadisticas.accionesFrecuentes; track accion.accion) {
+                        <div class="stat-item">
+                            <span class="stat-label">{{ accion.accion }}</span>
+                            <span class="stat-value">{{ accion.cantidad }} veces</span>
+                        </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <h3>Resumen General</h3>
+                    <div class="stat-list">
+                        <div class="stat-item">
+                            <span class="stat-label">Total de Acciones</span>
+                            <span class="stat-value">{{ estadisticas.estadisticas[0]?.total_acciones || 0 }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Usuarios Activos</span>
+                            <span class="stat-value">{{ estadisticas.estadisticas[0]?.usuarios_activos || 0 }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </section>
+    }
+</div>

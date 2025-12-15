@@ -1,0 +1,197 @@
+<div class="container usuarios-page">
+
+    <!-- Crear Nuevo Usuario -->
+    <h2>Crear Nuevo Usuario</h2>
+    <section>
+        <form class="form-grid" (submit)="crearUsuario($event)">
+            <div>
+                <label for="email">Email *</label>
+                <input id="email" type="email" [(ngModel)]="email" name="email" required
+                    placeholder="usuario@ejemplo.com" />
+            </div>
+
+            <div>
+                <label for="contrasena">Contraseña *</label>
+                <input id="contrasena" type="password" [(ngModel)]="contrasena" name="contrasena" required minlength="6"
+                    placeholder="Mínimo 6 caracteres" />
+            </div>
+
+            <div>
+                <label for="rol_id">Rol *</label>
+                <select id="rol_id" [(ngModel)]="rol_id" name="rol_id" required>
+                    <option value="">Seleccionar rol</option>
+                    @for (rol of roles; track rol.id_rol) {
+                        <option [value]="rol.id_rol">{{ rol.nombre }}</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-user-plus"></i>
+                    Crear Usuario
+                </button>
+            </div>
+        </form>
+
+        <!-- Mensajes inline eliminados: usar snackbars globales -->
+    </section>
+
+    <!-- Lista de Usuarios -->
+    <h2>Usuarios Registrados</h2>
+    <section>
+        <div class="filters-row">
+            <div>
+                <label for="emailQ">Buscar por email</label>
+                <input id="emailQ" [(ngModel)]="emailQ" (input)="filtrarUsuarios()" placeholder="usuario@ejemplo.com" />
+            </div>
+
+            <div>
+                <label for="rolQ">Filtrar por rol</label>
+                <select id="rolQ" [(ngModel)]="rolQ" (change)="filtrarUsuarios()">
+                    <option value="">Todos los roles</option>
+                    @for (rol of roles; track rol.id_rol) {
+                        <option [value]="rol.id_rol">{{ rol.nombre }}</option>
+                    }
+                </select>
+            </div>
+
+            <div>
+                <label for="estadoQ">Filtrar por estado</label>
+                <select id="estadoQ" [(ngModel)]="estadoQ" (change)="filtrarUsuarios()">
+                    <option value="">Todos</option>
+                    <option value="ACTIVO">Activos</option>
+                    <option value="INACTIVO">Inactivos</option>
+                </select>
+            </div>
+
+            <div class="reset-cell">
+                <button type="button" class="btn-reset-filtros" (click)="resetFiltros()">
+                    <i class="fas fa-redo"></i> Reiniciar
+                </button>
+            </div>
+        </div>
+
+        <!-- Estadísticas -->
+        @if (usuariosCount) {
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon total"><i class="fas fa-users"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value">{{ usuariosCount }}</div>
+                        <div class="stat-label">Total Usuarios</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon activo"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value">{{ contarPorEstado('ACTIVO') }}</div>
+                        <div class="stat-label">Activos</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon inactivo"><i class="fas fa-ban"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value">{{ contarPorEstado('INACTIVO') }}</div>
+                        <div class="stat-label">Inactivos</div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Tabla de Usuarios -->
+        <div class="table-container" [class.loading]="cargando">
+            
+            <!-- Skeleton placeholder while usuarios are loading -->
+            @if (cargando) {
+                <div class="table-skeleton" aria-hidden="true">
+                    @for (_ of [1,2,3,4,5]; track $index) {
+                        <div class="skeleton-row">
+                            <div class="skeleton-cell short"></div>
+                            <div class="skeleton-cell"></div>
+                            <div class="skeleton-cell"></div>
+                            <div class="skeleton-cell short"></div>
+                            <div class="skeleton-cell medium"></div>
+                            <div class="skeleton-cell actions"></div>
+                        </div>
+                    }
+                </div>
+                
+                <p class="loading-message">
+                    <i class="fas fa-spinner fa-spin"></i> Cargando usuarios...
+                </p>
+            }
+
+            <!-- Tabla de usuarios cuando no está cargando y hay datos -->
+            @if (!cargando && usuariosFiltradosList.length) {
+                <table class="usuarios-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
+                            <th>Fecha Creación</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (usuario of usuariosFiltradosList; track usuario.id_usuario) {
+                            <tr [class.usuario-inactivo]="usuario.estado === 'INACTIVO'">
+                                <td>{{ usuario.id_usuario }}</td>
+                                <td>
+                                    <i class="fas fa-user-tie" style="color: #3182ce; margin-right: 0.5rem;"></i> 
+                                    {{ usuario.email }}
+                                </td>
+                                <td>
+                                    @if (!canChangeRole()) {
+                                        <span class="role-badge">{{ usuario.rol_nombre || 'Sin rol' }}</span>
+                                    } @else {
+                                        <select [ngModel]="usuario.rol_id"
+                                            (ngModelChange)="cambiarRol(usuario, $event)" class="role-select">
+                                            @for (rol of roles; track rol.id_rol) {
+                                                <option [value]="rol.id_rol">{{ rol.nombre }}</option>
+                                            }
+                                        </select>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="estado-badge" [class]="'estado-' + usuario.estado">
+                                        <i [class]="usuario.estado === 'ACTIVO' ? 'fas fa-check-circle' : 'fas fa-ban'"></i> 
+                                        {{ usuario.estado }}
+                                    </span>
+                                </td>
+                                <td>{{ formatearFecha(usuario.created_at) }}</td>
+                                <td class="actions-cell">
+                                    @if (usuario.estado === 'ACTIVO') {
+                                        <button type="button" class="btn-desactivar"
+                                            (click)="cambiarEstado(usuario, 'INACTIVO')" title="Desactivar usuario">
+                                            <i class="fas fa-user-lock"></i>
+                                        </button>
+                                    } @else if (usuario.estado === 'INACTIVO') {
+                                        <button type="button" class="btn-activar"
+                                            (click)="cambiarEstado(usuario, 'ACTIVO')" title="Activar usuario">
+                                            <i class="fas fa-user-check"></i>
+                                        </button>
+                                    }
+                                    <button type="button" class="btn-delete" 
+                                        (click)="eliminarUsuario(usuario.id_usuario)" title="Eliminar usuario">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+            <!-- Mensaje cuando no hay usuarios -->
+            @if (!cargando && !usuariosFiltradosList.length) {
+                <p class="empty-message">
+                    <i class="fas fa-user-slash"></i> No se encontraron usuarios
+                </p>
+            }
+        </div>
+    </section>
+
+</div>

@@ -1,0 +1,890 @@
+/* Fonts loaded globally via index.html */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
+@import '../../shared/dashboard-cards.css';
+/* ===== Variables CSS ===== */
+:root {
+    --primary-blue: #001f5b;
+    --primary-turquoise: #00b8b5;
+    --primary-white: #ffffff;
+    --alerta-yellow: #fff3b0;
+    --alert-orange: #ffd6a5;
+    --alert-red: #ffadad;
+    --text-gray: #4a5568;
+    --light-gray: #f7fafc;
+    --border-gray: #e2e8f0;
+}
+
+/* ===== Reset y Configuración Base ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--light-gray);
+    color: var(--text-gray);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+/* Eliminar espacios superiores */
+.container,
+.insumos-page {
+    margin-top: 0;
+    padding-top: 2rem;
+}
+
+/* ===== Header ===== */
+.header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-turquoise) 100%);
+    color: var(--primary-white);
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    margin-top: 0;
+}
+
+
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+    background: var(--primary-white);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-blue);
+    font-weight: bold;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.header-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.header-subtitle {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 0.95rem;
+}
+
+/* Navigation is centralized in src/app/app.css (scoped to #app-header). */
+/* Component-level nav rules removed to avoid duplication and ensure a single source of truth. */
+
+/* ===== Main Container ===== */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.insumos-page h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-blue);
+    margin: 2rem 0 1rem 0;
+}
+
+/* ===== Sections ===== */
+section {
+    background: var(--primary-white);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* ===== Forms ===== */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    align-items: end;
+}
+
+.form-grid > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-grid label {
+    font-weight: 500;
+    color: var(--primary-blue);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Base input/textarea/select styling now unified globally (styles.css).
+   Keep only textarea adjustments here to avoid duplication. */
+.form-grid textarea { resize: vertical; min-height: 80px; }
+
+.form-grid textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* ===== Buttons ===== */
+button[type="submit"],
+button[type="button"],
+.btn,
+.btn-primary,
+.btn-secondary {
+    padding: 0.8rem 1.2rem;
+    border: none;
+    border-radius: 6px;
+    font-family: inherit;
+    font-weight: 500;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--primary-turquoise);
+    color: var(--primary-white);
+}
+
+button[type="submit"]:hover,
+button[type="button"]:hover,
+.btn:hover,
+.btn-primary:hover {
+    background: #008e8c;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 184, 181, 0.3);
+}
+
+.btn-secondary {
+    background: var(--border-gray);
+    color: var(--text-gray);
+}
+
+.btn-secondary:hover {
+    background: #cbd5e0;
+}
+
+/* Compact button variant to fit text better */
+.btn-compact {
+    padding: 0.7rem 1rem !important; /* más alto para mejor tactilidad */
+    min-height: 40px; /* asegura altura cómoda */
+    font-size: 0.92rem;
+    width: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+
+/* Ensure action cells don't stretch buttons */
+.form-grid .actions {
+    align-self: start;
+}
+
+.btn-reset-filtros {
+    background: var(--alert-orange) !important;
+    color: #744210 !important;
+}
+
+.btn-reset-filtros:hover {
+    background: #ffb366 !important;
+}
+
+/* ===== Filters ===== */
+.filters-grid,
+.filters-row,
+.catalogo-filters,
+.insumos-filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    align-items: end;
+}
+
+.filters-grid label,
+.filters-row label {
+    font-weight: 500;
+    color: var(--primary-blue);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    display: block;
+}
+
+.filters-grid input,
+.filters-row input {
+    padding: 0.7rem;
+    border: 2px solid var(--border-gray);
+    border-radius: 6px;
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+    width: 100%;
+}
+
+.filters-grid input:focus,
+.filters-row input:focus {
+    outline: none;
+    border-color: var(--primary-turquoise);
+}
+
+.reset-cell {
+    display: flex;
+    align-items: flex-end;
+}
+
+/* ===== Cards Container (Catálogo) ===== */
+.cards-container {
+    margin-top: 1.5rem;
+}
+
+.catalogo-stats {
+    margin-bottom: 1rem;
+    padding: 0.8rem;
+    background: var(--light-gray);
+    border-radius: 6px;
+    color: var(--text-gray);
+    font-weight: 500;
+}
+
+.catalogo-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    align-items: start; /* permite que cada tarjeta conserve su propia altura y no se estiren todas al tamaño de la más alta */
+}
+
+.catalog-card {
+    background: var(--primary-white);
+    border: 2px solid var(--border-gray);
+    border-radius: 10px;
+    padding: 1.5rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    cursor: pointer;
+    display: flex;           /* que el contenido defina la altura */
+    flex-direction: column;  /* detalles se apilan verticalmente */
+}
+
+.catalog-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-turquoise);
+}
+
+/* Catalog product image */
+.catalog-card-media {
+    width: 100%;
+    height: 180px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f3f4f6;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.catalog-card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tag {
+    background: var(--light-gray);
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: var(--text-gray);
+}
+
+.card-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-blue);
+    margin-top: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Meta line under catalog name */
+.card-meta {
+    margin-top: 0.25rem;
+    font-size: 0.9rem;
+    color: #556;
+}
+.card-meta .meta {
+    background: var(--light-gray);
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+/* ===== ESTILOS DE ERROR IGUALES A SOLICITUDES Y REACTIVOS ===== */
+
+/* Clase base para todos los campos del formulario */
+.form-field {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+/* Mensaje de error */
+.form-field .error-message {
+  display: block;
+  font-size: 0.85rem;
+  margin-top: 4px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  animation: fadeInError 0.2s ease;
+  line-height: 1.3;
+  min-height: 1.5em; /* Altura mínima para no colapsar */
+}
+
+
+
+
+
+/* Para full-row */
+.full-row.form-field {
+  grid-column: 1 / -1;
+}
+
+.full-row.form-field .error-message {
+  margin-top: 4px;
+}
+
+/* Animación suave para errores */
+@keyframes fadeInError {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Label con asterisco para campos obligatorios */
+.form-field label:has(+ input[required]),
+.form-field label:has(+ select[required]) {
+  position: relative;
+}
+
+
+
+/* Asegurar que los contenedores tengan altura mínima */
+.form-grid > .form-field {
+  min-height: calc(100% - 1rem);
+  display: flex;
+  flex-direction: column;
+}
+
+.form-grid > .form-field > * {
+  flex-shrink: 0;
+}
+
+.form-grid > .form-field .error-message {
+  flex-shrink: 0;
+  margin-top: auto;
+}
+
+/* ===== Insumo actions row (input + quitar) ===== */
+.insumo-actions-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: .75rem;
+    align-items: center;
+    margin: .6rem 0 .4rem;
+}
+.insumo-actions-row input[type=number] {
+    padding: 0.6rem 0.75rem;
+    border: 2px solid var(--border-gray);
+    border-radius: 8px;
+    font: inherit;
+    width: 100%;
+    transition: border-color .25s ease;
+}
+.insumo-actions-row input[type=number]:focus { outline: none; border-color: var(--primary-turquoise); }
+.insumo-actions-row .btn-remove {
+    background: #dc2626;
+    color: #fff;
+    border: none;
+    padding: 0.65rem 1.1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s ease, transform .2s ease;
+}
+.insumo-actions-row .btn-remove:hover:not(:disabled) { background:#b91c1c; }
+.insumo-actions-row .btn-remove:disabled { opacity:.55; cursor:not-allowed; }
+.insumo-actions-row .btn-remove:active:not(:disabled){ transform:translateY(1px); }
+
+/* ===== Details toggle and panel ===== */
+/* Card open state visual cue */
+.catalog-card[role="button"] { outline: none; }
+.catalog-card[role="button"]:focus { box-shadow: 0 0 0 3px rgba(0,184,181,0.35); }
+.catalog-card.open { border-color: var(--primary-turquoise); box-shadow: 0 6px 20px rgba(0, 184, 181, 0.25); }
+
+/* Panel de detalles con transición suave sin afectar otras tarjetas */
+.insumo-details-panel { overflow: hidden; }
+.catalog-card.open .insumo-details-panel { padding-top: 0.25rem; }
+
+/* (Opcional) Si quisieras animación: descomenta lo siguiente y renderiza siempre el div (aunque vacío cuando esté cerrado)
+.insumo-details-panel { max-height: 0; opacity: 0; transition: max-height .28s ease, opacity .24s ease; }
+.catalog-card.open .insumo-details-panel { max-height: 800px; opacity: 1; }
+*/
+
+.insumo-details-panel {
+    margin-top: .6rem;
+    padding: .75rem;
+    background: #fafafa;
+    border: 1px solid var(--border-gray);
+    border-radius: 8px;
+}
+.insumo-details-panel .detail-row { font-size:.95rem; color:#334155; padding:.2rem 0; }
+
+.panel-actions { display:block; margin-top:.6rem; }
+.btn-delete {
+    background: #ef4444;
+    color: #fff;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .2s ease, transform .2s ease;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn-delete:hover:not(:disabled) { background:#dc2626; }
+.btn-delete:disabled { opacity:.55; cursor:not-allowed; }
+.btn-delete:active:not(:disabled) { transform: translateY(1px); }
+
+/* ===== Menú contextual (click derecho) ===== */
+.context-menu {
+    position: fixed;
+    z-index: 7000;
+    background: #ffffff;
+    border: 1px solid var(--border-gray);
+    border-radius: 10px;
+    box-shadow: 0 10px 28px rgba(2,6,23,0.18);
+    padding: 8px;
+    width: 160px;
+    animation: ctxIn 160ms ease;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+@keyframes ctxIn { from { opacity:0; transform: scale(.96); } to { opacity:1; transform: scale(1); } }
+.context-menu .ctx-item {
+    background: transparent;
+    border: none;
+    text-align: left;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font: inherit;
+    font-size: 0.86rem;
+    cursor: pointer;
+    font-weight: 600;
+    color: #334155;
+    transition: background 120ms ease, color 120ms ease;
+}
+.context-menu .ctx-item:hover { background: var(--light-gray); }
+.context-menu .ctx-item.delete { color: #b91c1c; }
+.context-menu .ctx-item.delete:hover { background: #fee2e2; color:#7f1d1d; }
+
+/* Right-side tag inside the same row as the name */
+.card-name .meta {
+    background: var(--light-gray);
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+/* ===== PDF Actions ===== */
+.pdf-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Forzar layout horizontal en tarjetas de catálogo (may override reglas globales/otros componentes) */
+.catalog-card .pdf-actions {
+    flex-direction: row !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    gap: 0.5rem !important;
+}
+
+.pdf-group {
+    display: flex;
+    gap: 0.3rem;
+}
+
+/* PDF button styles are centralized in shared/inventory-cards.css */
+
+/* ===== PDF Badges ===== */
+.pdf-badges {
+    display: flex;
+    gap: 0.3rem;
+}
+
+.badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    background: var(--border-gray);
+    color: var(--text-gray);
+}
+
+.badge.loading {
+    background: var(--alert-yellow);
+    color: #744210;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.badge.ok {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.badge.fail {
+    background: var(--alert-red);
+    color: #742a2a;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+/* ===== Table ===== */
+.table-container {
+    overflow-x: auto;
+    margin-top: 1rem;
+}
+
+.insumos-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--primary-white);
+}
+
+.insumos-table caption {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary-blue);
+    text-align: left;
+    padding: 1rem 0;
+}
+
+.insumos-table thead tr {
+    background: var(--light-gray);
+}
+
+.insumos-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--primary-blue);
+    border-bottom: 2px solid var(--border-gray);
+    white-space: nowrap;
+}
+
+.insumos-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-gray);
+}
+
+.insumos-table tbody tr:hover {
+    background: var(--light-gray);
+}
+
+.insumos-table td button {
+    margin-right: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+}
+
+/* ===== Detalles Panel ===== */
+.detalles-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--primary-white);
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    z-index: 2000;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -45%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.detalles-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 2px solid var(--border-gray);
+}
+
+.detalles-header h3 {
+    font-size: 1.3rem;
+    color: var(--primary-blue);
+    font-weight: 600;
+}
+
+.detalles-header button {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: var(--text-gray);
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.detalles-header button:hover {
+    background: var(--alert-red);
+    color: var(--primary-white);
+}
+
+.detalles-content {
+    padding: 1.5rem;
+}
+
+.detalles-content p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.detalles-content strong {
+    color: var(--primary-blue);
+    font-weight: 600;
+}
+
+/* ===== Messages ===== */
+.success-message,
+.error-message,
+p[role="status"],
+p[aria-live="polite"] {
+    padding: 1rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    font-weight: 500;
+}
+
+.success-message,
+p[role="status"]:not(.error-message) {
+    background: #c6f6d5;
+    color: #22543d;
+    border-left: 4px solid #22543d;
+}
+
+.error-message {
+    color: #000000;
+}
+
+/* ===== Status Badges ===== */
+.status-badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.status-good {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.status-warning {
+    background: var(--alert-yellow);
+    color: #744210;
+}
+
+.status-critical {
+    background: var(--alert-red);
+    color: #742a2a;
+}
+
+/* (Inventario de insumos listado eliminado: se retiraron estilos de tarjetas .insumo-*) */
+
+/* old .insumo-meta remains for future metadata (left blank intentionally) */
+
+.insumo-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    margin: 0.5rem 0 0.5rem 0;
+    font-size: 0.92rem;
+}
+
+.insumo-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    font-size: 0.82rem;
+    color: #667;
+    margin-bottom: 0.75rem;
+}
+
+.insumo-actions {
+    display: none; /* ocultamos acciones antiguas */
+}
+
+/* Botón eliminar en esquina superior izquierda */
+/* Minimal small delete button: small area, large red X, no effects */
+/* (Botón eliminar de tarjetas eliminado) */
+
+/* (Estilos de chips eliminados: listado de insumos retirado) */
+
+/* Barra de progreso simple para disponibilidad */
+/* (Barra de progreso eliminada) */
+
+/* Desplegable de detalles en tarjetas */
+/* (Detalles desplegables eliminados) */
+
+/* ===== Utility Classes ===== */
+.hidden {
+    display: none;
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .nav-content {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .nav-item {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .container {
+        padding: 1rem;
+    }
+
+    .form-grid,
+    .filters-grid,
+    .filters-row {
+        grid-template-columns: 1fr;
+    }
+
+    .catalogo-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .table-container {
+        font-size: 0.85rem;
+    }
+
+    .insumos-table th,
+    .insumos-table td {
+        padding: 0.6rem;
+    }
+
+    .detalles-panel {
+        width: 95%;
+        max-height: 90vh;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-title {
+        font-size: 1.2rem;
+    }
+
+    .header-subtitle {
+        font-size: 0.8rem;
+    }
+
+    section {
+        padding: 1rem;
+    }
+
+    .insumos-page h2 {
+        font-size: 1.2rem;
+    }
+}
+
+/* ===== SOLO EL CAMPO EN ROJO CUANDO HAY ERROR ===== */
+
+/* Borde rojo para campos con error */
+.form-field input.error,
+.form-field select.error,
+.form-field textarea.error {
+  border-color: #dc2626 !important;
+  border-width: 2px;
+}

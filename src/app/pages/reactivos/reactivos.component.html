@@ -1,0 +1,942 @@
+<div class="liba-theme container reactivos-page">
+  <h1>
+    <i class="fas fa-flask"></i>
+    | Reactivos
+  </h1>
+  <div class="dashboard-cards">
+    <div class="action-card" (click)="toggleFormulario('catalogo')" [class.active]="formularioActivo === 'catalogo'">
+      <i class="fas fa-book-medical"></i>
+      <span>Crear en Catálogo</span>
+    </div>
+    <div class="action-card" (click)="toggleFormulario('catalogo-list')" [class.active]="formularioActivo === 'catalogo-list'">
+      <i class="fas fa-th-list"></i>
+      <span>Ver Catálogo</span>
+    </div>
+    <div class="action-card" (click)="toggleFormulario('crear-reactivo')" [class.active]="formularioActivo === 'crear-reactivo'">
+      <i class="fas fa-plus-circle"></i>
+      <span>Crear Reactivo</span>
+    </div>
+    <div class="action-card" (click)="toggleFormulario('inventario')" [class.active]="formularioActivo === 'inventario'">
+      <i class="fas fa-boxes"></i>
+      <span>Ver Inventario</span>
+    </div>
+  </div>
+
+ @if (formularioActivo === 'catalogo') {
+  <h2>Crear nuevo reactivo en Catálogo</h2>
+  <section>
+    <form class="form-grid" #catalogoForm="ngForm" (ngSubmit)="crearCatalogo($event, catalogoForm)">
+      
+      <!-- Código (select) -->
+      <div *ngIf="!esAuxiliar" class="form-field">
+        <label for="catCodigo">Código: *</label>
+        <select id="catCodigo" [(ngModel)]="catCodigo" name="catCodigo" required
+          (change)="validarCampoCatalogoEnTiempoReal('codigo', $event)"
+          (blur)="validarCampoCatalogoEnTiempoReal('codigo', $event)"
+          [class.error]="catalogoErrors['codigo']">
+          <option value="">Seleccionar código</option>
+          <option [value]="nextCodigoS">{{ nextCodigoS }}</option>
+          <option [value]="nextCodigoR">{{ nextCodigoR }}</option>
+          <option [value]="nextCodigoM">{{ nextCodigoM }}</option>
+        </select>
+        @if (catalogoErrors['codigo']) {
+          <small class="error-message">⚠️ {{ catalogoErrors['codigo'] }}</small>
+        }
+      </div>
+
+      <!-- Nombre -->
+      <div class="form-field">
+        <label for="catNombre">Nombre: *</label>
+        <input id="catNombre" [(ngModel)]="catNombre" name="catNombre" required appLettersOnly
+          (input)="validarCampoCatalogoEnTiempoReal('nombre', $event)"
+          (blur)="validarCampoCatalogoEnTiempoReal('nombre', $event)"
+          [class.error]="catalogoErrors['nombre']" 
+          placeholder="Ej: Ácido acético" />
+        @if (catalogoErrors['nombre']) {
+          <small class="error-message">⚠️ {{ catalogoErrors['nombre'] }}</small>
+        }
+      </div>
+
+      <!-- Tipo reactivo -->
+      <div class="form-field">
+        <label for="catTipo">Tipo reactivo: *</label>
+        <select id="catTipo" [(ngModel)]="catTipo" name="catTipo" required
+          (change)="validarCampoCatalogoEnTiempoReal('tipo', $event)"
+          (blur)="validarCampoCatalogoEnTiempoReal('tipo', $event)"
+          [class.error]="catalogoErrors['tipo']">
+          <option [ngValue]="''">Seleccione tipo</option>
+          @for (t of tipos; track t) {
+            <option [value]="t.nombre">{{ t.nombre }}</option>
+          }
+        </select>
+        @if (catalogoErrors['tipo']) {
+          <small class="error-message">⚠️ {{ catalogoErrors['tipo'] }}</small>
+        }
+      </div>
+
+      <!-- Clasificación SGA -->
+      <div class="form-field">
+        <label for="catClasificacion">Clasificación SGA: *</label>
+        <select id="catClasificacion" [(ngModel)]="catClasificacion" name="catClasificacion" required
+          (change)="validarCampoCatalogoEnTiempoReal('clasificacion', $event)"
+          (blur)="validarCampoCatalogoEnTiempoReal('clasificacion', $event)"
+          [class.error]="catalogoErrors['clasificacion']"
+          [ngStyle]="getSelectStyleForName(catClasificacion)">
+          <option [ngValue]="''">Seleccione clasificación</option>
+          @for (c of clasif; track c) {
+            <option [value]="c.nombre" 
+              [style.backgroundColor]="getClasifColorByName(c.nombre)"
+              [style.color]="getClasifTextColor(getClasifColorByName(c.nombre))">
+              {{ c.nombre }}
+            </option>
+          }
+        </select>
+        @if (catalogoErrors['clasificacion']) {
+          <small class="error-message">⚠️ {{ catalogoErrors['clasificacion'] }}</small>
+        }
+      </div>
+
+      <!-- Descripción (NO obligatorio) -->
+      <div class="full-row form-field">
+        <label for="catDescripcion">Descripción:</label>
+        <textarea id="catDescripcion" [(ngModel)]="catDescripcion" name="catDescripcion" rows="2"
+          (input)="validarCampoCatalogoEnTiempoReal('descripcion', $event)"
+          (blur)="validarCampoCatalogoEnTiempoReal('descripcion', $event)"
+          [class.error]="catalogoErrors['descripcion']"
+          placeholder="Descripción adicional"></textarea>
+        @if (catalogoErrors['descripcion']) {
+          <small class="error-message">⚠️ {{ catalogoErrors['descripcion'] }}</small>
+        }
+      </div>
+
+      <div class="actions" *ngIf="!esAuxiliar">
+        <button class="btn-compact" type="submit">Agregar al catálogo</button>
+      </div>
+    </form>
+
+    @if (toastMsg) {
+      <div class="toast" role="status" aria-live="polite">{{ toastMsg }}</div>
+    }
+  </section>
+}
+
+  @if (formularioActivo === 'catalogo-list') {
+    <h2>Catálogo de Reactivos</h2>
+    <section>
+    <div>
+      <div class="filters-grid catalogo-filters">
+        <div>
+          <label for="catalogoCodigoQ">Filtrar por código</label>
+          <input id="catalogoCodigoQ" [(ngModel)]="codigoFiltro" (input)="filtrarCatalogoPorCampos()"
+            placeholder="Ej: H2SO4" />
+        </div>
+        <div>
+          <label for="catalogoNombreQ">Filtrar por nombre</label>
+          <input id="catalogoNombreQ" [(ngModel)]="nombreFiltro" (input)="filtrarCatalogoPorCampos()"
+            placeholder="Ej: ácido acético" />
+        </div>
+        <div class="reset-cell">
+          <button type="button" class="btn-load-more" (click)="cargarMasCatalogo()"
+            [disabled]="catalogoResultados.length >= (catalogoTotal || 0)" aria-label="Cargar más reactivos">Cargar más
+            reactivos</button>
+        </div>
+      </div>
+
+      <div class="cards-container">
+        @if (catalogoCargando) {
+        <p>Cargando catálogo...</p>
+        }
+
+        @if (!catalogoCargando && catalogoResultados.length) {
+        <div class="catalogo-stats">
+          <span>🧪 Mostrando {{ catalogoResultados.length }} de {{ catalogoTotal || catalogoBase.length }}
+            reactivos</span>
+        </div>
+        }
+
+        <div class="catalogo-cards">
+          @for (c of catalogoResultados; track trackByCatalogo($index, c)) {
+          <article class="catalog-card">
+            <div class="card-top">
+              <div class="tags">
+                <span class="tag"><strong>Código: </strong> <span
+                    [innerHTML]="highlightField(c.codigo, 'codigo')"></span></span>
+                <span class="tag"><strong>Tipo: </strong> <span
+                    [innerHTML]="highlightField(c.tipo_reactivo, 'otro')"></span></span>
+                <span class="tag"><strong>Clasificación: </strong> <span
+                    [innerHTML]="highlightField(c.clasificacion_sga, 'otro')"></span></span>
+              </div>
+              @if (canDelete()) {
+                <button
+                  type="button"
+                  class="pdf-btn delete"
+                  title="Eliminar del catálogo"
+                  aria-label="Eliminar del catálogo"
+                  (click)="onDeleteCatalogo(c, $event)"
+                  [disabled]="isDeleteCatalogoLoading(c)"
+                  [attr.aria-busy]="isDeleteCatalogoLoading(c) ? 'true' : null">
+                  <i class="fas fa-trash" aria-hidden="true"></i>
+                </button>
+              }
+            </div>
+            <div class="card-name" [title]="c.nombre">
+              <span [innerHTML]="highlightField(c.nombre, 'nombre')"></span>
+            </div>
+          </article>
+          }
+        </div>
+
+        @if (!catalogoCargando && !catalogoResultados.length) {
+        <p>No hay elementos en el catálogo.</p>
+        }
+      </div>
+    </div>
+    </section>
+  }
+
+  <!-- Inventario de reactivos -->
+ <!-- Inventario de reactivos -->
+@if (formularioActivo === 'crear-reactivo') {
+  <h2>Crear reactivo</h2>
+  <section>
+    <form class="form-grid" #reactivoForm="ngForm" (ngSubmit)="crearReactivo($event, reactivoForm)">
+      
+      <!-- Lote -->
+      <div class="field-sm field-autocomplete form-field">
+        <label for="lote">Lote: *</label>
+        <input id="lote" [(ngModel)]="lote" name="lote" required appAlphaNumeric
+          (input)="validarCampoReactivoEnTiempoReal('lote', $event)"
+          (blur)="validarCampoReactivoEnTiempoReal('lote', $event)"
+          [class.error]="reactivoErrors['lote']" 
+          placeholder="Ej: L202501" />
+        @if (reactivoErrors['lote']) {
+          <small class="error-message">⚠️ {{ reactivoErrors['lote'] }}</small>
+        }
+      </div>
+
+      <!-- Código (catálogo) -->
+      <div class="field-autocomplete form-field">
+        <label for="codigo">Código (catálogo): *</label>
+        <input id="codigo" [(ngModel)]="codigo" name="codigo" required appAlphaNumeric
+          (input)="onCodigoInput(); validarCampoReactivoEnTiempoReal('codigo', $event)"
+          (blur)="onCodigoBlur(); validarCampoReactivoEnTiempoReal('codigo', $event)"
+          (focus)="onCodigoFocus()"
+          [class.error]="reactivoErrors['codigo']" 
+          placeholder="Ej: R-001" />
+        @if (reactivoErrors['codigo']) {
+          <small class="error-message">⚠️ {{ reactivoErrors['codigo'] }}</small>
+        }
+
+        @if (isCodigoFocused && (codigo.trim().length>=1) && catalogoSugerencias.length && catalogoFiltroCampo==='codigo') {
+          <div class="autocomplete-panel" role="listbox">
+            @for (s of catalogoSugerencias | slice:0:8; track s) {
+              <button type="button" class="autocomplete-item" role="option" 
+                (mousedown)="$event.preventDefault()"
+                (click)="seleccionarCatalogo(s)" [title]="s.nombre">
+                <span class="code">{{ s.codigo }}</span>
+                <span class="name">{{ s.nombre }}</span>
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Nombre (catálogo) -->
+      <div class="field-autocomplete form-field">
+        <label for="nombre">Nombre (catálogo): *</label>
+        <input id="nombre" [(ngModel)]="nombre" name="nombre" required appAlphaNumeric
+          (input)="onNombreInput(); validarCampoReactivoEnTiempoReal('nombre', $event)"
+          (blur)="onNombreBlur(); validarCampoReactivoEnTiempoReal('nombre', $event)"
+          (focus)="onNombreFocus()"
+          [class.error]="reactivoErrors['nombre']" 
+          placeholder="Ej: Ácido clorhídrico" />
+        @if (reactivoErrors['nombre']) {
+          <small class="error-message">⚠️ {{ reactivoErrors['nombre'] }}</small>
+        }
+
+        @if (isNombreFocused && (nombre.trim().length>=1) && catalogoSugerencias.length && catalogoFiltroCampo==='nombre') {
+          <div class="autocomplete-panel" role="listbox">
+            @for (s of catalogoSugerencias | slice:0:8; track s) {
+              <button type="button" class="autocomplete-item" role="option" 
+                (mousedown)="$event.preventDefault()"
+                (click)="seleccionarCatalogo(s)" [title]="s.nombre">
+                <span class="code">{{ s.codigo }}</span>
+                <span class="name">{{ s.nombre }}</span>
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Marca -->
+      <div class="form-field">
+        <label for="marca">Marca: *</label>
+        <input id="marca" [(ngModel)]="marca" name="marca" required appAlphaNumeric
+          (input)="validarCampoReactivoEnTiempoReal('marca', $event)"
+          (blur)="validarCampoReactivoEnTiempoReal('marca', $event)"
+          [class.error]="reactivoErrors['marca']" 
+          placeholder="Ej: Merck" />
+        @if (reactivoErrors['marca']) {
+          <small class="error-message">⚠️ {{ reactivoErrors['marca'] }}</small>
+        }
+      </div>
+
+      <!-- Referencia -->
+      <div class="form-field">
+        <label for="referencia">Referencia: *</label>
+        <input id="referencia" [(ngModel)]="referencia" name="referencia" required appNumbersOnly
+          (input)="validarCampoReactivoEnTiempoReal('referencia', $event)"
+          (blur)="validarCampoReactivoEnTiempoReal('referencia', $event)"
+          [class.error]="reactivoErrors['referencia']" 
+          placeholder="Ej: 100512" />
+        @if (reactivoErrors['referencia']) {
+          <small class="error-message">⚠️ {{ reactivoErrors['referencia'] }}</small>
+        }
+      </div>
+
+      <!-- CAS -->
+      <div class="form-field">
+        <label for="cas">CAS: *</label>
+        <input id="cas" [(ngModel)]="cas" name="cas" required
+          (input)="validarCampoReactivoEnTiempoReal('cas', $event)"
+          (blur)="onCasBlur(); validarCampoReactivoEnTiempoReal('cas', $event)"
+          [class.error]="reactivoErrors['cas']" 
+          title="Formato: 64-17-5"
+          placeholder="Ej: 64-17-5" />
+        @if (reactivoErrors['cas']) {
+          <small class="error-message">⚠️ {{ reactivoErrors['cas'] }}</small>
+        }
+      </div>
+
+      <!-- Presentación -->
+      <div class="field-sm form-field">
+        <label for="presentacion">Presentación: *</label>
+        <input id="presentacion" type="number" [(ngModel)]="presentacion" 
+          name="presentacion" min="0" step="any" required appNumbersOnly
+          (input)="calcularCantidadTotal(); validarCampoReactivoEnTiempoReal('presentacion', $event)"
+          (blur)="validarCampoReactivoEnTiempoReal('presentacion', $event)"
+          [class.error]="reactivoErrors['presentacion']" 
+          placeholder="Ej: 500" />
+        @if (reactivoErrors['presentacion']) {
+          <small class="error-message">⚠️ {{ reactivoErrors['presentacion'] }}</small>
+        }
+      </div>
+
+      <!-- Unidad -->
+      <div class="form-field">
+        <label for="unidad_id">Unidad: *</label>
+        <select id="unidad_id" [(ngModel)]="unidad_id" name="unidad_id" required
+          (change)="validarCampoReactivoEnTiempoReal('unidad_id', $event)"
+          (blur)="validarCampoReactivoEnTiempoReal('unidad_id', $event)"
+          [class.error]="reactivoErrors['unidad_id']">
+          <option [ngValue]="''">Seleccione unidad</option>
+          @for (u of unidades; track u) {
+            <option [value]="u.id">{{ u.nombre }}</option>
+          }
+        </select>
+        @if (reactivoErrors['unidad_id']) {
+          <small class="error-message">⚠️ {{ reactivoErrors['unidad_id'] }}</small>
+        }
+      </div>
+
+      <!-- Cantidad x presentación -->
+      <div class="field-sm form-field">
+        <label for="presentacion_cant">Cantidad x presentación: *</label>
+        <input id="presentacion_cant" type="number" [(ngModel)]="presentacion_cant" 
+          name="presentacion_cant" min="0" step="any" required appNumbersOnly
+          (input)="calcularCantidadTotal(); validarCampoReactivoEnTiempoReal('presentacion_cant', $event)"
+          (blur)="validarCampoReactivoEnTiempoReal('presentacion_cant', $event)"
+          [class.error]="reactivoErrors['presentacion_cant']" 
+          placeholder="Ej: 1" />
+        @if (reactivoErrors['presentacion_cant']) {
+          <small class="error-message">⚠️ {{ reactivoErrors['presentacion_cant'] }}</small>
+        }
+      </div>
+
+      <!-- Cantidad total (readonly) -->
+      <div class="field-sm form-field">
+        <label for="cantidad_total">Cantidad total:</label>
+        <input id="cantidad_total" type="number" [(ngModel)]="cantidad_total" 
+          name="cantidad_total" readonly 
+          placeholder="Calculado automáticamente" />
+      </div>
+
+      <!-- Fecha de adquisición -->
+      <div class="form-field">
+        <label for="fecha_adquisicion">Fecha de adquisición: *</label>
+        <input id="fecha_adquisicion" type="date" [(ngModel)]="fecha_adquisicion" 
+          name="fecha_adquisicion" required
+          (input)="validarCampoReactivoEnTiempoReal('fecha_adquisicion', $event)"
+          (blur)="validarCampoReactivoEnTiempoReal('fecha_adquisicion', $event)"
+          [class.error]="reactivoErrors['fecha_adquisicion']" />
+        @if (reactivoErrors['fecha_adquisicion']) {
+          <small class="error-message">⚠️ {{ reactivoErrors['fecha_adquisicion'] }}</small>
+        }
+      </div>
+
+      <!-- Fecha de vencimiento -->
+      <div class="form-field">
+        <label for="fecha_vencimiento">Fecha de vencimiento: *</label>
+        <input id="fecha_vencimiento" type="date" [(ngModel)]="fecha_vencimiento" 
+          name="fecha_vencimiento" required
+          (input)="validarCampoReactivoEnTiempoReal('fecha_vencimiento', $event)"
+          (blur)="validarCampoReactivoEnTiempoReal('fecha_vencimiento', $event)"
+          [class.error]="reactivoErrors['fecha_vencimiento'] || fechasInconsistentes()" />
+        @if (reactivoErrors['fecha_vencimiento']) {
+          <small class="error-message">⚠️ {{ reactivoErrors['fecha_vencimiento'] }}</small>
+        }
+        @if (!reactivoErrors['fecha_vencimiento'] && fechasInconsistentes()) {
+          <small class="error-message">⚠️ Vencimiento no puede ser anterior a adquisición</small>
+        }
+      </div>
+
+      <!-- Tipo reactivo -->
+      <div class="form-field">
+        <label for="tipo_id">Tipo reactivo: *</label>
+        <select id="tipo_id" [(ngModel)]="tipo_id" name="tipo_id" required
+          (change)="validarCampoReactivoEnTiempoReal('tipo_id', $event)"
+          (blur)="validarCampoReactivoEnTiempoReal('tipo_id', $event)"
+          [class.error]="reactivoErrors['tipo_id']">
+          <option [ngValue]="''">Seleccione tipo</option>
+          @for (t of tipos; track t) {
+            <option [value]="t.id">{{ t.nombre }}</option>
+          }
+        </select>
+        @if (reactivoErrors['tipo_id']) {
+          <small class="error-message">⚠️ {{ reactivoErrors['tipo_id'] }}</small>
+        }
+      </div>
+
+      <!-- Clasificación SGA -->
+      <div class="form-field">
+        <label for="clasificacion_id">Clasificación SGA: *</label>
+        <select id="clasificacion_id" [(ngModel)]="clasificacion_id" name="clasificacion_id" required
+          (change)="validarCampoReactivoEnTiempoReal('clasificacion_id', $event)"
+          (blur)="validarCampoReactivoEnTiempoReal('clasificacion_id', $event)"
+          [class.error]="reactivoErrors['clasificacion_id']"
+          [ngStyle]="getSelectStyleForId(clasificacion_id)">
+          <option [ngValue]="''">Seleccione clasificación</option>
+          @for (c of clasif; track c) {
+            <option [value]="c.id" 
+              [style.backgroundColor]="getClasifColorByName(c.nombre)"
+              [style.color]="getClasifTextColor(getClasifColorByName(c.nombre))">
+              {{ c.nombre }}
+            </option>
+          }
+        </select>
+        @if (reactivoErrors['clasificacion_id']) {
+          <small class="error-message">⚠️ {{ reactivoErrors['clasificacion_id'] }}</small>
+        }
+      </div>
+
+      <!-- Estado -->
+      <div class="form-field">
+        <label for="estado_id">Estado: *</label>
+        <select id="estado_id" [(ngModel)]="estado_id" name="estado_id" required
+          (change)="validarCampoReactivoEnTiempoReal('estado_id', $event)"
+          (blur)="validarCampoReactivoEnTiempoReal('estado_id', $event)"
+          [class.error]="reactivoErrors['estado_id']">
+          <option [ngValue]="''">Seleccione estado</option>
+          @for (e of estado; track e) {
+            <option [value]="e.id">{{ e.nombre }}</option>
+          }
+        </select>
+        @if (reactivoErrors['estado_id']) {
+          <small class="error-message">⚠️ {{ reactivoErrors['estado_id'] }}</small>
+        }
+      </div>
+
+      <!-- Tipo de recipiente -->
+      <div class="form-field">
+        <label for="tipo_recipiente_id">Tipo de recipiente: *</label>
+        <select id="tipo_recipiente_id" [(ngModel)]="tipo_recipiente_id" 
+          name="tipo_recipiente_id" required
+          (change)="validarCampoReactivoEnTiempoReal('tipo_recipiente_id', $event)"
+          (blur)="validarCampoReactivoEnTiempoReal('tipo_recipiente_id', $event)"
+          [class.error]="reactivoErrors['tipo_recipiente_id']">
+          <option [ngValue]="''">Seleccione recipiente</option>
+          @for (r of recipiente; track r) {
+            <option [value]="r.id">{{ r.nombre }}</option>
+          }
+        </select>
+        @if (reactivoErrors['tipo_recipiente_id']) {
+          <small class="error-message">⚠️ {{ reactivoErrors['tipo_recipiente_id'] }}</small>
+        }
+      </div>
+
+      <!-- Almacenamiento -->
+      <div class="form-field">
+        <label for="almacenamiento_id">Almacenamiento: *</label>
+        <select id="almacenamiento_id" [(ngModel)]="almacenamiento_id" 
+          name="almacenamiento_id" required
+          (change)="validarCampoReactivoEnTiempoReal('almacenamiento_id', $event)"
+          (blur)="validarCampoReactivoEnTiempoReal('almacenamiento_id', $event)"
+          [class.error]="reactivoErrors['almacenamiento_id']">
+          <option [ngValue]="''">Seleccione almacenamiento</option>
+          @for (a of almacen; track a) {
+            <option [value]="a.id">{{ a.nombre }}</option>
+          }
+        </select>
+        @if (reactivoErrors['almacenamiento_id']) {
+          <small class="error-message">⚠️ {{ reactivoErrors['almacenamiento_id'] }}</small>
+        }
+      </div>
+
+      <!-- Observaciones (NO obligatorio) -->
+      <div class="full-row form-field">
+        <label for="observaciones">Observaciones:</label>
+        <textarea id="observaciones" [(ngModel)]="observaciones" name="observaciones" 
+          rows="2" placeholder="Observaciones adicionales"
+          (input)="validarCampoReactivoEnTiempoReal('observaciones', $event)"
+          (blur)="validarCampoReactivoEnTiempoReal('observaciones', $event)"
+          [class.error]="reactivoErrors['observaciones']"></textarea>
+        @if (reactivoErrors['observaciones']) {
+          <small class="error-message">⚠️ {{ reactivoErrors['observaciones'] }}</small>
+        }
+      </div>
+
+      <!-- PDF uploads (NO obligatorios) -->
+      <div class="form-field">
+        <label for="sdsFile">Hoja de seguridad (SDS)</label>
+        <input id="sdsFile" type="file" accept="application/pdf" 
+          (change)="onSdsSelected($event)" />
+      </div>
+
+      <div class="form-field">
+        <label for="coaFile">Certificado de análisis (CoA)</label>
+        <input id="coaFile" type="file" accept="application/pdf" 
+          (change)="onCoaSelected($event)" />
+      </div>
+
+      <!-- Botón submit -->
+      <div class="form-field">
+        <button type="submit" class="btn-create">
+          {{ editMode ? 'Guardar cambios' : 'Crear reactivo' }}
+        </button>
+        @if (editMode) {
+          <button type="button" (click)="resetReactivoForm()"
+            style="margin-left:8px; background:#777; color:#fff; border:1px solid #666;">
+            Cancelar
+          </button>
+        }
+      </div>
+    </form>
+  </section>
+}
+
+  @if (formularioActivo === 'inventario') {
+    <h2>Inventario de Reactivos</h2>
+    <section>
+    <!-- Lista y búsqueda de reactivos existentes -->
+    <div>
+      <div class="filters-row reactivos-filters">
+        <div>
+          <label for="reactLoteQ">Filtrar por Lote</label>
+          <input id="reactLoteQ" [(ngModel)]="reactivosLoteQ" (input)="filtrarReactivos()" />
+        </div>
+        <div>
+          <label for="reactCodigoQ">Filtrar por Código</label>
+          <input id="reactCodigoQ" [(ngModel)]="reactivosCodigoQ" (input)="filtrarReactivos()" />
+        </div>
+        <div>
+          <label for="reactNombreQ">Filtrar por Nombre</label>
+          <input id="reactNombreQ" [(ngModel)]="reactivosNombreQ" (input)="filtrarReactivos()" />
+        </div>
+        @if (canDelete()) {
+        <div class="reset-cell">
+          <div class="bulk-delete-wrapper">
+            <button type="button"
+                    class="btn-delete-all"
+                    (click)="eliminarReactivosListado()"
+                    [disabled]="bulkDeletingReactivos || !reactivosFiltrados.length"
+                    [attr.aria-busy]="bulkDeletingReactivos ? 'true' : null"
+                    title="Eliminar todos los reactivos filtrados">
+              {{ bulkDeletingReactivos ? ('Eliminando… ' + bulkDeleteProgress + '%') : ('Eliminar Reactivos') }}
+            </button>
+            @if (bulkDeletingReactivos) {
+              <div class="progress-line" role="progressbar" [attr.aria-valuenow]="bulkDeleteProgress" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-fill" [style.width]="bulkDeleteProgress + '%'">&nbsp;</div>
+              </div>
+              
+            }
+          </div>
+        </div>
+        }
+      </div>
+
+      <div class="cards-container">
+        @if (reactivos && reactivos.length) {
+        <div class="catalogo-stats">
+          <span>🧪 Mostrando {{ reactivosFiltrados.length }} de {{ reactivosTotal }} reactivos</span>
+            <button type="button"
+                    class="btn-export"
+                    (click)="descargarReactivosExcel()"
+                    [disabled]="exportandoExcel"
+                    [attr.aria-busy]="exportandoExcel ? 'true' : null"
+                    title="Descargar Excel con todos los reactivos">
+              <i class="fas fa-file-excel"></i>
+              {{ exportandoExcel ? 'Generando...' : 'Exportar Excel' }}
+            </button>
+        </div>
+        }
+
+        <div class="catalogo-cards">
+          @for (r of reactivosFiltrados; track trackByReactivo($index, r)) {
+          <article class="catalog-card reactivo-card" (click)="toggleExpand(r)" [attr.aria-expanded]="isExpanded(r)"
+            tabindex="0">
+            <div class="card-top">
+              <div class="tags">
+                <span class="tag"><strong>Código:</strong> {{ r.codigo }}</span>
+                <span class="tag"><strong>Lote:</strong> {{ r.lote }}</span>
+                <span class="tag"><strong>Estado:</strong> {{ obtenerNombreEstado(r.estado_id) }}</span>
+                <span class="tag"><strong>Marca:</strong> {{ r.marca || '—' }}</span>
+                <span class="tag" [style.borderColor]="getClasifColor(r.clasificacion_id)"><strong>SGA:</strong> {{
+                  obtenerNombreClasificacion(r.clasificacion_id) }}</span>
+
+                @if (getVencimientoInfo(r.fecha_vencimiento); as v) {
+                <span class="tag" [style.backgroundColor]="v.bg" [style.color]="v.fg" [attr.title]="v.title">
+                  {{ v.text }}
+                </span>
+                }
+              </div>
+
+              <div class="pdf-actions" aria-label="Acciones del reactivo" (click)="$event.stopPropagation()">
+                <div class="pdf-group">
+                  <button type="button" class="pdf-btn view" title="Editar reactivo" aria-label="Editar reactivo"
+                    (click)="openEditModal(r)">
+                    <svg viewBox="0 0 24 24" class="icon" aria-hidden="true">
+                      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25Z" fill="currentColor" />
+                      <path d="M20.71 7.04a1 1 0 0 0 0-1.41L18.37 3.29a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83Z"
+                        fill="currentColor" />
+                    </svg>
+                  </button>
+                  <button type="button" class="pdf-btn delete" *ngIf="canDelete()" title="Eliminar reactivo"
+                    aria-label="Eliminar reactivo" (click)="eliminarReactivo(r.lote)">
+                    <svg viewBox="0 0 24 24" class="icon" aria-hidden="true">
+                      <path d="M6 6l12 12M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-name" [title]="r.nombre">
+              <div class="name-line">{{ r.nombre }}</div>
+
+              <!-- Botones y etiquetas PDF a la derecha -->
+              <div class="name-pdfs" (click)="$event.stopPropagation()">
+                <div class="pdf-box pdf-sds" role="group" aria-label="SDS controls">
+                  <!-- SDS combinado: icono archivo + estado habilitado/inhabilitado -->
+                  <button
+                    *ngIf="reactivoPdfStatusSig()[r.lote] && reactivoPdfStatusSig()[r.lote].hoja===true"
+                    type="button"
+                    class="btn pdf-existe"
+                    title="Ver hoja de seguridad (SDS)"
+                    aria-label="Ver hoja de seguridad (SDS)"
+                    (click)="$event.stopPropagation(); onVerHojaReactivo(r.lote)">
+                    <span class="pdf-acronym" aria-hidden="true">SDS</span>
+                  </button>
+                  <span
+                    *ngIf="!(reactivoPdfStatusSig()[r.lote] && reactivoPdfStatusSig()[r.lote].hoja===true)"
+                    class="tag pdf-no-existe"
+                    aria-label="Hoja de seguridad no disponible">
+                    <span class="pdf-acronym" aria-hidden="true">SDS</span>
+                  </span>
+                  <button type="button" class="pdf-btn delete" *ngIf="canDelete()" title="Eliminar hoja de seguridad"
+                    aria-label="Eliminar hoja de seguridad"
+                    (click)="$event.stopPropagation(); onEliminarHojaReactivo(r.lote)">
+                    <svg viewBox="0 0 24 24" class="icon" aria-hidden="true">
+                      <path d="M6 6l12 12M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                  </button>
+                  <input type="file" accept="application/pdf" (change)="onSubirHojaReactivo($event, r.lote)" #sdsInput
+                    style="display:none" />
+                  <button type="button" class="pdf-btn upload" title="Subir hoja de seguridad"
+                    aria-label="Subir hoja de seguridad" (click)="$event.stopPropagation(); sdsInput.click()">
+                    <svg viewBox="0 0 24 24" class="icon" aria-hidden="true">
+                      <path d="M12 3v12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                      <path d="M8 7l4-4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    </svg>
+                  </button>
+                </div>
+
+                <div class="pdf-box pdf-coa" role="group" aria-label="CoA controls">
+                  <!-- CoA combinado: icono archivo + estado habilitado/inhabilitado -->
+                  <button
+                    *ngIf="reactivoPdfStatusSig()[r.lote] && reactivoPdfStatusSig()[r.lote].cert===true"
+                    type="button"
+                    class="btn pdf-existe"
+                    title="Ver certificado de análisis (CoA)"
+                    aria-label="Ver certificado de análisis (CoA)"
+                    (click)="$event.stopPropagation(); onVerCertReactivo(r.lote)">
+                    <span class="pdf-acronym" aria-hidden="true">CoA</span>
+                  </button>
+                  <span
+                    *ngIf="!(reactivoPdfStatusSig()[r.lote] && reactivoPdfStatusSig()[r.lote].cert===true)"
+                    class="tag pdf-no-existe"
+                    aria-label="Certificado de análisis no disponible">
+                    <span class="pdf-acronym" aria-hidden="true">CoA</span>
+                  </span>
+                  <button type="button" class="pdf-btn delete" *ngIf="canDelete()"
+                    title="Eliminar certificado de análisis" aria-label="Eliminar certificado de análisis"
+                    (click)="$event.stopPropagation(); onEliminarCertReactivo(r.lote)">
+                    <svg viewBox="0 0 24 24" class="icon" aria-hidden="true">
+                      <path d="M6 6l12 12M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                  </button>
+                  <input type="file" accept="application/pdf" (change)="onSubirCertReactivo($event, r.lote)" #coaInput
+                    style="display:none" />
+                  <button type="button" class="pdf-btn upload" title="Subir certificado de análisis"
+                    aria-label="Subir certificado de análisis" (click)="$event.stopPropagation(); coaInput.click()">
+                    <svg viewBox="0 0 24 24" class="icon" aria-hidden="true">
+                      <path d="M12 3v12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                      <path d="M8 7l4-4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="meta-line">
+                <span class="chip">{{ obtenerNombreTipo(r.tipo_id) }}</span>
+                <span class="chip">{{ 'Cantidad Total:' }} {{ r.cantidad_total }} {{ obtenerNombreUnidad(r.unidad_id) }}</span>
+                <span class="chip">Vence: {{ formatearFecha(r.fecha_vencimiento) }}</span>
+              </div>
+
+              <span class="toggle-icon" [class.open]="isExpanded(r)" aria-hidden="true">▾</span>
+            </div>
+
+            @if (isExpanded(r)) {
+            <div class="card-expand" (click)="$event.stopPropagation()">
+              <div class="details-grid">
+                <div class="detail-card">
+                  <div class="detail-label">Referencia</div>
+                  <div class="detail-value">{{ r.referencia || '—' }}</div>
+                </div>
+
+                <div class="detail-card">
+                  <div class="detail-label">CAS</div>
+                  <div class="detail-value">{{ r.cas || '—' }}</div>
+                </div>
+
+                <div class="detail-card">
+                  <div class="detail-label">Presentación</div>
+                  <div class="detail-value">{{ r.presentacion || '—' }}</div>
+                </div>
+
+                <div class="detail-card">
+                  <div class="detail-label">Cant. x presentación</div>
+                  <div class="detail-value">{{ r.presentacion_cant || '—' }}</div>
+                </div>
+
+                <div class="detail-card">
+                  <div class="detail-label">Unidad</div>
+                  <div class="detail-value">{{ obtenerNombreUnidad(r.unidad_id) }}</div>
+                </div>
+
+                <div class="detail-card">
+                  <div class="detail-label">Almacenamiento</div>
+                  <div class="detail-value">{{ obtenerNombreAlmacenamiento(r.almacenamiento_id) }}</div>
+                </div>
+
+                <div class="detail-card">
+                  <div class="detail-label">Recipiente</div>
+                  <div class="detail-value">{{ obtenerNombreTipoRecipiente(r.tipo_recipiente_id) }}</div>
+                </div>
+
+                <div class="detail-card">
+                  <div class="detail-label">Adquisición</div>
+                  <div class="detail-value">{{ formatearFecha(r.fecha_adquisicion) }}</div>
+                </div>
+
+                <div class="detail-card">
+                  <div class="detail-label">Vencimiento</div>
+                  <div class="detail-value">{{ formatearFecha(r.fecha_vencimiento) }}</div>
+                </div>
+
+                @if (r.observaciones) {
+                <div class="detail-card detail-full">
+                  <div class="detail-label">Observaciones</div>
+                  <div class="detail-value">{{ r.observaciones }}</div>
+                </div>
+                }
+              </div>
+            </div>
+            }
+          </article>
+          }
+        </div>
+
+        @if (reactivosFiltrados && reactivosFiltrados.length === 0) {
+        <p>No hay reactivos que coincidan con los filtros.</p>
+        }
+        @if (reactivos && reactivos.length === 0) {
+        <p>No hay reactivos cargados.</p>
+        }
+      </div>
+    </div>
+    </section>
+  }
+
+  <!-- Modal de edición de reactivo -->
+  @if (editModalOpen) {
+  <div class="modal-backdrop" (click)="closeEditModal()"></div>
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Editar reactivo" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <button type="button" class="close-btn" (click)="closeEditModal()" aria-label="Cerrar">×</button>
+    </div>
+    <form class="form-grid" #editForm="ngForm" (ngSubmit)="guardarEdicion(editForm)">
+      <div class="field-sm">
+        <label for="edit_lote">Lote</label>
+        <input id="edit_lote" [(ngModel)]="editFormData.lote" name="edit_lote" #editLoteCtrl="ngModel" required
+          [class.invalid]="editLoteCtrl.invalid && (editLoteCtrl.touched || editSubmitted)" />
+        @if (editLoteCtrl.invalid && (editLoteCtrl.touched || editSubmitted)) {
+        <span class="field-error">Requerido</span>
+        }
+      </div>
+
+      <div>
+        <label for="edit_codigo">Código (catálogo)</label>
+        <input id="edit_codigo" [(ngModel)]="editFormData.codigo" name="edit_codigo" #editCodigoCtrl="ngModel" required
+          [class.invalid]="editCodigoCtrl.invalid && (editCodigoCtrl.touched || editSubmitted)" />
+        @if (editCodigoCtrl.invalid && (editCodigoCtrl.touched || editSubmitted)) {
+        <span class="field-error">Requerido</span>
+        }
+      </div>
+
+      <div>
+        <label for="edit_nombre">Nombre (catálogo)</label>
+        <input id="edit_nombre" [(ngModel)]="editFormData.nombre" name="edit_nombre" #editNombreCtrl="ngModel" required
+          [class.invalid]="editNombreCtrl.invalid && (editNombreCtrl.touched || editSubmitted)" />
+        @if (editNombreCtrl.invalid && (editNombreCtrl.touched || editSubmitted)) {
+        <span class="field-error">Requerido</span>
+        }
+      </div>
+
+      <div>
+        <label for="edit_marca">Marca</label>
+        <input id="edit_marca" [(ngModel)]="editFormData.marca" name="edit_marca" />
+      </div>
+
+      <div>
+        <label for="edit_referencia">Referencia</label>
+        <input id="edit_referencia" [(ngModel)]="editFormData.referencia" name="edit_referencia" />
+      </div>
+
+      <div>
+        <label for="edit_cas">CAS</label>
+        <input id="edit_cas" [(ngModel)]="editFormData.cas" name="edit_cas" title="Formato: 64-17-5"
+          #editCasCtrl="ngModel" (blur)="onEditCasBlur()"
+          [class.invalid]="editCasCtrl.invalid && (editCasCtrl.touched || editSubmitted)" />
+        @if (editCasCtrl.errors?.['pattern'] && (editCasCtrl.touched || editSubmitted)) {
+        <span class="field-error">Formato CAS inválido</span>
+        }
+      </div>
+
+      <div class="field-sm">
+        <label for="edit_presentacion">Presentación</label>
+        <input id="edit_presentacion" type="number" [(ngModel)]="editFormData.presentacion" name="edit_presentacion"
+          min="0" step="any" />
+      </div>
+
+      <div class="field-sm">
+        <label for="edit_presentacion_cant">Cantidad x presentación</label>
+        <input id="edit_presentacion_cant" type="number" [(ngModel)]="editFormData.presentacion_cant"
+          name="edit_presentacion_cant" min="0" step="any" />
+      </div>
+
+      <div class="field-sm">
+        <label for="edit_cantidad_total">Cantidad total</label>
+        <input id="edit_cantidad_total" type="number" [(ngModel)]="editFormData.cantidad_total"
+          name="edit_cantidad_total" readonly />
+      </div>
+
+      <div>
+        <label for="edit_fecha_adq">Fecha de adquisición</label>
+        <input id="edit_fecha_adq" type="date" [(ngModel)]="editFormData.fecha_adquisicion" name="edit_fecha_adq" />
+      </div>
+
+      <div>
+        <label for="edit_fecha_venc">Fecha de vencimiento</label>
+        <input id="edit_fecha_venc" type="date" [(ngModel)]="editFormData.fecha_vencimiento" name="edit_fecha_venc" />
+      </div>
+
+      <div>
+        <label for="edit_tipo">Tipo reactivo</label>
+        <select id="edit_tipo" [(ngModel)]="editFormData.tipo_id" name="edit_tipo">
+          <option [ngValue]="''">Seleccione tipo</option>
+          @for (t of tipos; track t) {
+          <option [value]="t.id">{{ t.nombre }}</option>
+          }
+        </select>
+      </div>
+
+      <div>
+        <label for="edit_clasif">Clasificación SGA</label>
+        <select id="edit_clasif" [(ngModel)]="editFormData.clasificacion_id" name="edit_clasif"
+          [ngStyle]="getSelectStyleForId(editFormData.clasificacion_id)">
+          <option [ngValue]="''">Seleccione clasificación</option>
+          @for (c of clasif; track c) {
+          <option [value]="c.id" [style.backgroundColor]="getClasifColorByName(c.nombre)"
+            [style.color]="getClasifTextColor(getClasifColorByName(c.nombre))">{{ c.nombre }}</option>
+          }
+        </select>
+      </div>
+
+      <div>
+        <label for="edit_unidad">Unidad</label>
+        <select id="edit_unidad" [(ngModel)]="editFormData.unidad_id" name="edit_unidad">
+          <option [ngValue]="''">Seleccione unidad</option>
+          @for (u of unidades; track u) {
+          <option [value]="u.id">{{ u.nombre }}</option>
+          }
+        </select>
+      </div>
+
+      <div>
+        <label for="edit_estado">Estado</label>
+        <select id="edit_estado" [(ngModel)]="editFormData.estado_id" name="edit_estado">
+          <option [ngValue]="''">Seleccione estado</option>
+          @for (e of estado; track e) {
+          <option [value]="e.id">{{ e.nombre }}</option>
+          }
+        </select>
+      </div>
+
+      <div>
+        <label for="edit_recipiente">Recipiente</label>
+        <select id="edit_recipiente" [(ngModel)]="editFormData.tipo_recipiente_id" name="edit_recipiente">
+          <option [ngValue]="''">Seleccione recipiente</option>
+          @for (rtp of recipiente; track rtp) {
+          <option [value]="rtp.id">{{ rtp.nombre }}</option>
+          }
+        </select>
+      </div>
+
+      <div>
+        <label for="edit_almacen">Almacenamiento</label>
+        <select id="edit_almacen" [(ngModel)]="editFormData.almacenamiento_id" name="edit_almacen">
+          <option [ngValue]="''">Seleccione almacenamiento</option>
+          @for (a of almacen; track a) {
+          <option [value]="a.id">{{ a.nombre }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="full-row">
+        <label for="edit_obs">Observaciones</label>
+        <textarea id="edit_obs" [(ngModel)]="editFormData.observaciones" name="edit_obs" rows="2"></textarea>
+      </div>
+
+      <div class="actions">
+        <button type="submit">Guardar cambios</button>
+      </div>
+    </form>
+
+  </div>
+  }
+  
+</div>

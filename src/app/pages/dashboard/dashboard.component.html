@@ -1,0 +1,227 @@
+<div class="container dashboard-page">
+  <h1>
+    <i class="fas fa-chart-line"></i>
+    Dashboard del Laboratorio
+    @if (esAuxiliar) {
+      <span class="auxiliar-label">(Solo visualización)</span>
+    }
+  </h1>
+
+  <!-- Estado de carga -->
+  @if (cargando()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Cargando datos del dashboard...</p>
+    </div>
+  }
+
+  <!-- Métricas Principales -->
+  @if (!cargando()) {
+    <div class="metrics-grid">
+      <!-- Tarjeta Insumos -->
+      <div class="metric-card" routerLink="/insumos" [class.disabled]="esAuxiliar">
+        <div class="metric-icon insumos">
+          <i class="fas fa-boxes"></i>
+        </div>
+        <div class="metric-content">
+          <div class="metric-value">{{ formatearNumero(metricas().totalInsumos) }}</div>
+          <div class="metric-label">Total Insumos</div>
+          <div class="metric-subtitle">Inventario actual</div>
+        </div>
+      </div>
+
+      <!-- Tarjeta Reactivos -->
+      <div class="metric-card" routerLink="/reactivos" [class.disabled]="esAuxiliar">
+        <div class="metric-icon reactivos">
+          <i class="fas fa-flask"></i>
+        </div>
+        <div class="metric-content">
+          <div class="metric-value">{{ formatearNumero(metricas().totalReactivos) }}</div>
+          <div class="metric-label">Total Reactivos</div>
+          <div class="metric-subtitle">
+            @if (reactivosProximosVencer().length > 0) {
+              <span class="warning-badge">
+                <i class="fas fa-clock"></i>
+                {{ reactivosProximosVencer().length }} por vencer
+              </span>
+            } @else {
+              <span class="success-badge">
+                <i class="fas fa-check-circle"></i>
+                Al día
+              </span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta Solicitudes -->
+      <div class="metric-card" routerLink="/solicitudes" [class.disabled]="esAuxiliar">
+        <div class="metric-icon solicitudes">
+          <i class="fas fa-clipboard-list"></i>
+        </div>
+        <div class="metric-content">
+          <div class="metric-value">{{ formatearNumero(metricas().totalSolicitudes) }}</div>
+          <div class="metric-label">Total Solicitudes</div>
+          <div class="metric-subtitle">
+            {{ contarSolicitudesViable() }} viables • {{ contarSolicitudesConOferta() }} con oferta
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta Clientes -->
+      <div class="metric-card" [class.disabled]="esAuxiliar">
+        <div class="metric-icon clientes">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="metric-content">
+          <div class="metric-value">{{ formatearNumero(metricas().totalClientes) }}</div>
+          <div class="metric-label">Total Clientes</div>
+          <div class="metric-subtitle">
+            {{ contarClientesPorTipo('Persona Natural') }} naturales
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta Papelería -->
+      <div class="metric-card" routerLink="/papeleria" [class.disabled]="esAuxiliar">
+        <div class="metric-icon papeleria">
+          <i class="fas fa-file-alt"></i>
+        </div>
+        <div class="metric-content">
+          <div class="metric-value">{{ formatearNumero(metricas().totalPapeleria) }}</div>
+          <div class="metric-label">Total Papelería</div>
+          <div class="metric-subtitle">Ítems de catálogo</div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Sección de Alertas Expandibles -->
+  @if (!cargando() && (reactivosProximosVencer().length > 0 || reactivosVencidos().length > 0)) {
+    <div class="alert-section">
+      <h2>
+        <i class="fas fa-exclamation-triangle"></i>
+        Alertas Importantes
+      </h2>
+
+      <div class="expandible-alerts-container">
+        <!-- Tarjeta expandible para Reactivos Próximos a Vencer -->
+        @if (reactivosProximosVencer().length > 0) {
+          <div class="expandible-card" [class.expanded]="proximosVencerExpanded">
+            <div class="expandible-header" (click)="toggleProximosVencer()">
+              <div class="expandible-title">
+                <i class="fas fa-clock"></i>
+                <h3>Reactivos Próximos a Vencer</h3>
+                <span class="alert-count warning">{{ reactivosProximosVencer().length }}</span>
+              </div>
+              <i class="fas fa-chevron-down expand-icon" [class.rotated]="proximosVencerExpanded"></i>
+            </div>
+            
+            <div class="expandible-content" [class.visible]="proximosVencerExpanded">
+              <div class="alert-card warning">
+                <div class="alert-content">
+                  <p>Tienes <strong>{{ reactivosProximosVencer().length }}</strong> reactivos que vencen en los próximos 30 días:</p>
+                  <div class="reactivos-list">
+                    @for (reactivo of reactivosProximosVencer(); track $index) {
+                      <div class="reactivo-item">
+                        <div class="reactivo-header">
+                          <i class="fas fa-flask reactivo-icon"></i>
+                          <span class="reactivo-name">{{ reactivo.nombre }}</span>
+                        </div>
+                        <div class="reactivo-footer">
+                          <div class="reactivo-lote-container">
+                            <i class="fas fa-barcode"></i>
+                            <span class="lote-label">Lote:</span>
+                            <span class="lote-value">{{ reactivo.lote }}</span>
+                          </div>
+                          <div class="reactivo-fecha-container advertencia">
+                            <i class="fas fa-calendar-exclamation"></i>
+                            <span class="fecha-label">Vence:</span>
+                            <span class="fecha-value">{{ reactivo.fecha_vencimiento | date:'dd/MM/yyyy' }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Tarjeta expandible para Reactivos Vencidos -->
+        @if (reactivosVencidos().length > 0) {
+          <div class="expandible-card" [class.expanded]="vencidosExpanded">
+            <div class="expandible-header" (click)="toggleVencidos()">
+              <div class="expandible-title">
+                <i class="fas fa-exclamation-circle"></i>
+                <h3>Reactivos Vencidos</h3>
+                <span class="alert-count danger">{{ reactivosVencidos().length }}</span>
+              </div>
+              <i class="fas fa-chevron-down expand-icon" [class.rotated]="vencidosExpanded"></i>
+            </div>
+            
+            <div class="expandible-content" [class.visible]="vencidosExpanded">
+              <div class="alert-card danger">
+                <div class="alert-content">
+                  <p>Hay <strong>{{ reactivosVencidos().length }}</strong> reactivos vencidos:</p>
+                  <div class="reactivos-list">
+                    @for (reactivo of reactivosVencidos(); track $index) {
+                      <div class="reactivo-item">
+                        <div class="reactivo-header">
+                          <i class="fas fa-flask reactivo-icon"></i>
+                          <span class="reactivo-name">{{ reactivo.nombre }}</span>
+                        </div>
+                        <div class="reactivo-footer">
+                          <div class="reactivo-lote-container">
+                            <i class="fas fa-barcode"></i>
+                            <span class="lote-label">Lote:</span>
+                            <span class="lote-value">{{ reactivo.lote }}</span>
+                          </div>
+                          <div class="reactivo-fecha-container peligro">
+                            <span class="fecha-label">Vencido:</span>
+                            <span class="fecha-value">{{ reactivo.fecha_vencimiento | date:'dd/MM/yyyy' }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Sección de Resumen Detallado -->
+  @if (!cargando()) {
+    <div class="detailed-grid">
+      <!-- Resumen de Solicitudes -->
+      <div class="detail-card">
+        <h3>
+          <i class="fas fa-chart-bar"></i>
+          Estado de Solicitudes
+        </h3>
+        <div class="status-grid">
+          <div class="status-item">
+            <i class="fas fa-check-double status-icon"></i>
+            <div class="status-value">{{ contarSolicitudesViable() }}</div>
+            <div class="status-label">Servicios Viables</div>
+          </div>
+          <div class="status-item">
+            <i class="fas fa-file-invoice-dollar status-icon"></i>
+            <div class="status-value">{{ contarSolicitudesConOferta() }}</div>
+            <div class="status-label">Con Oferta</div>
+          </div>
+          <div class="status-item">
+            <i class="fas fa-clipboard-check status-icon"></i>
+            <div class="status-value">{{ contarSolicitudesConResultados() }}</div>
+            <div class="status-label">Con Resultados</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

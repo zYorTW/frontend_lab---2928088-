@@ -1,0 +1,431 @@
+<div class="liba-theme container insumos-page" (click)="onGlobalClick($event)">
+<h1>
+    <i class="fas fa-boxes"></i>
+    | Insumos
+  </h1>
+  
+    <div class="dashboard-cards">
+        <div class="action-card" (click)="toggleFormulario('catalogo')" [class.active]="formularioActivo === 'catalogo'">
+            <i class="fas fa-book-medical"></i>
+            <span>Crear en Catálogo</span>
+        </div>
+        <div class="action-card" (click)="toggleFormulario('catalogo-list')" [class.active]="formularioActivo === 'catalogo-list'">
+            <i class="fas fa-th-list"></i>
+            <span>Ver Catálogo</span>
+        </div>
+        <div class="action-card" (click)="toggleFormulario('crear-insumo')" [class.active]="formularioActivo === 'crear-insumo'">
+            <i class="fas fa-plus-circle"></i>
+            <span>Crear Insumo</span>
+        </div>
+        <div class="action-card" (click)="toggleFormulario('listado')" [class.active]="formularioActivo === 'listado'">
+            <i class="fas fa-boxes-stacked"></i>
+            <span>Listado Insumos</span>
+        </div>
+    </div>
+    <!-- Catálogo de insumos -->
+  @if (formularioActivo === 'catalogo') {
+  <h2>Crear nuevo insumo en catálogo</h2>
+  <section>
+    <form class="form-grid" (submit)="crearCatalogo($event)">
+      <div *ngIf="!esAuxiliar" class="form-field">
+        <label for="catNombre">Nombre: *</label>
+        <input id="catNombre" [(ngModel)]="catNombre" name="catNombre" required 
+          appLettersOnly
+          (input)="validarCampoCatalogoEnTiempoReal('nombre', $event)"
+          (blur)="validarCampoCatalogoEnTiempoReal('nombre', $event)"
+          [class.error]="catalogoErrors['nombre']"
+          placeholder="Ej: Guantes de nitrilo" />
+        @if (catalogoErrors['nombre']) {
+          <small class="error-message">⚠️ {{ catalogoErrors['nombre'] }}</small>
+        }
+      </div>
+      
+      <div class="form-field">
+        <label for="catItem">Item: *</label>
+        <input id="catItem" type="number" min="1" step="1" [(ngModel)]="catItem" 
+          name="catItem" required appNumbersOnly
+          (input)="validarCampoCatalogoEnTiempoReal('item', $event)"
+          (blur)="validarCampoCatalogoEnTiempoReal('item', $event)"
+          [class.error]="catalogoErrors['item']" 
+          placeholder="Ej: 1001" />
+        @if (catalogoErrors['item']) {
+          <small class="error-message">⚠️ {{ catalogoErrors['item'] }}</small>
+        }
+      </div>
+      
+      <div class="form-field">
+        <label for="catImagen">Imagen
+          <span class="hint-icon" tabindex="0" data-tooltip="Peso máximo: 5 MB.">?</span>
+        </label>
+        <input id="catImagen" type="file" accept="image/*" 
+          (change)="onCatImagenChange($event); validarCampoCatalogoEnTiempoReal('imagen', $event)"
+          [class.error]="catalogoErrors['imagen']" />
+        @if (catalogoErrors['imagen']) {
+          <small class="error-message">⚠️ {{ catalogoErrors['imagen'] }}</small>
+        }
+      </div>
+      
+      <div class="full-row form-field">
+        <label for="catDescripcion">Descripción:</label>
+        <textarea id="catDescripcion" [(ngModel)]="catDescripcion" name="catDescripcion" 
+          rows="2" placeholder="Descripción adicional"
+          (input)="validarCampoCatalogoEnTiempoReal('descripcion', $event)"
+          (blur)="validarCampoCatalogoEnTiempoReal('descripcion', $event)"
+          [class.error]="catalogoErrors['descripcion']"></textarea>
+        @if (catalogoErrors['descripcion']) {
+          <small class="error-message">⚠️ {{ catalogoErrors['descripcion'] }}</small>
+        }
+      </div>
+      
+      <div class="actions" *ngIf="!esAuxiliar">
+        <button class="btn-compact" type="submit">Agregar al catálogo</button>
+      </div>
+    </form>
+  </section>
+}
+
+    @if (formularioActivo === 'catalogo-list') {
+    <h2>Catálogo de insumos</h2>
+    <section>
+        <div>
+            <div class="filters-grid catalogo-filters">
+                <div>
+                    <label for="catalogoItemQ">Filtrar por item</label>
+                    <input id="catalogoItemQ" [(ngModel)]="itemFiltro" (input)="filtrarCatalogoPorCampos()"
+                        placeholder="Ej: 001" />
+                </div>
+                <div>
+                    <label for="catalogoNombreQ">Filtrar por nombre</label>
+                    <input id="catalogoNombreQ" [(ngModel)]="nombreFiltro" (input)="filtrarCatalogoPorCampos()"
+                        placeholder="Ej: Guantes" />
+                </div>
+                <div class="reset-cell">
+                    <button type="button" class="btn-reset-filtros" (click)="resetCatalogoPaginado()"
+                        aria-label="Reiniciar filtros">Reiniciar filtros</button>
+                </div>
+            </div>
+
+            <div class="cards-container">
+                                @if (catalogoCargando) {
+                                    <div class="catalogo-cards">
+                                        <article class="catalog-card skeleton-card">
+                                            <div class="catalog-card-media"><div class="skeleton-box"></div></div>
+                                            <div class="card-name"><span class="skeleton-line w-70"></span><span class="skeleton-line w-30"></span></div>
+                                            <div class="card-desc"><div class="skeleton-line w-90"></div></div>
+                                        </article>
+                                        <article class="catalog-card skeleton-card">
+                                            <div class="catalog-card-media"><div class="skeleton-box"></div></div>
+                                            <div class="card-name"><span class="skeleton-line w-70"></span><span class="skeleton-line w-30"></span></div>
+                                            <div class="card-desc"><div class="skeleton-line w-90"></div></div>
+                                        </article>
+                                        <article class="catalog-card skeleton-card">
+                                            <div class="catalog-card-media"><div class="skeleton-box"></div></div>
+                                            <div class="card-name"><span class="skeleton-line w-70"></span><span class="skeleton-line w-30"></span></div>
+                                            <div class="card-desc"><div class="skeleton-line w-90"></div></div>
+                                        </article>
+                                        <article class="catalog-card skeleton-card">
+                                            <div class="catalog-card-media"><div class="skeleton-box"></div></div>
+                                            <div class="card-name"><span class="skeleton-line w-70"></span><span class="skeleton-line w-30"></span></div>
+                                            <div class="card-desc"><div class="skeleton-line w-90"></div></div>
+                                        </article>
+                                        <article class="catalog-card skeleton-card">
+                                            <div class="catalog-card-media"><div class="skeleton-box"></div></div>
+                                            <div class="card-name"><span class="skeleton-line w-70"></span><span class="skeleton-line w-30"></span></div>
+                                            <div class="card-desc"><div class="skeleton-line w-90"></div></div>
+                                        </article>
+                                        <article class="catalog-card skeleton-card">
+                                            <div class="catalog-card-media"><div class="skeleton-box"></div></div>
+                                            <div class="card-name"><span class="skeleton-line w-70"></span><span class="skeleton-line w-30"></span></div>
+                                            <div class="card-desc"><div class="skeleton-line w-90"></div></div>
+                                        </article>
+                                    </div>
+                                }
+                                @if (!catalogoCargando && catalogoResultados.length) {
+                                    <div class="catalogo-stats">
+                                        <span>Mostrando {{ catalogoResultados.length }} de {{ catalogoTotal || catalogoBase.length }} insumos</span>
+                                    </div>
+                                }
+                                                <div class="catalogo-cards">
+                                                    @for (c of catalogoResultados; track c.item) {
+                                        <article class="catalog-card"
+                                                        (contextmenu)="onCatalogContextMenu($event, c)"
+                                                        (click)="onCatalogCardClick(c)" role="button" tabindex="0"
+                                                        (keyup.enter)="onCatalogCardClick(c)" (keyup.space)="onCatalogCardClick(c)">
+                                            <div class="catalog-card-media">
+                                                <img [src]="getCatalogoImagenUrl(c.item)" alt="Imagen {{ c.nombre }}" (error)="onImgError($event)" />
+                                            </div>
+                                            <div class="card-name" [title]="c.nombre">
+                                                <span [innerHTML]="highlightField(c.nombre, 'nombre')"></span>
+                                                <span class="meta">Item: <strong>{{ c.item }}</strong></span>
+                                            </div>
+                                            @if (c.descripcion) {
+                                                <div class="card-desc">{{ c.descripcion }}</div>
+                                            }
+                                        </article>
+                                    }
+                                </div>
+                                
+                                @if (!catalogoCargando && !catalogoResultados.length) {
+                                    <p>No hay elementos en el catálogo.</p>
+                                }
+            </div>
+        </div>
+    </section>
+    }
+
+    <!-- Inventario de insumos -->
+      @if (formularioActivo === 'crear-insumo' || item_catalogo != null) {
+  <h2>Crear nuevo insumo</h2>
+  <section #insumoFormSection>
+    <form class="form-grid" (submit)="crearInsumo($event)">
+      
+      <!-- Item catálogo (OBLIGATORIO) -->
+      <div class="form-field">
+        <label for="item_catalogo">Item catálogo: *</label>
+        <input #itemCatalogoInput id="item_catalogo" [(ngModel)]="item_catalogo" 
+          name="item_catalogo" required appNumbersOnly
+          (input)="validarCampoInsumoEnTiempoReal('item_catalogo', $event)"
+          (blur)="validarCampoInsumoEnTiempoReal('item_catalogo', $event)"
+          [class.error]="insumoErrors['item_catalogo']" 
+          placeholder="Ej: 1001" />
+        @if (insumoErrors['item_catalogo']) {
+          <small class="error-message">⚠️ {{ insumoErrors['item_catalogo'] }}</small>
+        }
+      </div>
+      
+      <!-- Nombre (OBLIGATORIO) -->
+      <div class="form-field">
+        <label for="nombre">Nombre: *</label>
+        <input id="nombre" [(ngModel)]="nombre" name="nombre" required 
+          appLettersOnly
+          (input)="validarCampoInsumoEnTiempoReal('nombre', $event)"
+          (blur)="validarCampoInsumoEnTiempoReal('nombre', $event)"
+          [class.error]="insumoErrors['nombre']" 
+          placeholder="Ej: Guantes de nitrilo" />
+        @if (insumoErrors['nombre']) {
+          <small class="error-message">⚠️ {{ insumoErrors['nombre'] }}</small>
+        }
+      </div>
+      
+      <!-- Cantidad adquirida (OBLIGATORIO) -->
+      <div class="form-field">
+        <label for="cantidad_adquirida">Cantidad adquirida: *</label>
+        <input id="cantidad_adquirida" type="number" [(ngModel)]="cantidad_adquirida" 
+          name="cantidad_adquirida" required appNumbersOnly
+          (input)="validarCampoInsumoEnTiempoReal('cantidad_adquirida', $event)"
+          (blur)="validarCampoInsumoEnTiempoReal('cantidad_adquirida', $event)"
+          [class.error]="insumoErrors['cantidad_adquirida']" 
+          placeholder="Ej: 100" min="0" />
+        @if (insumoErrors['cantidad_adquirida']) {
+          <small class="error-message">⚠️ {{ insumoErrors['cantidad_adquirida'] }}</small>
+        }
+      </div>
+      
+      <!-- Cantidad existente (OBLIGATORIO) -->
+      <div class="form-field">
+        <label for="cantidad_existente">Cantidad existente: *</label>
+        <input id="cantidad_existente" type="number" [(ngModel)]="cantidad_existente" 
+          name="cantidad_existente" required appNumbersOnly
+          (input)="validarCampoInsumoEnTiempoReal('cantidad_existente', $event)"
+          (blur)="validarCampoInsumoEnTiempoReal('cantidad_existente', $event)"
+          [class.error]="insumoErrors['cantidad_existente']" 
+          placeholder="Ej: 100" min="0" />
+        @if (insumoErrors['cantidad_existente']) {
+          <small class="error-message">⚠️ {{ insumoErrors['cantidad_existente'] }}</small>
+        }
+      </div>
+      
+      <!-- Presentación (OBLIGATORIO) -->
+      <div class="form-field">
+        <label for="presentacion">Presentación: *</label>
+        <input id="presentacion" [(ngModel)]="presentacion" name="presentacion" 
+          required appAlphaNumeric
+          (input)="validarCampoInsumoEnTiempoReal('presentacion', $event)"
+          (blur)="validarCampoInsumoEnTiempoReal('presentacion', $event)"
+          [class.error]="insumoErrors['presentacion']"
+          placeholder="Ej: Caja x 100 unidades" />
+        @if (insumoErrors['presentacion']) {
+          <small class="error-message">⚠️ {{ insumoErrors['presentacion'] }}</small>
+        }
+      </div>
+      
+      <!-- Marca (OBLIGATORIO) -->
+      <div class="form-field">
+        <label for="marca">Marca: *</label>
+        <input id="marca" [(ngModel)]="marca" name="marca" 
+          required appAlphaNumeric
+          (input)="validarCampoInsumoEnTiempoReal('marca', $event)"
+          (blur)="validarCampoInsumoEnTiempoReal('marca', $event)"
+          [class.error]="insumoErrors['marca']"
+          placeholder="Ej: 3M" />
+        @if (insumoErrors['marca']) {
+          <small class="error-message">⚠️ {{ insumoErrors['marca'] }}</small>
+        }
+      </div>
+      
+      <!-- Referencia (OBLIGATORIO) -->
+      <div class="form-field">
+        <label for="referencia">Referencia: *</label>
+        <input id="referencia" [(ngModel)]="referencia" name="referencia" 
+          required appAlphaNumeric
+          (input)="validarCampoInsumoEnTiempoReal('referencia', $event)"
+          (blur)="validarCampoInsumoEnTiempoReal('referencia', $event)"
+          [class.error]="insumoErrors['referencia']"
+          placeholder="Ej: REF-001" />
+        @if (insumoErrors['referencia']) {
+          <small class="error-message">⚠️ {{ insumoErrors['referencia'] }}</small>
+        }
+      </div>
+      
+      <!-- Ubicación (OBLIGATORIO) -->
+      <div class="form-field">
+        <label for="ubicacion">Ubicación: *</label>
+        <input id="ubicacion" [(ngModel)]="ubicacion" name="ubicacion" 
+          required appAlphaNumeric
+          (input)="validarCampoInsumoEnTiempoReal('ubicacion', $event)"
+          (blur)="validarCampoInsumoEnTiempoReal('ubicacion', $event)"
+          [class.error]="insumoErrors['ubicacion']"
+          placeholder="Ej: Estantería A-1" />
+        @if (insumoErrors['ubicacion']) {
+          <small class="error-message">⚠️ {{ insumoErrors['ubicacion'] }}</small>
+        }
+      </div>
+      
+      <!-- Fecha adquisición (OBLIGATORIO) -->
+      <div class="form-field">
+        <label for="fecha_adquisicion">Fecha de adquisición: *</label>
+        <input id="fecha_adquisicion" type="date" [(ngModel)]="fecha_adquisicion" 
+          name="fecha_adquisicion" required
+          (input)="validarCampoInsumoEnTiempoReal('fecha_adquisicion', $event)"
+          (blur)="validarCampoInsumoEnTiempoReal('fecha_adquisicion', $event)"
+          [class.error]="insumoErrors['fecha_adquisicion']" />
+        @if (insumoErrors['fecha_adquisicion']) {
+          <small class="error-message">⚠️ {{ insumoErrors['fecha_adquisicion'] }}</small>
+        }
+      </div>
+      
+      <!-- Descripción (NO obligatorio) -->
+      <div class="full-row form-field">
+        <label for="descripcion">Descripción:</label>
+        <textarea id="descripcion" [(ngModel)]="descripcion" name="descripcion" 
+          rows="2" placeholder="Descripción del insumo"
+          (input)="validarCampoInsumoEnTiempoReal('descripcion', $event)"
+          (blur)="validarCampoInsumoEnTiempoReal('descripcion', $event)"
+          [class.error]="insumoErrors['descripcion']"></textarea>
+        @if (insumoErrors['descripcion']) {
+          <small class="error-message">⚠️ {{ insumoErrors['descripcion'] }}</small>
+        }
+      </div>
+      
+      <!-- Observaciones (NO obligatorio) -->
+      <div class="full-row form-field">
+        <label for="observaciones">Observaciones:</label>
+        <textarea id="observaciones" [(ngModel)]="observaciones" name="observaciones" 
+          rows="2" placeholder="Observaciones adicionales"
+          (input)="validarCampoInsumoEnTiempoReal('observaciones', $event)"
+          (blur)="validarCampoInsumoEnTiempoReal('observaciones', $event)"
+          [class.error]="insumoErrors['observaciones']"></textarea>
+        @if (insumoErrors['observaciones']) {
+          <small class="error-message">⚠️ {{ insumoErrors['observaciones'] }}</small>
+        }
+      </div>
+      
+      <div class="actions">
+        <button class="btn-compact" type="submit">Crear insumo</button>
+      </div>
+    </form>
+  </section>
+}
+
+        <!-- ===== Listado de insumos (tarjetas) al final de la página ===== -->
+    @if (formularioActivo === 'listado') {
+    <div>
+        <h2>Listado de insumos</h2>
+        <section>
+            <div class="cards-container">
+                
+                <div class="filters-grid">
+                    <div>
+                        <label for="invItemQ">Filtrar por item</label>
+                        <input id="invItemQ" [(ngModel)]="invItemFiltro" (input)="filtrarInsumosPorCampos()" placeholder="Ej: 001" />
+                    </div>
+                    <div>
+                        <label for="invNombreQ">Filtrar por nombre</label>
+                        <input id="invNombreQ" [(ngModel)]="invNombreFiltro" (input)="filtrarInsumosPorCampos()" placeholder="Ej: Guantes" />
+                    </div>
+                </div>
+                @if (insumosCargando) {
+                    <div class="catalogo-cards">
+                        @for (s of skeletonInsumos; track $index) {
+                            <article class="catalog-card skeleton-card">
+                                <div class="catalog-card-media"><div class="skeleton-box"></div></div>
+                                <div class="card-name"><span class="skeleton-line w-70"></span><span class="skeleton-line w-30"></span></div>
+                                <div class="card-desc"><div class="skeleton-line w-90"></div></div>
+                            </article>
+                        }
+                    </div>
+                }
+                @if (!insumosCargando && insumosList.length) {
+                    <div class="catalogo-cards">
+                                                  @for (ins of insumosList; track $index) {
+                                                    <article class="catalog-card" role="button" tabindex="0" [class.open]="isOpen(ins)"
+                                                                     (contextmenu)="onCatalogContextMenu($event, ins)"
+                                                                     (click)="toggleOpen(ins)" (keyup.enter)="toggleOpen(ins)" (keyup.space)="toggleOpen(ins)">
+                                <div class="catalog-card-media" *ngIf="ins.item_catalogo as ic">
+                                    <img [src]="getCatalogoImagenUrl(ic)" alt="Imagen catálogo" (error)="onImgError($event)" />
+                                </div>
+                                <div class="card-name" [title]="ins.nombre">
+                                    <span>{{ ins.nombre }}</span>
+                                    <span class="meta">Item: <strong>{{ ins.item_catalogo }}</strong></span>
+                                </div>
+                                        <!-- Cantidad disponible arriba de los campos -->
+                                        <div class="card-meta">
+                                            <span class="meta">Cantidad disponible: <strong>{{ ins.cantidad_existente }}</strong></span>
+                                        </div>
+                                        <!-- Fila con número y botón Quitar -->
+                                                        <div class="insumo-actions-row" (click)="$event.stopPropagation()">
+                                            <input type="number" min="1" step="1"
+                                                         [ngModel]="getRemoveQty(ins.id)"
+                                                         (ngModelChange)="setRemoveQty(ins.id, $event)"
+                                                         placeholder="Cantidad" />
+                                                            <button type="button" class="btn-compact btn-remove"
+                                                            [disabled]="isBusy(ins.id) || !isValidQty(getRemoveQty(ins.id))"
+                                                                            (click)="$event.stopPropagation(); quitar(ins)">Quitar</button>
+                                        </div>
+                                                                        @if (isOpen(ins)) {
+                                                            <div class="insumo-details-panel">
+                                                                <div class="detail-row"><strong>Adquirida:</strong> {{ ins.cantidad_adquirida }}</div>
+                                                                @if (ins.presentacion) { <div class="detail-row"><strong>Presentación:</strong> {{ ins.presentacion }}</div> }
+                                                                @if (ins.marca) { <div class="detail-row"><strong>Marca:</strong> {{ ins.marca }}</div> }
+                                                                @if (ins.referencia) { <div class="detail-row"><strong>Referencia:</strong> {{ ins.referencia }}</div> }
+                                                                @if (ins.ubicacion) { <div class="detail-row"><strong>Ubicación:</strong> {{ ins.ubicacion }}</div> }
+                                                                  @if (ins.fecha_adquisicion) { <div class="detail-row"><strong>Fecha adquisición:</strong> {{ ins.fecha_adquisicion | date:'yyyy-MM-dd' }}</div> }
+                                                                @if (ins.descripcion) { <div class="detail-row"><strong>Descripción:</strong> {{ ins.descripcion }}</div> }
+                                                                @if (ins.observaciones) { <div class="detail-row"><strong>Observaciones:</strong> {{ ins.observaciones }}</div> }
+                                                                                                <div class="panel-actions">
+                                                                                                    <button type="button" class="btn-delete"
+                                                                                                                    [disabled]="isBusy(ins.id)"
+                                                                                                                    (click)="$event.stopPropagation(); eliminar(ins)">
+                                                                                                        Eliminar
+                                                                                                    </button>
+                                                                                                </div>
+                                                            </div>
+                                                        }
+                            </article>
+                        }
+                    </div>
+                }
+                @if (!insumosCargando && !insumosList.length) {
+                    <p>No hay insumos registrados.</p>
+                }
+            </div>
+        </section>
+    </div>
+    }
+
+    <!-- Menú contextual (click derecho) para catálogo de insumos -->
+    @if (contextMenuVisible) {
+        <div class="context-menu" [style.left.px]="contextMenuX" [style.top.px]="contextMenuY" (click)="$event.stopPropagation()" (contextmenu)="$event.preventDefault()">
+            <button type="button" class="ctx-item delete" (click)="onContextMenuEliminar()">Eliminar</button>
+        </div>
+    }

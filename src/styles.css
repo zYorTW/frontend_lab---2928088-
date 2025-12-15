@@ -1,0 +1,589 @@
+/* Fonts and icons loaded globally via index.html */
+@import url('./app/shared/inventory-cards.css');
+@import url('./app/shared/dashboard-cards.css');
+[data-theme] .details-grid,
+.details-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+	gap: 12px;
+}
+
+[data-theme] .detail-card,
+.detail-card {
+	background: #fff;
+	border-radius: 10px;
+	overflow: hidden;
+	border: 1px solid var(--border-gray, #e2e8f0);
+	box-shadow: 0 8px 18px rgba(2,6,23,0.06);
+}
+
+.detail-card .detail-label {
+	background: #e9e9ea;
+	padding: 6px 8px;
+	font-size: 0.72rem;
+	color: #6b7280;
+	text-align: center;
+}
+
+.detail-card .detail-value {
+	padding: 8px 10px 10px 10px;
+	font-weight: 400;
+	font-size: 0.86rem;
+	color: #0f172a;
+	text-align: center;
+}
+
+.detail-full {
+	grid-column: 1 / -1;
+	background: #fff;
+	border-radius: 10px;
+	padding: 8px 10px;
+	border: 1px solid var(--border-gray, #e2e8f0);
+	box-shadow: 0 6px 12px rgba(2,6,23,0.04);
+	font-size: 0.84rem;
+	color: var(--text-gray, #4a5568);
+}
+
+.detail-card.detail-full .detail-value {
+	text-align: left;
+	white-space: pre-wrap;
+	word-break: break-word;
+	font-size: 0.86rem;
+	padding: 10px 12px;
+	font-weight: 400;
+}
+
+.detail-card.detail-full .detail-label {
+	text-align: left;
+	padding-left: 12px;
+}
+
+@media (max-width: 900px) {
+	.details-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+	.details-grid { grid-template-columns: 1fr; }
+}
+
+/* Hint icon used for inline help tooltips on labels */
+.hint-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 16px;
+	height: 16px;
+	margin-left: 6px;
+	border-radius: 50%;
+	font-size: 12px;
+	font-weight: 700;
+	background: #eef3ff;
+	color: #2d3a63;
+	border: 1px solid #cfd8ff;
+	cursor: help;
+	user-select: none;
+}
+.hint-icon:hover { background: #e3ecff; }
+.hint-icon:focus { outline: 2px solid #98b0ff; outline-offset: 2px; }
+
+/* Custom tooltip bubble above hint icon */
+.hint-icon[data-tooltip] {
+	position: relative;
+}
+.hint-icon[data-tooltip]:hover::after,
+.hint-icon[data-tooltip]:focus::after {
+	content: attr(data-tooltip);
+	position: absolute;
+	left: 50%;
+	top: -8px;
+	transform: translate(-50%, -100%);
+	background: #ffffff;
+	color: #1f2a44;
+	padding: 8px 10px;
+	font-size: 12px;
+	line-height: 1.25;
+	min-width: 220px;
+	max-width: 280px;
+	border-radius: 8px;
+	box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+	border: 1px solid #d9e2f7;
+	z-index: 20;
+	text-align: center;
+	white-space: pre-line;
+}
+.hint-icon[data-tooltip]:hover::before,
+.hint-icon[data-tooltip]:focus::before {
+	content: '';
+	position: absolute;
+	left: 50%;
+	top: -8px;
+	transform: translate(-50%, -50%);
+	width: 14px;
+	height: 14px;
+	background: #ffffff;
+	border: 1px solid #d9e2f7;
+	box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+	z-index: 19;
+	border-radius: 4px;
+	rotate: 45deg;
+}
+/* =====================================================
+	GLOBAL STYLES & THEME VARIABLES
+	===================================================== */
+
+/* LIBA theme variables (global) */
+:root {
+	--primary-blue: #001f5b;
+	--primary-turquoise: #00b8b5;
+	--primary-white: #ffffff;
+	--alert-yellow: #fff3b0;
+	--alert-orange: #ffd6a5;
+	--alert-red: #ffadad;
+	--text-gray: #4a5568;
+	--light-gray: #f7fafc;
+	--border-gray: #e2e8f0;
+}
+
+/* html, body {
+	height: 100%;
+	font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	background: var(--light-gray);
+	color: var(--text-gray);
+} */
+
+html, body {
+	font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	background: var(--light-gray);
+	color: var(--text-gray);
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	/* Layout: make body a column so footer can stay at bottom even when content is small */
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	width: 100%;
+	overflow-x: hidden;
+	box-sizing: border-box;
+}
+*, *::before, *::after { box-sizing: inherit; }
+
+/* Ocultar nav global en páginas de autenticación (header handled in app.css) */
+body.auth-page .nav-menu {
+	display: none !important;
+}
+
+/* Cuando no hay header, ajustar el padding */
+body.auth-page .container {
+	padding-top: 0;
+}
+
+/* =====================================================
+   SCOPED LIBA THEME (para el contenido interno)
+   ===================================================== */
+.liba-theme {
+	font-family: 'Poppins', sans-serif;
+	color: #001F5B;
+}
+
+.liba-theme h2,
+.liba-theme h3 {
+	color: var(--primary-blue);
+	font-weight: 600;
+	margin-bottom: 1.5rem;
+	position: relative;
+	padding-bottom: 0.5rem;
+}
+
+.liba-theme h2::after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 60px;
+	height: 3px;
+	background: linear-gradient(90deg, var(--primary-turquoise), transparent);
+	border-radius: 2px;
+}
+
+.liba-theme h3::before {
+	position: absolute;
+	left: -1rem;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 4px;
+	height: 20px;
+	background: var(--primary-turquoise);
+	border-radius: 2px;
+}
+
+/* =====================================================
+   SECTIONS (solo dentro del tema LIBA)
+   ===================================================== */
+.liba-theme section {
+	background: var(--primary-white);
+	border-radius: 12px;
+	padding: 2rem;
+	margin-bottom: 2rem;
+	border: none;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+	position: relative;
+	overflow: visible; /* allow tooltips and context menus to overflow */
+}
+
+.liba-theme section::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 4px;
+	background: linear-gradient(90deg, var(--primary-blue), var(--primary-turquoise));
+	opacity: 0;
+	transition: opacity 0.3s ease;
+}
+
+.liba-theme section:hover::before {
+	opacity: 1;
+}
+
+.liba-theme section:hover {
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+	transform: translateY(-2px);
+}
+
+/* =====================================================
+   FORM ELEMENTS
+   ===================================================== */
+.liba-theme label {
+	font-weight: 500;
+	color: var(--primary-blue);
+	margin-bottom: 0.5rem;
+	display: block;
+	font-size: 0.95rem;
+	position: relative;
+	padding-left: 8px;
+	white-space: nowrap;
+	overflow: visible; /* prevent clipping of hint-icon tooltip */
+	text-overflow: ellipsis;
+}
+
+.liba-theme label::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 3px;
+	height: 60%;
+	background: var(--primary-turquoise);
+	border-radius: 2px;
+	opacity: 0.6;
+}
+
+.liba-theme input,
+.liba-theme select,
+.liba-theme textarea {
+	width: 100%;
+	padding: 0.8rem;
+	border: 2px solid var(--border-gray);
+	border-radius: 6px;
+	font-family: inherit;
+	transition: all 0.3s ease;
+	background-color: var(--primary-white);
+	font-size: 0.95rem;
+	position: relative;
+	box-sizing: border-box;
+}
+
+/* Custom select caret + unified base style (match Reactivos) */
+select {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	/* Reactivos base look */
+	padding: 0.8rem; /* consistent padding */
+	padding-right: 2.2rem; /* extra space for custom caret */
+	border: 2px solid var(--border-gray);
+	border-radius: 6px;
+	font-family: inherit;
+	font-size: 0.95rem;
+	background-color: var(--primary-white);
+	transition: border-color 0.3s ease;
+	box-sizing: border-box;
+	/* caret as background layer, vertically centered */
+	--liba-select-caret: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23667085' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+	background-image: var(--liba-select-caret);
+	background-repeat: no-repeat;
+	background-position: right 12px center; /* perfect vertical centering */
+	background-size: 18px 18px; /* slightly larger icon */
+}
+
+/* Place a chevron on the container of any select within form grids */
+/* We now render the chevron as the select's background; hide any previous pseudo-caret */
+/* Ensure any wrapper div in form grids doesn't add an extra caret */
+.form-grid > div:has(> select) { position: relative; }
+.form-grid > div:has(> select)::after { display: none !important; content: none !important; }
+
+/* Swap to an upward chevron when the select is open (toggled by data-select-open) */
+
+/* Rotate caret when select considered open (attribute on wrapper OR select) */
+.form-grid > div[data-select-open="true"] > select,
+div[data-select-open="true"] > select,
+select[data-select-open="true"],
+select[data-open="true"] {
+	--liba-select-caret: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23667085' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 15 12 9 18 15'/></svg>");
+}
+
+/* Keep gradient on focus without losing the caret or causing tiling */
+select:focus {
+	background-image: var(--liba-select-caret), linear-gradient(to right, rgba(0, 184, 181, 0.02), transparent);
+	background-repeat: no-repeat, no-repeat;
+	background-position: right 12px center, 0 0;
+	background-size: 18px 18px, auto;
+	outline: none;
+	border-color: var(--primary-turquoise);
+	box-shadow: 0 0 0 3px rgba(0, 184, 181, 0.1);
+}
+
+/* Hover + disabled for consistency */
+select:hover:not(:focus):not(:disabled) { border-color: #cbd5e0; }
+select:disabled { background-color: #f5f7fb; color: #9aa4b2; cursor: not-allowed; opacity: 1; }
+
+/* Contenedores de campos para evitar desbordes */
+.liba-theme form .form-grid > div,
+.liba-theme form.form-grid > div,
+.liba-theme form div.field,
+.liba-theme .reactivos-page form.form-grid > div {
+	min-width: 0;
+}
+
+/* Label con salto de línea permitido */
+.liba-theme label.label-wrap {
+	white-space: normal;
+	text-overflow: clip;
+}
+
+.liba-theme input:focus,
+.liba-theme select:focus,
+.liba-theme textarea:focus {
+	outline: none;
+	border-color: var(--primary-turquoise);
+	box-shadow: 0 0 0 3px rgba(0, 184, 181, 0.1);
+}
+
+/* Keep subtle gradient only for inputs and textareas; selects use layered background to keep caret */
+.liba-theme input:focus,
+.liba-theme textarea:focus {
+	background: linear-gradient(to right, rgba(0, 184, 181, 0.02), transparent);
+}
+
+/* Position form validation messages so they don't push layout when shown.
+	 The .form-group wrapper will act as positioning context and the .field-error
+	 is absolutely positioned below the input. This keeps the space stable when
+	 messages appear or disappear. */
+.form-group { position: relative; }
+.field-error,
+.field-error[role="alert"] {
+	position: absolute;
+	left: 0;
+	top: 100%; /* directly below the input/label area */
+	margin-top: 6px;
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+/* =====================================================
+   FILTERS: SINGLE-ROW LAYOUT (GLOBAL)
+   ===================================================== */
+/* Base: keep all filter controls in one horizontal row with graceful overflow */
+.filters-grid {
+	display: grid;
+	grid-auto-flow: column;
+	grid-auto-columns: minmax(220px, auto);
+	align-items: end;
+	gap: 0.75rem;
+	overflow-x: auto;
+    padding-bottom: 0.25rem; /* room for potential scrollbar */
+}
+
+/* Catalog filters variant */
+.liba-theme .filters-grid.catalogo-filters {
+	grid-auto-flow: column;
+	grid-auto-columns: minmax(220px, auto);
+	grid-template-columns: none; /* ensure row layout */
+}
+.liba-theme .filters-grid.catalogo-filters .reset-cell { min-width: fit-content; }
+
+/* Inventory filters variant */
+.liba-theme .reactivos-filters {
+	display: grid;
+	grid-auto-flow: column;
+	grid-auto-columns: minmax(220px, auto);
+	gap: 0.75rem;
+}
+
+/* Optional: keep a small reserved height to avoid visual jump in very tight layouts */
+.form-group { padding-bottom: 1.25rem; }
+
+.liba-theme input:hover:not(:focus),
+.liba-theme select:hover:not(:focus),
+.liba-theme textarea:hover:not(:focus) {
+	border-color: #cbd5e0;
+}
+
+.liba-theme textarea {
+	resize: vertical;
+	min-height: 100px;
+}
+
+/* Force textarea and large text fields to occupy a full row inside form/grid layouts globally */
+.liba-theme form .form-grid textarea,
+.form-grid textarea,
+.liba-theme .form-grid textarea,
+.liba-theme form textarea,
+.liba-theme section textarea,
+.liba-theme .card textarea {
+	grid-column: 1 / -1 !important; /* span the entire grid row */
+	width: 100% !important;
+	min-width: 0 !important; /* allow flex/grid containers to shrink properly */
+	display: block !important;
+	box-sizing: border-box !important;
+}
+
+/* =====================================================
+	 PAGE LAYOUT UNIFICATION & ENTRY ANIMATIONS
+	 Apply consistent header/nav sizing and replicate the solicitudes
+	 entry animation for all sections (h2/h3 + section).
+	 ===================================================== */
+
+@keyframes libaFadeIn {
+	from { opacity: 0; transform: translateY(16px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes libaSlideInLeft {
+	from { opacity: 0; transform: translateX(-18px); }
+	to { opacity: 1; transform: translateX(0); }
+}
+
+/* Apply to all liba-theme pages so insumos, usuarios, reactivos, solicitudes behave equally */
+.liba-theme section { animation: libaFadeIn 420ms ease; }
+.liba-theme h2, .liba-theme h3 { animation: libaSlideInLeft 480ms ease; }
+
+/* Navigation sizing/alignment is managed in app-specific CSS (app.css) to keep
+   header + nav together. Component-specific nav rules may still exist. */
+
+/* Ensure the main container has consistent top spacing to account for header+nav */
+.liba-theme .container { padding-top: 2rem !important; }
+
+/* Small tweak: ensure section titles have consistent top margin */
+.liba-theme h2 { margin-top: 0.5rem; margin-bottom: 1rem; }
+
+/* Ensure the first section title inside the container doesn't sit too high
+	(fix for pages where the title was visually higher than others). */
+.liba-theme .container > h2:first-child,
+.liba-theme .container > h2:first-of-type {
+  margin-top: 0; /* reset any collapsed margin */
+  padding-top: 0.25rem; /* small breathing room from top */
+}
+
+/* Hide any decorative top bar that might appear above the nav/menu in
+	certain pages (prevents the green line you mentioned). */
+.liba-theme section::before { display: none !important; }
+
+
+/* Fallback selector: mark parent wrapper divs with class 'full-row' to span full grid row */
+.form-grid > div.full-row {
+	grid-column: 1 / -1 !important;
+}
+
+/* =====================================================
+   BUTTONS
+   ===================================================== */
+.liba-theme button:not(.pdf-btn):not(.eliminar):not(.tab-btn):not(.pdf-action) {
+	background: linear-gradient(135deg, var(--primary-turquoise) 0%, #009a98 100%);
+	color: var(--primary-white);
+	padding: 0.8rem 1.5rem;
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+	font-weight: 500;
+	font-family: inherit;
+	transition: all 0.3s ease;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-size: 0.95rem;
+	position: relative;
+	overflow: hidden;
+}
+
+.liba-theme button:not(.pdf-btn):not(.eliminar):not(.tab-btn):not(.pdf-action)::before {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 0;
+	height: 0;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.3);
+	transform: translate(-50%, -50%);
+	transition: width 0.6s, height 0.6s;
+}
+
+.liba-theme button:not(.pdf-btn):not(.eliminar):not(.tab-btn):not(.pdf-action):hover::before {
+	width: 300px;
+	height: 300px;
+}
+
+.liba-theme button:not(.pdf-btn):not(.eliminar):not(.tab-btn):not(.pdf-action):hover {
+	background: linear-gradient(135deg, #009a98 0%, var(--primary-turquoise) 100%);
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(0, 184, 181, 0.4);
+}
+
+.liba-theme button:not(.pdf-btn):not(.eliminar):not(.tab-btn):not(.pdf-action):active {
+	transform: translateY(0);
+	
+}
+
+/* =====================================================
+   UTILIDADES Y ANIMACIONES
+   ===================================================== */
+.liba-theme form div[style*="display:grid"] {
+	display: grid !important;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+	gap: 1.5rem !important;
+}
+
+/* Animaciones */
+@keyframes libaFadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(4px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.liba-theme .fade-in {
+	animation: libaFadeIn 0.4s ease;
+}
+
+/* =====================================================
+   CONTAINER (tema LIBA)
+   ===================================================== */
+.liba-theme .container {
+	max-width: 1400px;
+	margin: 0 auto;
+	padding: 2rem;
+}

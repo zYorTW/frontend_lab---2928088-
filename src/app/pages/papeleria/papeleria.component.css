@@ -1,0 +1,469 @@
+@import '../../shared/dashboard-cards.css';
+
+.papeleria-page { 
+  font-family: inherit; 
+  line-height: inherit; 
+}
+
+.papeleria-page h2 { 
+  font-size: 1.5rem; 
+  font-weight: 600; 
+  color: var(--primary-blue); 
+  margin: 2rem 0 1rem 0; 
+}
+
+/* ===== ESTILOS DE ERROR ===== */
+
+/* Clase base para todos los campos del formulario */
+.form-field {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+/* Mensaje de error */
+.form-field .error-message {
+  color: #000000;
+  font-size: 0.85rem;
+  margin-top: 4px;
+  padding: 3px 8px;
+  animation: fadeInError 0.2s ease;
+  line-height: 1.3;
+  min-height: 1.5em;
+  display: block;
+  border-radius: 4px;
+}
+
+.form-field input.error,
+.form-field select.error,
+.form-field textarea.error {
+  border-color: #dc3545 !important;
+  background-color: rgba(220, 53, 69, 0.02) !important;
+}
+
+/* Para full-row */
+.full-row.form-field {
+  grid-column: 1 / -1;
+}
+
+.full-row.form-field .error-message {
+  margin-top: 4px;
+}
+
+/* Animación suave para errores */
+@keyframes fadeInError {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Label con asterisco para campos obligatorios */
+.form-field label:has(+ input[required]),
+.form-field label:has(+ select[required]),
+.form-field label:has(+ textarea[required]) {
+  position: relative;
+}
+
+.form-field label:has(+ input[required])::after,
+.form-field label:has(+ select[required])::after,
+.form-field label:has(+ textarea[required])::after {
+  content: " *";
+  color: #dc3545;
+}
+
+/* Asegurar que los contenedores tengan altura mínima */
+.form-grid > .form-field {
+  min-height: calc(100% - 1rem);
+  display: flex;
+  flex-direction: column;
+}
+
+.form-grid > .form-field > * {
+  flex-shrink: 0;
+}
+
+.form-grid > .form-field .error-message {
+  flex-shrink: 0;
+  margin-top: auto;
+}
+
+/* ===== FILTROS ===== */
+.filters-grid,
+.catalogo-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: end;
+}
+
+.filters-grid label { 
+  font-weight: 500; 
+  color: var(--primary-blue); 
+  margin-bottom: 0.5rem; 
+  font-size: 0.9rem; 
+  display: block; 
+}
+
+.filters-grid input { 
+  padding: 0.7rem; 
+  border: 2px solid var(--border-gray); 
+  border-radius: 6px; 
+  font-family: inherit; 
+  transition: border-color 0.3s ease; 
+  width: 100%; 
+}
+
+.filters-grid input:focus { 
+  outline: none; 
+  border-color: var(--primary-turquoise); 
+}
+
+/* ===== CONTENEDOR DE TARJETAS ===== */
+.cards-container { 
+  margin-top: 1.5rem; 
+}
+
+.catalogo-cards { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+  gap: 1.5rem; 
+}
+
+/* ===== TARJETAS DE CATÁLOGO ===== */
+.catalog-card { 
+  background: var(--primary-white); 
+  border: 2px solid var(--border-gray); 
+  border-radius: 10px; 
+  padding: 1.5rem; 
+  transition: all 0.3s ease; 
+  position: relative; 
+  cursor: pointer; 
+}
+
+.catalog-card:hover { 
+  transform: translateY(-3px); 
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1); 
+  border-color: var(--primary-turquoise); 
+}
+
+.catalog-card-media { 
+  width: 100%; 
+  height: 180px; 
+  border-radius: 8px; 
+  overflow: hidden; 
+  background: #f3f4f6; 
+  margin-bottom: 0.75rem; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+}
+
+.catalog-card-media img { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
+  display: block; 
+}
+
+.card-name { 
+  font-size: 1.1rem; 
+  font-weight: 600; 
+  color: var(--primary-blue); 
+  margin-top: 0.5rem; 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  gap: 0.5rem; 
+}
+
+.card-name .meta { 
+  background: var(--light-gray); 
+  padding: 0.2rem 0.5rem; 
+  border-radius: 6px; 
+  font-weight: 500; 
+  font-size: 0.9rem; 
+  white-space: nowrap; 
+}
+
+.card-desc { 
+  color: var(--text-gray); 
+  margin-top: 0.5rem; 
+}
+
+/* ===== FORMULARIO GRID ===== */
+.form-grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+  gap: 1.5rem; 
+  align-items: start;
+}
+
+.form-grid label { 
+  font-weight: 500; 
+  color: var(--primary-blue); 
+  margin-bottom: 0.5rem; 
+  font-size: 0.9rem; 
+  display: block; 
+}
+
+/* Estilos base para inputs, selects y textareas */
+.form-grid input,
+.form-grid select,
+.form-grid textarea {
+  padding: 0.7rem;
+  border: 2px solid var(--border-gray);
+  border-radius: 6px;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+  width: 100%;
+}
+
+.form-grid input:focus,
+.form-grid select:focus,
+.form-grid textarea:focus {
+  outline: none;
+  border-color: var(--primary-turquoise);
+}
+
+.form-grid textarea { 
+  resize: vertical; 
+  min-height: 80px; 
+}
+
+.form-grid .full-row {
+  grid-column: 1 / -1;
+}
+
+/* ===== BOTONES ===== */
+.actions { 
+  display: flex; 
+  gap: .5rem; 
+  align-items: center; 
+}
+
+.btn-compact { 
+  padding: 0.7rem 1rem !important; 
+  min-height: 40px; 
+  font-size: 0.92rem; 
+  border-radius: 6px; 
+  background: var(--primary-turquoise); 
+  color: #fff; 
+  border: none; 
+  cursor: pointer; 
+  display: inline-flex; 
+  align-items: center; 
+  justify-content: center; 
+  white-space: nowrap; 
+  line-height: 1.2; 
+}
+
+.btn-compact:hover { 
+  background: #008e8c; 
+  box-shadow: 0 4px 8px rgba(0, 184, 181, 0.3); 
+  transform: translateY(-1px); 
+}
+
+/* Botón reset filtros */
+.btn-reset-filtros { 
+  background: var(--alert-orange); 
+  color: #744210; 
+  padding: 0.7rem 1rem; 
+  border-radius: 6px; 
+  border: none; 
+  cursor: pointer; 
+}
+
+.btn-reset-filtros:hover { 
+  background: #ffb366; 
+}
+
+/* Estadísticas del catálogo */
+.catalogo-stats { 
+  margin-bottom: 1rem; 
+  padding: 0.8rem; 
+  background: var(--light-gray); 
+  border-radius: 6px; 
+  color: var(--text-gray); 
+  font-weight: 500; 
+}
+
+/* ===== FILTROS DE INVENTARIO ===== */
+.filters-row { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+  gap: 1rem; 
+  margin-bottom: 1.5rem; 
+  align-items: end; 
+}
+
+.filters-row label { 
+  font-weight: 500; 
+  color: var(--primary-blue); 
+  margin-bottom: 0.5rem; 
+  font-size: 0.9rem; 
+  display: block; 
+}
+
+.filters-row input { 
+  padding: 0.7rem; 
+  border: 2px solid var(--border-gray); 
+  border-radius: 6px; 
+  font-family: inherit; 
+  transition: border-color 0.3s ease; 
+  width: 100%; 
+}
+
+.filters-row input:focus { 
+  outline: none; 
+  border-color: var(--primary-turquoise); 
+}
+
+/* ===== PANEL DE DETALLES DE INSUMOS ===== */
+.insumo-details-panel {
+  margin-top: .6rem;
+  padding: .75rem;
+  background: #fafafa;
+  border: 1px solid var(--border-gray);
+  border-radius: 8px;
+}
+
+.insumo-actions-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: .75rem;
+  align-items: center;
+  margin: .6rem 0 .4rem;
+}
+
+.insumo-actions-row input[type=number] {
+  padding: 0.6rem 0.75rem;
+  border: 2px solid var(--border-gray);
+  border-radius: 8px;
+  font: inherit;
+  width: 100%;
+  transition: border-color .25s ease;
+}
+
+.insumo-actions-row input[type=number]:focus { 
+  outline: none; 
+  border-color: var(--primary-turquoise); 
+}
+
+.insumo-actions-row .btn-remove {
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  padding: 0.65rem 1.1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .2s ease, transform .2s ease;
+}
+
+.insumo-actions-row .btn-remove:hover:not(:disabled) { 
+  background: #b91c1c; 
+}
+
+.insumo-actions-row .btn-remove:disabled { 
+  opacity: .55; 
+  cursor: not-allowed; 
+}
+
+.insumo-actions-row .btn-remove:active:not(:disabled) { 
+  transform: translateY(1px); 
+}
+
+.catalog-card.open .insumo-details-panel { 
+  max-height: 800px; 
+  opacity: 1; 
+  padding-top: .25rem; 
+}
+
+.panel-actions { 
+  display: block; 
+  margin-top: .6rem; 
+}
+
+.btn-delete { 
+  width: 100%; 
+  display: inline-flex; 
+  align-items: center; 
+  justify-content: center; 
+  padding: .7rem 1rem; 
+  background: #ef4444; 
+  color: #fff; 
+  border: none; 
+  border-radius: 6px; 
+  font-weight: 600; 
+}
+
+.btn-delete:hover:not(:disabled) { 
+  background: #dc2626; 
+}
+
+.btn-delete:disabled { 
+  opacity: .55; 
+  cursor: not-allowed; 
+}
+
+/* ===== MENÚ CONTEXTUAL (CLICK DERECHO) ===== */
+.context-menu {
+  position: fixed;
+  z-index: 7000;
+  background: #ffffff;
+  border: 1px solid var(--border-gray);
+  border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(2, 6, 23, 0.18);
+  padding: 8px;
+  width: 160px;
+  animation: ctxIn 160ms ease;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+@keyframes ctxIn { 
+  from { 
+    opacity: 0; 
+    transform: scale(.96);
+  } 
+  to { 
+    opacity: 1; 
+    transform: scale(1);
+  } 
+}
+
+.context-menu .ctx-item {
+  background: transparent;
+  border: none;
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 0.86rem;
+  cursor: pointer;
+  font-weight: 600;
+  color: #334155;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.context-menu .ctx-item:hover { 
+  background: var(--light-gray); 
+}
+
+.context-menu .ctx-item.delete { 
+  color: #b91c1c; 
+}
+
+.context-menu .ctx-item.delete:hover { 
+  background: #fee2e2; 
+  color: #7f1d1d; 
+}

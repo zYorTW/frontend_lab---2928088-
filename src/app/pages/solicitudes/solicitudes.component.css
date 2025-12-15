@@ -1,0 +1,1810 @@
+@import '../../shared/dashboard-cards.css';
+
+.compact-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #d0d6dd);
+  color: var(--text-color, #374151);
+  border-radius: 6px; /* less rounded for a more squared look */
+  padding: 6px; /* equal padding for a compact square feel */
+  line-height: 1;
+  cursor: pointer;
+  min-height: 28px;
+  min-width: 28px;
+}
+
+.compact-action:hover {
+  background: var(--hover-bg, #f3f4f6);
+}
+
+.compact-action .action-leading,
+.compact-action .action-label {
+  display: inline-flex;
+  align-items: center;
+}
+
+.compact-action .icon-plus,
+.compact-action .icon-caret {
+  fill: currentColor;
+}
+/* Place right controls inside card-name without leaving it */
+.card-name {
+  position: relative;
+}
+.equipos-grid {
+  position: relative; /* create stacking context above page footer */
+  z-index: 1;
+  overflow: visible; /* allow dropdowns to overflow cards */
+}
+
+.equipo-card {
+  position: relative; /* ensure dropdown can stack over siblings */
+  z-index: 2;
+  overflow: visible;
+}
+
+/* Espaciado vertical entre tarjetas en listas (solicitudes / clientes) */
+.equipos-grid .equipo-card {
+  margin-bottom: 1rem;
+}
+.equipos-grid .equipo-card:last-child {
+  margin-bottom: 0;
+}
+
+/* When the dropdown is open, lift the whole card above siblings */
+.equipo-card:has(.compact-dropdown[open]) {
+  z-index: 100002;
+}
+
+.equipo-card .compact-dropdown[open] {
+  z-index: 100000; /* force above other cards and footer */
+}
+
+.card-name .name-line {
+  font-weight: 600;
+  padding-right: 280px; /* extra room so it doesn't feel crowded */
+}
+
+.card-name .card-right-controls {
+  position: absolute;
+  top: 50%;
+  right: 12px; /* pull away from the edge */
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px; /* a bit more breathing room */
+  z-index: 3; /* ensure above name-line for clicks */
+}
+.compact-group {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border-color, #d0d6dd);
+  border-radius: 6px;
+  background: var(--card-bg, #fff);
+  overflow: visible; /* allow dropdown menu to overflow */
+}
+
+.compact-group .pdf-icon-left {
+  border: none;
+  border-right: 1px solid var(--border-color, #d0d6dd);
+  border-radius: 0;
+}
+
+.compact-group .compact-dropdown .compact-action {
+  border: none;
+  border-radius: 0;
+}
+
+.compact-group .compact-dropdown[open] .compact-menu {
+  right: 0;
+}
+.pdf-icon-left {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  /* decorative only: no border or background so only icon color shows */
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-color, #374151);
+  pointer-events: none; /* decorative; do not block clicks */
+}
+
+.pdf-icon-left i {
+  font-size: 14px;
+}
+.compact-dropdown {
+  position: relative;
+  display: inline-block;
+  z-index: 100000; /* ensure above other card content */
+}
+
+.compact-dropdown > summary.compact-action {
+  display: inline-flex;
+  align-items: center;
+  list-style: none;
+  cursor: pointer;
+}
+
+.compact-dropdown > summary::-webkit-details-marker {
+  display: none;
+}
+
+.compact-dropdown > summary:focus {
+  outline: none;
+}
+
+.compact-dropdown[open] .compact-menu {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* When JS decides the menu should flip, add the 'flip' helper class */
+.compact-dropdown.flip .compact-menu {
+  top: auto;
+  bottom: calc(100% + 6px);
+  transform: translateY(4px);
+}
+
+.compact-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 160px;
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #d0d6dd);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  padding: 6px;
+  list-style: none;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition: opacity 120ms ease, transform 120ms ease;
+  z-index: 100001; /* above everything local */
+}
+
+/* Flip menu upward if near bottom of viewport */
+/* Prefer native position-anchor when available, but the experimental
+   at-rules (@position-fallback/@try) were removed because they break
+   CSS parsing in many build pipelines and browsers. The media-query
+   fallback below handles flipping the menu for older browsers. If
+   you want native anchor positioning later, we can add a feature
+   detection script to apply it at runtime. */
+
+/* Alternative using container query for older browsers */
+.compact-dropdown[open] .compact-menu {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* Fallback: flip to top if parent is in bottom half of screen */
+@media (min-height: 600px) {
+  .equipo-card:nth-last-child(-n+2) .compact-menu,
+  .equipo-card:last-child .compact-menu {
+    top: auto;
+    bottom: calc(100% + 6px);
+    transform: translateY(4px);
+  }
+  
+  .equipo-card:nth-last-child(-n+2) .compact-dropdown[open] .compact-menu,
+  .equipo-card:last-child .compact-dropdown[open] .compact-menu {
+    transform: translateY(0);
+  }
+}
+
+.compact-menu li {
+  padding: 6px 8px;
+  border-radius: 6px;
+  color: var(--text-color, #1f2937);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.compact-menu li:hover {
+  background: var(--hover-bg, #f3f4f6);
+}
+
+.card-name .pdf-uploader .upload-btn {
+  padding: 6px 10px;
+}
+/* Compact type select shows selected label clearly */
+.type-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.type-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #d0d6dd);
+  border-radius: 6px;
+  color: var(--text-color, #1f2937);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  padding: 6px 28px 6px 10px; /* room for chevron */
+  min-width: 140px; /* show label without breaking compact look */
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.type-select:focus {
+  outline: none;
+  border-color: var(--primary, #2563eb);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.chevron {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted, #6b7280);
+  font-size: 0.8rem;
+  pointer-events: none;
+}
+/* ===== Menú de pestañas para información de equipo ===== */
+.equipo-tabs-menu {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.7rem;
+  border-bottom: 2px solid var(--border-gray);
+  background: var(--primary-white);
+  padding-left: 0.5rem;
+}
+.tab-btn {
+  background: #f4f6fa;
+  border: 1px solid var(--border-gray);
+  border-bottom: none;
+  outline: none;
+  padding: 0.5rem 1.4rem;
+  font-size: 1rem;
+  color: var(--primary-blue);
+  cursor: pointer;
+  border-radius: 8px 8px 0 0;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  margin-bottom: -2px;
+  position: relative;
+  z-index: 1;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.tab-btn .done-icon,
+.done-icon {
+  color: #28a745;
+  margin-left: 6px;
+  font-size: 0.9em;
+  vertical-align: middle;
+}
+.tab-btn.active {
+  background: #fff;
+  color: var(--primary-blue);
+  border-bottom: 2px solid #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  font-weight: 600;
+}
+.tab-btn:not(.active):hover {
+  background: #e9e9ea;
+  color: var(--primary-turquoise);
+}
+.tab-btn:not(.active) {
+  opacity: 0.7;
+}
+.tab-btn.active {
+  opacity: 1;
+}
+
+.equipos-page .actions button.btn-compact {
+  width: fit-content !important;
+  padding: 0.5rem 1.2rem !important;
+  display: inline-flex !important;
+}
+.btn-compact {
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  flex: 0 0 auto !important;
+  padding: 0.5rem 1.2rem !important;
+  display: inline-flex !important;
+}
+.btn-compact {
+  padding: 0.5rem 1.2rem !important;
+}
+/* Estilos para el formulario de equipos */
+.equipos-page {
+  /* Usa el mismo layout que los otros apartados */
+  width: 100%;
+  padding: 2rem;
+}
+
+/* ===== Variables CSS ===== */
+:root {
+  --primary-blue: #001f5b;
+  --primary-turquoise: #00b8b5;
+  --primary-white: #ffffff;
+  --text-gray: #4a5568;
+  --light-gray: #f7fafc;
+  --border-gray: #e2e8f0;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== Animaciones ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Utility to fade-in lists when data becomes available */
+.fade-in {
+  animation: fadeInUp 360ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+
+/* ===== Tarjetas de Equipo ===== */
+
+/* ===== Sección de Acciones Rápidas ===== */
+.actions-section {
+  margin: 2.5rem 0;
+  animation: fadeInUp 1.4s ease-out;
+}
+
+.actions-section h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary-blue);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.actions-section h2 i {
+  color: var(--primary-turquoise);
+  font-size: 1.5rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 184, 181, 0.3));
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.actions-grid .action-card {
+    background: linear-gradient(135deg, var(--primary-white) 0%, #fafbfc 100%);
+    border: 3px solid var(--border-gray);
+    border-radius: 20px;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: var(--text-gray);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+}
+
+.actions-grid .action-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(0, 184, 181, 0.08) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.actions-grid .action-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0;
+    background: linear-gradient(180deg, transparent 0%, rgba(0, 184, 181, 0.1) 100%);
+    transition: height 0.4s ease;
+}
+
+.actions-grid .action-card:hover::before {
+    opacity: 1;
+}
+  /* Modal overlay and fixed-size edit modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    /* Smooth fade for opening/closing */
+    transition: opacity 200ms ease;
+    opacity: 1;
+  }
+
+  .edit-modal {
+    background: #fff;
+    padding: 18px;
+    border-radius: 8px;
+    width: 900px; /* fixed width based on the largest tab (Solicitud) */
+    max-width: calc(100vw - 40px);
+    height: 620px; /* fixed height to avoid resizing when switching tabs */
+    max-height: 90vh;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.18);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    /* Smooth scale/fade for closing */
+    transition: transform 200ms ease, opacity 200ms ease;
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+
+  /* Ensure form grid inside modal lays out fields in two columns,
+     and make .span-full occupy the full row. Textareas inside span-full
+     become large block rows that fit the modal height without breaking layout. */
+  .edit-modal .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    align-items: start;
+    /* allow children to shrink when scrolling container is constrained */
+    min-height: 0;
+  }
+
+  .edit-modal .form-field.span-full {
+    grid-column: 1 / -1;
+  }
+
+  .edit-modal .form-field.span-full textarea {
+    width: 100%;
+    box-sizing: border-box;
+    display: block;
+    resize: vertical;
+    /* Start small (same height as other fields) and expand as user types */
+    min-height: 40px;
+    max-height: calc(60vh);
+    overflow: auto;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border-gray);
+    background: var(--primary-white);
+    transition: height 140ms ease;
+    line-height: 1.4;
+  }
+
+  /* Smaller screens: reduce textarea height to avoid overflowing viewport */
+  @media (max-width: 720px) {
+    .edit-modal .form-grid {
+      grid-template-columns: 1fr;
+    }
+    .edit-modal .form-field.span-full textarea {
+      min-height: 160px;
+      max-height: calc(80vh - 160px);
+    }
+  }
+
+  /* Closing state: play fade/scale out while keeping modal in DOM */
+  .modal-overlay.closing {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .edit-modal.closing {
+    transform: translateY(10px) scale(0.98);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Make the modal content scrollable while keeping header and footer visible */
+  .edit-modal > div:last-child,
+  .edit-modal > .form-grid,
+  .edit-modal .form-grid,
+  .edit-modal .equipo-tabs-menu + div {
+    overflow: auto;
+  }
+
+  /* Ensure the tab content area can scroll without increasing modal size */
+  .edit-modal .equipo-tabs-menu + div {
+    flex: 1 1 auto;
+    padding-right: 8px; /* room for scrollbar */
+  }
+
+  /* Keep actions pinned at the bottom (if any) */
+  .edit-modal .form-actions,
+  .edit-modal > div > div[style*="justify-content:flex-end"] {
+    z-index: 2;
+  }
+
+.actions-grid .action-card:hover::after {
+    height: 100%;
+}
+
+.actions-grid .action-card:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 15px 40px rgba(0, 184, 181, 0.25);
+    border-color: var(--primary-turquoise);
+    color: var(--primary-blue);
+    text-decoration: none;
+}
+
+.actions-grid .action-card i {
+  font-size: 2rem;
+  color: var(--primary-turquoise);
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  filter: drop-shadow(0 6px 12px rgba(0, 184, 181, 0.4));
+  position: relative;
+  z-index: 1;
+}
+
+.actions-grid .action-card:hover i {
+  transform: scale(1.25) rotate(15deg);
+  color: var(--primary-blue);
+}
+
+.actions-grid .action-card span {
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== Estilos para los formularios ===== */
+.form-section {
+  margin-top: 2rem;
+  animation: fadeInUp 0.3s ease-in-out;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+}
+.form-grid > div {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Helper to make a field span the full row (all grid columns) */
+.form-grid > .full,
+.form-grid > .form-field.full {
+  grid-column: 1 / -1;
+}
+
+/* Ensure textarea and inputs inside a full field take full width */
+.form-grid .full textarea,
+.form-grid .full input,
+.form-grid .full select {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ensure consistent vertical spacing inside each form-field
+   so textarea, inputs and error messages are evenly separated */
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
+.form-field > * + * {
+  margin-top: 0.75rem; /* espacio consistente entre label, control y ayuda/errores */
+}
+
+/* Reduce spacing specifically between a label and its immediate control
+   so labels remain visually close to their inputs while other gaps stay larger */
+.form-field > label + * {
+  margin-top: 0.35rem;
+}
+
+/* Espacio entre bloques de formulario (cuando se separan en múltiples .form-grid) */
+.form-grid + .form-grid {
+  margin-top: 1.25rem;
+}
+
+/* Ensure full-width fields (commonly used to host textareas) are
+   visually separated from previous content in all forms */
+.form-field.full {
+  margin-top: 1rem; /* extra spacing before the full-width textarea block */
+}
+
+/* Defensive: if a textarea is placed directly after another field
+   within the same grid, add a little extra top margin so it doesn't stick */
+.form-field textarea + * {
+  margin-top: 0.5rem;
+}
+
+.form-field textarea {
+  padding: 0.6rem;
+  min-height: 110px; /* altura razonable para textareas */
+  resize: vertical;
+}
+
+/* Make solicitudes accept the same helper class used in equipos */
+.full-row {
+  grid-column: 1 / -1;
+}
+
+.form-grid textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+.form-section-title {
+  grid-column: 1 / -1;
+}
+label {
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+}
+input, select, textarea {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+.actions,
+.form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-start; /* botones alineados a la izquierda */
+  gap: 1rem;
+  margin-top: 1.75rem; /* más separación entre campos y botones */
+}
+.actions button,
+.form-actions button {
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  flex: 0 0 auto !important;
+  margin-top: 0; /* botones ya se separan por el contenedor */
+}
+.btn-compact {
+  width: auto;
+  min-width: 0;
+  max-width: 100%;
+  padding: 0.5rem 1.2rem;
+}
+button.btn-compact {
+  padding: 0.5rem 1.2rem;
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+button.btn-compact:hover {
+  background: #1565c0;
+}
+
+.btn-compact i {
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+.form-section {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Opcional: animación suave para mostrar/ocultar */
+div[ngIf] {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Estilos para el campo combinado de búsqueda */
+.campo-combinado {
+  position: relative;
+  display: flex;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: white;
+  overflow: hidden;
+  transition: border-color 0.3s ease;
+}
+
+.campo-combinado:focus-within {
+  border-color: #001f5b;
+  box-shadow: 0 0 0 2px rgba(0, 31, 91, 0.1);
+}
+
+.select-filtro {
+  width: 160px;
+  border: none;
+  border-right: 1px solid #ccc;
+  background: #f8f9fa;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  color: #495057;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.3s ease;
+}
+
+.select-filtro:focus {
+  background: #e9ecef;
+}
+
+.input-combinado {
+  flex: 1;
+  border: none;
+  padding: 0.5rem;
+  font-size: 1rem;
+  outline: none;
+  min-width: 0;
+}
+
+.input-combinado::placeholder {
+  color: #6c757d;
+  opacity: 0.7;
+}
+
+/* Mejorar el estilo de la lista de resultados */
+.lista-resultados {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.sin-resultados {
+  padding: 20px;
+  text-align: center;
+  color: #6c757d;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.sin-resultados i {
+  font-size: 1.5rem;
+  color: #adb5bd;
+}
+
+.sin-resultados small {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.resultado-item {
+  padding: 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  transition: all 0.2s ease;
+}
+
+.resultado-item:hover {
+  background-color: #f8f9fa;
+  transform: translateX(2px);
+}
+
+.resultado-item:last-child {
+  border-bottom: none;
+}
+
+.resultado-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.codigo {
+  color: #001f5b;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.nombre {
+  color: #495057;
+  font-size: 0.95rem;
+}
+
+.info-adicional {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.info-adicional span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.info-adicional i {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+.equipo-seleccionado {
+  margin-top: 12px;
+  padding: 12px;
+  background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%);
+  border: 1px solid #c3e6cb;
+  border-radius: 6px;
+}
+
+.seleccionado-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.seleccionado-content {
+  flex: 1;
+}
+
+.seleccionado-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.seleccionado-header i {
+  color: #28a745;
+  font-size: 0.9rem;
+}
+
+.seleccionado-header strong {
+  color: #155724;
+  font-size: 0.9rem;
+}
+
+.codigo-nombre {
+  color: #155724;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.detalles-seleccionado {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: #155724;
+}
+
+.detalles-seleccionado span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-limpiar {
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.3s ease;
+}
+
+.btn-limpiar:hover {
+  background: #c82333;
+}
+
+.info-ayuda {
+  margin-top: 6px;
+  padding: 8px;
+  background: #e7f3ff;
+  border-radius: 4px;
+  border-left: 3px solid #001f5b;
+}
+
+.info-ayuda small {
+  color: #001f5b;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.info-ayuda i {
+  font-size: 0.7rem;
+}
+
+.full-row {
+  grid-column: 1 / -1;
+}
+
+/* Estilo para campos autocompletados */
+input[readonly] {
+  background-color: #f8f9fa;
+  border-color: #e9ecef;
+  color: #6c757d;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+  }
+  
+  .actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .select-filtro {
+    width: 130px;
+    font-size: 0.85rem;
+  }
+  
+  .info-adicional,
+  .detalles-seleccionado {
+    flex-direction: column;
+    gap: 2px;
+  }
+  
+  .resultado-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .actions-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .campo-combinado {
+    flex-direction: column;
+  }
+  
+  .select-filtro {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .seleccionado-info {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .btn-limpiar {
+    align-self: flex-end;
+  }
+}
+
+/* ===== Estilos para Lista de Equipos ===== */
+.sin-equipos {
+  text-align: center;
+  padding: 3rem;
+  background: var(--light-gray);
+  border-radius: 12px;
+  margin: 2rem 0;
+}
+
+.sin-equipos i {
+  font-size: 4rem;
+  color: var(--border-gray);
+  margin-bottom: 1rem;
+}
+
+.sin-equipos p {
+  color: var(--text-gray);
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.equipos-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+/* Base card styling siguiendo diseño de reactivos */
+.equipo-card {
+  background: var(--primary-white);
+  border: 2px solid var(--border-gray);
+  border-radius: 10px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  cursor: pointer;
+  width: 100%;
+}
+
+.equipo-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary-turquoise);
+}
+
+/* Card top: tags + action buttons */
+.equipo-card .card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.equipo-card .tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.equipo-card .tag {
+  background: var(--light-gray);
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: var(--text-gray);
+  border: 1px solid var(--border-gray);
+  white-space: nowrap;
+}
+
+.equipo-card .tag strong {
+  color: var(--primary-blue);
+  margin-right: 0.25rem;
+}
+
+/* PDF Actions buttons */
+.equipo-card .pdf-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+/* PDF button styles centralized in shared/inventory-cards.css; remove local duplicates */
+
+/* Card name section with gradient background */
+.equipo-card .card-name {
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-turquoise) 100%);
+  color: var(--primary-white);
+  padding: 0.75rem 0.9rem;
+  border-radius: 8px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.equipo-card .card-name .name-line {
+  font-size: 1.05rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  padding-right: 30px;
+}
+
+.equipo-card .card-name .meta-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  opacity: 0.95;
+}
+
+.equipo-card .card-name .meta-line .chip {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.equipo-card .card-name .toggle-icon {
+  position: absolute;
+  right: 12px;
+  top: 8px;
+  transition: transform 0.18s ease;
+  font-size: 1.2rem;
+}
+
+.equipo-card .card-name .toggle-icon.open {
+  transform: rotate(180deg);
+}
+
+/* ====== Cabecera: nombre + controles derechos ====== */
+.equipo-card .card-header-row {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.equipo-card .card-header-row .card-name {
+  flex: 1 1 auto;
+}
+
+.equipo-card .card-right-controls {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+}
+
+/* Control combinado similar a pestaña de navegador para subir PDF */
+.equipo-card .pdf-uploader {
+  display: inline-flex;
+  align-items: stretch;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #cfd3da;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+
+.equipo-card .pdf-uploader .upload-btn {
+  all: unset;
+  background: #d9d9d9;
+  color: #1f2030;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  padding: 10px 16px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+.equipo-card .pdf-uploader .upload-btn:hover { background: #d3d3d3; }
+
+.equipo-card .pdf-uploader .type-wrap {
+  position: relative;
+  background: #bfbfbf;
+  min-width: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.equipo-card .pdf-uploader .type-wrap .type-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: none;
+  background: transparent;
+
+  width: 44px;
+  height: 100%;
+  cursor: pointer;
+}
+
+.equipo-card .pdf-uploader .type-wrap .chevron {
+  position: absolute;
+  right: 12px;
+  font-size: 18px;
+  color: #1f2030;
+  pointer-events: none;
+}
+
+.equipo-info-principal {
+  background: var(--light-gray);
+  padding: 1.25rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.info-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: 0.95rem;
+  color: var(--primary-blue);
+  font-weight: 500;
+}
+
+.equipo-nombre {
+  padding: 1.25rem;
+  border-top: 1px solid var(--border-gray);
+}
+
+.equipo-nombre strong {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.equipo-nombre p {
+  font-size: 1rem;
+  color: var(--primary-blue);
+  font-weight: 500;
+  margin: 0;
+}
+/* Expanded details section - compact design */
+.equipo-detalles {
+  margin-top: 0.75rem;
+  padding: 0.5rem 0;
+  animation: fadeInUp 0.3s ease;
+}
+
+/* Botón segundo nivel */
+.info-expand-toggle {
+  background: #ffffff;
+  border: 1px solid var(--border-gray);
+  color: var(--primary-blue);
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: .5px;
+  padding: 0.45rem 0.7rem;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background .2s, box-shadow .2s;
+  margin: 0 0 .6rem .4rem;
+}
+
+.info-expand-toggle:hover {
+  background: var(--light-gray);
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
+
+.info-expand-toggle .arrow {
+  transition: transform .2s ease;
+  font-size: .9rem;
+  opacity: .8;
+}
+
+.info-expand-toggle .arrow.open {
+  transform: rotate(180deg);
+}
+
+/* Tarjeta interna de información */
+.equipo-info-card {
+  background: #ffffff;
+  border: 1px solid var(--border-gray);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(2,6,23,0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.equipo-info-card-header {
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-turquoise) 100%);
+  color: #fff;
+  padding: 0.55rem 0.85rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: .5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.equipo-info-card-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.equipo-info-card-title::before {
+  content: '\f1b2'; /* icono cubo FontAwesome */
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  font-size: 0.9rem;
+}
+
+.equipo-info-card-body {
+  padding: 0.75rem 0.75rem 0.9rem;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Compact detail grid with more columns and less spacing */
+.detalle-grid-compacto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+}
+
+.detalle-item {
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border-gray);
+  box-shadow: 0 4px 12px rgba(2, 6, 23, 0.04);
+  display: flex;
+  flex-direction: column;
+}
+
+.detalle-item .detalle-label {
+  background: #e9e9ea;
+  padding: 4px 8px;
+  font-size: 0.7rem;
+  color: #6b7280;
+  text-align: center;
+  font-weight: 500;
+}
+
+.detalle-item span:not(.detalle-label) {
+  padding: 6px 8px;
+  font-weight: 400;
+  font-size: 0.82rem;
+  color: #0f172a;
+  text-align: center;
+}
+
+.detalle-item-full {
+  grid-column: 1 / -1;
+}
+
+.detalle-item-full .detalle-label {
+  text-align: left;
+  padding-left: 12px;
+}
+
+.detalle-item-full span:not(.detalle-label) {
+  text-align: left;
+  padding: 8px 10px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Section titles in ficha tecnica tab */
+.seccion-titulo {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, var(--primary-turquoise) 0%, #009996 100%);
+  color: #ffffff;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.seccion-titulo:first-child {
+  margin-top: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .detalle-grid-compacto {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .detalle-grid-compacto {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ===== Historial Records Styles ===== */
+.historial-records-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.historial-record-card {
+  background: #ffffff;
+  border: 2px solid var(--border-gray);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+}
+
+.historial-record-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-turquoise);
+}
+
+.historial-header {
+  background: linear-gradient(135deg, var(--primary-turquoise) 0%, #009996 100%);
+  padding: 0.8rem 1.2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.historial-header:hover {
+  background: linear-gradient(135deg, #00a8a5 0%, #008885 100%);
+}
+
+.historial-consecutivo {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.historial-consecutivo i {
+  font-size: 0.85rem;
+  transition: transform 0.2s ease;
+}
+
+.historial-fecha {
+  font-size: 0.9rem;
+  color: #ffffff;
+  opacity: 0.95;
+}
+
+.historial-body {
+  padding: 1rem;
+}
+
+.historial-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.historial-item {
+  background: #f9fafb;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+}
+
+.historial-item .historial-label {
+  background: #e9e9ea;
+  padding: 5px 10px;
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.historial-item span:not(.historial-label) {
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  color: #0f172a;
+  font-weight: 400;
+}
+
+.historial-item-full {
+  grid-column: 1 / -1;
+}
+
+.historial-item-full .historial-label {
+  text-align: left;
+}
+
+.historial-item-full span:not(.historial-label) {
+  text-align: left;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.no-historial-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  color: var(--text-gray);
+  text-align: center;
+}
+
+.no-historial-message i {
+  font-size: 3rem;
+  color: var(--border-gray);
+  margin-bottom: 1rem;
+}
+
+.no-historial-message p {
+  font-size: 1rem;
+  color: #9ca3af;
+}
+
+@media (max-width: 768px) {
+  .historial-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .historial-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+}
+
+/* Firma image preview */
+.firma-mini {
+  max-height: 80px;
+  max-width: 100%;
+  object-fit: contain;
+  cursor: pointer;
+  border: 1px solid var(--border-gray);
+  border-radius: 6px;
+}
+.firma-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.firma-center {
+  width: 100%;
+  justify-content: center;
+}
+
+.btn-eye {
+  background: var(--primary-turquoise);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.35rem 0.55rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-eye i {
+  font-size: 0.95rem;
+}
+
+.btn-eye:hover {
+  background: #009996;
+}
+
+.icon-eye {
+  color: var(--primary-turquoise);
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.icon-eye:hover {
+  color: #009996;
+}
+
+.icon-eye-link {
+  text-decoration: none;
+}
+
+.link-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* Modal styles */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 12px;
+  width: min(90vw, 800px);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, var(--primary-turquoise) 0%, #009996 100%);
+  color: #fff;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.firma-full {
+  max-width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  border: 1px solid var(--border-gray);
+  border-radius: 8px;
+}
+
+/* Regla vacía eliminada para evitar lint error */
+
+/* PDF field styles (left of card-right-controls) */
+.pdf-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  padding: 10px 14px;
+  border-radius: 12px;
+  max-width: 500px;
+  margin-right: 10px; /* give space to right controls */
+}
+
+.pdf-icon {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+}
+
+.pdf-select {
+  flex: 1;
+  padding: 6px 8px;
+  font-size: 15px;
+  border: none;
+  background: transparent;
+  outline: none;
+}
+
+.btn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn.view {
+  background: #e5e7eb;
+}
+
+.btn.delete {
+  background: #ff3b30;
+  color: white;
+}
+
+/* Ensure pdf-field matches the height and alignment of the right controls */
+.card-controls-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-right-controls .pdf-field,
+.card-right-controls .compact-group {
+  min-height: 28px; /* match .compact-action min-height */
+  display: inline-flex;
+  align-items: center;
+}
+
+.card-right-controls .pdf-field {
+  padding: 6px 10px; /* make visually closer to the compact action */
+  border-radius: 6px;
+}
+
+.card-right-controls .pdf-select {
+  font-size: 0.92rem;
+}
+
+/* Style placeholder state for the select to make it visually clearer */
+.pdf-select.placeholder {
+  color: #6b7280; /* slightly muted */
+  font-style: italic;
+}
+
+.pdf-select option[disabled] {
+  color: #6b7280;
+}
+
+/* ===== ESTILOS DE ERROR PARA VALIDACIÓN ===== */
+/* Siguiendo el mismo patrón que PapELERÍA */
+.form-field input.error,
+.form-field select.error, 
+.form-field textarea.error {
+  border-color: #dc3545 !important;
+  background-color: #fff8f8 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15) !important;
+}
+
+.form-field input.error:focus,
+.form-field select.error:focus,
+.form-field textarea.error:focus {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.3rem rgba(220, 53, 69, 0.25) !important;
+}
+
+/* Mensaje de error */
+.error-message {
+  color: #dc3545 !important;
+  font-size: 0.85rem !important;
+  margin-top: 0.25rem !important;
+  display: block !important;
+  padding-left: 0.25rem !important;
+  font-weight: 500 !important;
+}
+

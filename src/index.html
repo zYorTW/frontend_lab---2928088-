@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Laboratorio Integrado de Biociencias Aplicadas</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <!-- Fonts: single source, optimized weights -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome (global) - use version compatible with existing markup -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- Environment configuration -->
+  <script src="/env.js"></script>
+  <script>
+    // Derive extra endpoints from API_BASE provided by env.js
+    window.__env = window.__env || {};
+    const API_BASE = window.__env.API_BASE || 'http://localhost:4000/api';
+    window.__env.API_PAPELERIA = window.__env.API_PAPELERIA || (API_BASE + '/papeleria');
+    window.__env.API_LOGS = window.__env.API_LOGS || (API_BASE + '/logs');
+  </script>
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>

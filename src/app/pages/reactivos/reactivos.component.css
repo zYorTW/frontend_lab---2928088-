@@ -1,0 +1,1610 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
+@import '../../shared/dashboard-cards.css';
+/* ===== Variables CSS ===== */
+:root {
+  --primary-blue: #001f5b;
+  --primary-turquoise: #00b8b5;
+  --primary-white: #ffffff;
+  --alert-yellow: #fff3b0;
+  --alert-orange: #ffd6a5;
+  --alert-red: #ffadad;
+  --text-gray: #4a5568;
+  --light-gray: #f7fafc;
+  --border-gray: #e2e8f0;
+}
+
+/* ===== Reset y Configuración Base ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--light-gray);
+  color: var(--text-gray);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
+
+/* Eliminar espacios superiores */
+.container,
+.reactivos-page {
+  margin-top: 0;
+  padding-top: 2rem;
+}
+
+/* ===== Header ===== */
+.header {
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-turquoise) 100%);
+  color: var(--primary-white);
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  margin-top: 0;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.catalog-card .card-name .inv-meta {
+  font-weight: 500;
+  opacity: 0.95;
+  font-size: 0.85em;
+  margin-left: 12px;
+}
+.reactivo-card .card-name {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+/* Posicionar el bloque de botones PDF a la derecha y centrar verticalmente
+   dentro del contenedor .card-name. Reservamos espacio con padding-right
+   para evitar que el nombre se solape con los botones. */
+.reactivo-card .card-name {
+  position: relative; /* necesario para posicionar el bloque absoluto */
+  padding-right: 140px; /* espacio para los botones/etiquetas a la derecha */
+  border-radius: 8px; /* bordes curvos solicitados */
+  padding-left: 8px; /* espacio interior para el texto del nombre */
+}
+.reactivo-card .card-name .name-pdfs {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  gap: 0.8rem; /* un poco más de separación entre controles */
+  align-items: center;
+}
+/* Local per-card .pdf-btn styles removed. Use shared styles in
+   `src/app/shared/inventory-cards.css` to control appearance, hover
+   effects and icon coloring. Keep markup compatible with shared rules. */
+
+/* Invert appearance for action buttons inside the compact name-pdfs block
+   — default: colored background + white icon. On hover: transparent
+   background and colored icon. Targets SDS/CoA groups and catalog items. */
+.reactivo-card .card-name .name-pdfs .pdf-btn,
+.catalog-card .card-name .name-pdfs .pdf-btn {
+  transition: background 160ms ease, color 160ms ease, transform 120ms ease;
+}
+
+/* Delete (red) */
+.reactivo-card .card-name .name-pdfs .pdf-btn.delete,
+.catalog-card .card-name .name-pdfs .pdf-btn.delete {
+  background: #d11a1a;
+  color: #fff;
+  box-shadow: none;
+}
+.reactivo-card .card-name .name-pdfs .pdf-btn.delete svg,
+.catalog-card .card-name .name-pdfs .pdf-btn.delete .icon {
+  fill: #fff;
+  stroke: #fff;
+}
+.reactivo-card .card-name .name-pdfs .pdf-btn.delete:hover,
+.catalog-card .card-name .name-pdfs .pdf-btn.delete:hover {
+  background: transparent;
+  color: #d11a1a;
+}
+.reactivo-card .card-name .name-pdfs .pdf-btn.delete:hover svg,
+.catalog-card .card-name .name-pdfs .pdf-btn.delete:hover .icon {
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+/* Upload (turquoise) */
+.reactivo-card .card-name .name-pdfs .pdf-btn.upload,
+.catalog-card .card-name .name-pdfs .pdf-btn.upload {
+  background: var(--primary-turquoise);
+  color: #fff;
+}
+.reactivo-card .card-name .name-pdfs .pdf-btn.upload svg,
+.catalog-card .card-name .name-pdfs .pdf-btn.upload .icon {
+  fill: #fff;
+  stroke: #fff;
+}
+.reactivo-card .card-name .name-pdfs .pdf-btn.upload:hover,
+.catalog-card .card-name .name-pdfs .pdf-btn.upload:hover {
+  background: transparent;
+  color: var(--primary-turquoise);
+}
+.reactivo-card .card-name .name-pdfs .pdf-btn.upload:hover svg,
+.catalog-card .card-name .name-pdfs .pdf-btn.upload:hover .icon {
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+/* View/Edit (blue) */
+.reactivo-card .card-name .name-pdfs .pdf-btn.view,
+.catalog-card .card-name .name-pdfs .pdf-btn.view,
+.reactivo-card .card-name .name-pdfs .pdf-btn.edit,
+.catalog-card .card-name .name-pdfs .pdf-btn.edit {
+  background: #1f6fe0;
+  color: #fff;
+}
+.reactivo-card .card-name .name-pdfs .pdf-btn.view svg,
+.reactivo-card .card-name .name-pdfs .pdf-btn.edit svg,
+.catalog-card .card-name .name-pdfs .pdf-btn.view svg,
+.catalog-card .card-name .name-pdfs .pdf-btn.edit svg,
+.reactivo-card .card-name .name-pdfs .pdf-btn.view .icon,
+.reactivo-card .card-name .name-pdfs .pdf-btn.edit .icon,
+.catalog-card .card-name .name-pdfs .pdf-btn.view .icon,
+.catalog-card .card-name .name-pdfs .pdf-btn.edit .icon {
+  fill: #fff;
+  stroke: #fff;
+}
+.reactivo-card .card-name .name-pdfs .pdf-btn.view:hover,
+.reactivo-card .card-name .name-pdfs .pdf-btn.edit:hover,
+.catalog-card .card-name .name-pdfs .pdf-btn.view:hover,
+.catalog-card .card-name .name-pdfs .pdf-btn.edit:hover {
+  background: transparent;
+  color: #1f6fe0;
+}
+.reactivo-card .card-name .name-pdfs .pdf-btn.view:hover svg,
+.reactivo-card .card-name .name-pdfs .pdf-btn.edit:hover svg,
+.catalog-card .card-name .name-pdfs .pdf-btn.view:hover svg,
+.catalog-card .card-name .name-pdfs .pdf-btn.edit:hover svg,
+.reactivo-card .card-name .name-pdfs .pdf-btn.view:hover .icon,
+.reactivo-card .card-name .name-pdfs .pdf-btn.edit:hover .icon,
+.catalog-card .card-name .name-pdfs .pdf-btn.view:hover .icon,
+.catalog-card .card-name .name-pdfs .pdf-btn.edit:hover .icon {
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+.reactivo-card .card-name .pdf-availability {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 30px;
+  padding: 0 8px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border: 1px solid var(--border-gray);
+  background: #ffffff; /* fondo blanco solicitado */
+  color: var(--text-gray);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) inset;
+}
+.reactivo-card .card-name .pdf-availability.ok {
+  background: #ffffff; /* mantener fondo blanco */
+  color: #16a34a; /* texto verde */
+  border-color: #16a34a;
+}
+.reactivo-card .card-name .pdf-availability.fail {
+  background: #ffffff; /* mantener fondo blanco */
+  color: #ef4444; /* texto rojo */
+  border-color: #ef4444;
+}
+.reactivo-card .card-name .pdf-availability.loading {
+  background: #ffffff;
+  color: #6b7280;
+  border-style: dashed;
+}
+
+/* Encapsular cada grupo (SDS / CoA) en una caja blanca separada */
+.reactivo-card .card-name .name-pdfs .pdf-box {
+  background: #ffffff;
+  padding: 6px 8px;
+  border-radius: 8px;
+  display: inline-flex;
+  flex-direction: row; /* botones en horizontal */
+  gap: 0.5rem;
+  align-items: center;
+  border: 1px solid var(--border-gray);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+/* modifiers (pdf-sds / pdf-coa) are available if specific per-group tweaks are needed */
+
+/* Variante solicitada: botón “Ver PDF” y etiqueta “Sin PDF” */
+.reactivo-card .card-name .name-pdfs .btn.pdf-existe {
+  background: #ffffff; /* neutraliza gradiente global */
+  border: 1px solid #007bff; /* azul vivo, borde más delgado */
+  color: #007bff;
+  height: 33px;
+  padding: 0 10px; /* ancho flexible para acrónimo */
+  border-radius: 8px !important; /* coincide con otros icon buttons */
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font: inherit;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: transform 0.15s ease;
+}
+/* Acrónimo dentro del botón */
+.reactivo-card .card-name .name-pdfs .btn.pdf-existe .pdf-acronym {
+  font-size: 0.85rem;
+}
+/* cancelamos el ripple/hover global del theme para este botón */
+.reactivo-card .card-name .name-pdfs .btn.pdf-existe::before {
+  content: none !important;
+}
+.reactivo-card .card-name .name-pdfs .btn.pdf-existe:hover {
+  transform: translateY(-1px);
+}
+.reactivo-card .card-name .name-pdfs .btn.pdf-existe:active,
+.reactivo-card .card-name .name-pdfs .btn.pdf-existe:focus {
+  background: #ffffff;
+  transform: none;
+  box-shadow: none;
+}
+.reactivo-card .card-name .name-pdfs .tag.pdf-no-existe {
+  border: 2px dashed #999;
+  color: #999;
+  padding: 0 10px;
+  height: 33px; /* alinear altura con botón */
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.7;
+  background: #ffffff;
+}
+
+/* Local .pdf-btn rules removed: use shared styles in
+   `src/app/shared/inventory-cards.css` for all action buttons.
+   If you need component-specific tweaks, add small modifiers
+   here that do not re-declare the full button layout. */
+/* Acrónimo gris cuando no hay documento */
+.reactivo-card .card-name .name-pdfs .tag.pdf-no-existe .pdf-acronym {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Aplicar también a la vista de catálogo: asegurar que el contenedor del nombre
+   tenga bordes curvos y reserve espacio a la derecha para botones/etiquetas. */
+.catalog-card .card-name {
+  position: relative;
+  padding-right: 140px; /* mismo espacio reservado que en inventario */
+  border-radius: 8px;
+  padding-left: 8px;
+}
+.catalog-card .card-name .name-pdfs {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.catalog-card .card-name .name-pdfs .pdf-availability.ok {
+  background: #ffffff;
+  color: #16a34a;
+  border-color: #16a34a;
+}
+.catalog-card .card-name .name-pdfs .pdf-availability.fail {
+  background: #ffffff;
+  color: #ef4444;
+  border-color: #ef4444;
+}
+.catalog-card .card-name .name-pdfs .pdf-availability.loading {
+  background: #ffffff;
+  color: #6b7280;
+  border-style: dashed;
+}
+
+/* Equivalente para la vista de catálogo */
+.catalog-card .card-name .name-pdfs .pdf-box {
+  background: #ffffff;
+  padding: 6px 8px;
+  border-radius: 8px;
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
+  border: 1px solid var(--border-gray);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+/* Separación adicional entre las dos cajas para mayor claridad */
+.reactivo-card .card-name .name-pdfs {
+  gap: 0.6rem;
+}
+.catalog-card .card-name .name-pdfs {
+  gap: 0.4rem;
+}
+
+/* Ajustes responsivos: reducir tamaño de botones y padding en pantallas pequeñas */
+@media (max-width: 520px) {
+  .reactivo-card .card-name {
+    padding-right: 100px;
+  }
+  .reactivo-card .card-name .name-pdfs .pdf-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+  }
+  .reactivo-card .card-name .name-pdfs .pdf-box {
+    padding: 4px 6px;
+  }
+}
+
+/* Toast styling (bottom-right) */
+.toast {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  background: #ffffff;
+  color: #0f172a;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border-gray);
+  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.12);
+  z-index: 2000;
+  font-weight: 600;
+}
+.reactivo-card .card-name .name-line {
+  font-size: 1.05rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+.reactivo-card .card-name .meta-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  opacity: 0.95;
+}
+.reactivo-card .card-name .meta-line .chip {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+.reactivo-card .card-name .toggle-icon {
+  position: absolute;
+  right: 12px;
+  top: 8px;
+  transition: transform 0.18s ease;
+}
+.reactivo-card .card-name .toggle-icon.open {
+  transform: rotate(180deg);
+}
+.reactivo-card .card-expand {
+  background: #fff;
+  border: 1px solid var(--border-gray);
+  border-radius: 8px;
+  margin-top: 10px;
+  padding: 10px;
+}
+.reactivo-card .expand-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.reactivo-card .expand-grid .full {
+  grid-column: 1 / -1;
+}
+.reactivo-card .expand-grid .section-label {
+  grid-column: 1 / -1;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #333;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border-gray);
+}
+
+/* New detail cards style for expanded reactivo (compact cards with small label strip) */
+.details-grid {
+  display: grid;
+  /* increase min width so cards appear longer on desktop while staying responsive */
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+.detail-card {
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border-gray);
+  box-shadow: 0 8px 18px rgba(2, 6, 23, 0.06);
+}
+.detail-card .detail-label {
+  background: #e9e9ea;
+  padding: 6px 8px;
+  font-size: 0.72rem; /* ligeramente más pequeña */
+  color: #6b7280;
+  text-align: center;
+}
+.detail-card .detail-value {
+  padding: 8px 10px 10px 10px;
+  font-weight: 400; /* quitar negrilla */
+  font-size: 0.86rem; /* más pequeña */
+  color: #0f172a;
+  text-align: center;
+}
+.detail-full {
+  grid-column: 1 / -1;
+  background: #fff;
+  border-radius: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-gray);
+  box-shadow: 0 6px 12px rgba(2, 6, 23, 0.04);
+  font-size: 0.84rem; /* reducir tamaño de observaciones */
+  color: var(--text-gray);
+}
+
+/* Make Observaciones behave like the other detail cards but with left-aligned, wrapped text */
+.detail-card.detail-full .detail-value {
+  text-align: left;
+  white-space: pre-wrap; /* preserve line breaks */
+  word-break: break-word;
+  font-size: 0.86rem;
+  padding: 10px 12px;
+  font-weight: 400;
+}
+.detail-card.detail-full .detail-label {
+  text-align: left; /* label aligned left for observations */
+  padding-left: 12px;
+}
+
+@media (max-width: 900px) {
+  /* on medium screens allow two columns */
+  .details-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  /* stack on narrow screens */
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.reactivo-card .tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+}
+.reactivo-card .tags .tag {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.35rem 0.55rem;
+}
+
+/* Mantener los <span> en una sola fila para la lista de inventario (no afecta al catálogo) */
+.reactivos-page .reactivo-card .tags {
+  flex-wrap: nowrap; /* evitar salto de línea */
+  overflow-x: hidden; /* ocultar desbordamiento horizontal para mantener todo en una línea */
+  -webkit-overflow-scrolling: touch;
+  min-width: 0; /* permitir que el contenedor se reduzca si es necesario */
+}
+.reactivos-page .reactivo-card .tags .tag {
+  flex: 0 0 auto; /* no estirar ni encoger, mantener tamaño de contenido */
+}
+
+/* Asegurar también que los chips de la línea meta no se envuelvan en la lista de inventario */
+.reactivos-page .reactivo-card .card-name .meta-line {
+  flex-wrap: nowrap;
+  overflow-x: hidden;
+}
+.reactivos-page .reactivo-card .card-name .meta-line .chip {
+  flex: 0 0 auto;
+}
+
+/* Anular regla de .catalog-card .tags (grid de 3 columnas) sólo para la vista de inventario
+   y forzar que los tags estén en una sola fila. Usamos selectores más específicos y !important
+   para garantizar que sobrescriba la regla definida más abajo que convierte .catalog-card .tags en grid. */
+.reactivos-page article.catalog-card.reactivo-card .tags,
+.reactivos-page .reactivo-card.catalog-card .tags {
+  display: flex !important;
+  grid-template-columns: none !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important; /* permitir desplazamiento horizontal si es necesario */
+  -webkit-overflow-scrolling: touch !important;
+  gap: 6px 8px !important;
+  align-items: center !important;
+}
+.reactivos-page article.catalog-card.reactivo-card .tags .tag,
+.reactivos-page .reactivo-card.catalog-card .tags .tag {
+  flex: 0 0 auto !important;
+}
+
+/* Alineación y comportamiento de la fila superior en la lista de inventario: etiquetas + botones en una sola línea */
+.reactivos-page .reactivo-card .card-top {
+  align-items: center; /* centra verticalmente tags y pdf-actions */
+}
+.reactivos-page .reactivo-card .pdf-actions {
+  flex: 0 0 auto; /* no ocupar espacio extra */
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.catalog-card .card-name .badge.loading {
+  background: rgba(255, 255, 255, 0.15);
+}
+.catalog-card .card-name .badge.loading::after {
+  content: '';
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  border-top-color: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes cardFade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes flashMark {
+  0% {
+    background: var(--alert-yellow);
+  }
+  100% {
+    background: var(--alert-yellow);
+  }
+}
+
+.logo {
+  width: 50px;
+  height: 50px;
+  background: var(--primary-white);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-blue);
+  font-weight: bold;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.header-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.header-subtitle {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 0.95rem;
+}
+
+/* Navigation is centralized in src/app/app.css (scoped to #app-header). */
+/* Component-level nav rules removed to avoid duplication and ensure a single source of truth. */
+
+/* ===== Main Container ===== */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.reactivos-page h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary-blue);
+  margin: 2rem 0 1rem 0;
+}
+
+/* ===== Sections ===== */
+section {
+  background: var(--primary-white);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* ===== Forms ===== */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  align-items: end;
+}
+
+.form-grid > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-grid label {
+  font-weight: 500;
+  color: var(--primary-blue);
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Base field styles (input/select) now come from global styles.css; keep textarea specifics */
+.form-grid textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-grid textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* ===== Buttons ===== */
+/* Scope general button styles to exclude icon-only action buttons
+  (those use the `.pdf-btn` class and are styled in
+  `src/app/shared/inventory-cards.css`). */
+button[type='submit']:not(.pdf-btn),
+button[type='button']:not(.pdf-btn),
+.btn:not(.pdf-btn),
+.btn-primary:not(.pdf-btn),
+.btn-secondary:not(.pdf-btn) {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: var(--primary-turquoise);
+  color: var(--primary-white);
+}
+
+button[type='submit']:not(.pdf-btn):hover,
+button[type='button']:not(.pdf-btn):hover,
+.btn:not(.pdf-btn):hover,
+.btn-primary:not(.pdf-btn):hover {
+  background: #008e8c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 184, 181, 0.3);
+}
+
+.btn-secondary {
+  background: var(--border-gray);
+  color: var(--text-gray);
+}
+
+.btn-secondary:hover {
+  background: #cbd5e0;
+}
+
+.btn-reset-filtros {
+  background: var(--alert-orange);
+  color: #744210;
+}
+
+.btn-reset-filtros:hover {
+  background: #ffb366;
+}
+
+/* ===== Filters ===== */
+.filters-grid,
+.filters-row,
+.catalogo-filters,
+.reactivos-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: end;
+}
+
+.filters-grid label,
+.filters-row label {
+  font-weight: 500;
+  color: var(--primary-blue);
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  display: block;
+}
+
+.filters-grid input,
+.filters-row input {
+  padding: 0.7rem;
+  border: 2px solid var(--border-gray);
+  border-radius: 6px;
+  font-family: inherit;
+  transition: border-color 0.3s ease;
+  width: 100%;
+}
+
+.filters-grid input:focus,
+.filters-row input:focus {
+  outline: none;
+  border-color: var(--primary-turquoise);
+}
+
+.reset-cell {
+  display: flex;
+  align-items: flex-end;
+}
+
+/* Botón eliminar todos (inventario) */
+.btn-delete-all {
+  background: #b91c1c !important; /* rojo oscuro */
+  color: #fff;
+  border: 1px solid #991b1b !important;
+  padding: 0.6rem 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.btn-delete-all[aria-busy='true'],
+.btn-delete-all:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.btn-delete-all:hover:not(:disabled) {
+  background: #dc2626;
+}
+
+/* ===== Cards Container (Catálogo) ===== */
+.cards-container {
+  margin-top: 1.5rem;
+}
+
+.catalogo-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  margin: 0.25rem 0 1rem;
+  padding: 0.8rem;
+  background: var(--light-gray);
+  border-radius: 6px;
+  color: var(--text-gray);
+  font-weight: 500;
+}
+
+.catalogo-stats button {
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.catalogo-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.catalog-card {
+  background: var(--primary-white);
+  border: 2px solid var(--border-gray);
+  border-radius: 10px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  animation: cardFade 0.4s ease;
+}
+
+.catalog-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary-turquoise);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag {
+  background: var(--light-gray);
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: var(--text-gray);
+}
+
+.card-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary-blue);
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ===== PDF Actions ===== */
+.pdf-actions {
+  display: flex;
+  flex-direction: row; /* keep buttons in a single horizontal row */
+  gap: 0.5rem;
+  align-items: center; /* vertically center buttons */
+  flex-wrap: nowrap; /* prevent wrapping into a column */
+}
+
+/* Forzar layout horizontal en tarjetas de catálogo (may override reglas globales/otros componentes) */
+.catalog-card .pdf-actions {
+  flex-direction: row !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  gap: 0.5rem !important;
+}
+
+.pdf-group {
+  display: flex;
+  gap: 0.3rem;
+}
+
+/* PDF button base and variants moved to shared/inventory-cards.css */
+/* Local files should not redefine .pdf-btn styles to keep consistency across the app. */
+
+/* ===== PDF Badges ===== */
+.pdf-badges {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+  background: var(--border-gray);
+  color: var(--text-gray);
+}
+
+.badge.loading {
+  background: var(--alert-yellow);
+  color: #744210;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.badge.ok {
+  background: #c6f6d5;
+  color: #22543d;
+}
+
+.badge.fail {
+  background: var(--alert-red);
+  color: #742a2a;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes cardFade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== Table ===== */
+.table-container {
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+.reactivos-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--primary-white);
+}
+
+.reactivos-table caption {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--primary-blue);
+  text-align: left;
+  padding: 1rem 0;
+}
+
+.reactivos-table thead tr {
+  background: var(--light-gray);
+}
+
+.reactivos-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--primary-blue);
+  border-bottom: 2px solid var(--border-gray);
+  white-space: nowrap;
+}
+
+.reactivos-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-gray);
+}
+
+.reactivos-table tbody tr:hover {
+  background: var(--light-gray);
+}
+
+.reactivos-table td button {
+  margin-right: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+}
+
+/* ===== Detalles Panel ===== */
+.detalles-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--primary-white);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -45%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.detalles-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 2px solid var(--border-gray);
+}
+
+.detalles-header h3 {
+  font-size: 1.3rem;
+  color: var(--primary-blue);
+  font-weight: 600;
+}
+
+.detalles-header button {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: var(--text-gray);
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.detalles-header button:hover {
+  background: var(--alert-red);
+  color: var(--primary-white);
+}
+
+.detalles-content {
+  padding: 1.5rem;
+}
+
+.detalles-content p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.detalles-content strong {
+  color: var(--primary-blue);
+  font-weight: 600;
+}
+
+/* ===== Messages ===== */
+.success-message,
+.error-message,
+p[role='status'],
+p[aria-live='polite'] {
+  padding: 1rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+  font-weight: 500;
+}
+
+.success-message,
+p[role='status']:not(.error-message) {
+  background: #c6f6d5;
+  color: #22543d;
+  border-left: 4px solid #22543d;
+}
+
+.error-message {
+  color: #000000;
+}
+
+/* ===== Status Badges ===== */
+.status-badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.status-good {
+  background: #c6f6d5;
+  color: #22543d;
+}
+
+.status-warning {
+  background: var(--alert-yellow);
+  color: #744210;
+}
+
+.status-critical {
+  background: var(--alert-red);
+  color: #742a2a;
+}
+
+/* ===== Utility Classes ===== */
+.hidden {
+  display: none;
+}
+
+mark {
+  background: var(--alert-yellow);
+  color: #222;
+  padding: 0 2px;
+  border-radius: 2px;
+  animation: flashMark 1.2s ease 1;
+}
+
+@keyframes flashMark {
+  0%,
+  100% {
+    background: var(--alert-yellow);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== PERSONALIZACIONES ESPECÍFICAS DE REACTIVOS ===== */
+
+/* Catalog cards layout optimizado */
+.catalogo-cards {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 1.25rem;
+  justify-content: center;
+}
+
+/* Tarjetas ocupan todo el ancho */
+.catalog-card {
+  width: 100%;
+  max-width: none;
+  flex: 1 1 100%;
+}
+
+/* Contenido interno escalado */
+.catalog-card .tags {
+  display: grid;
+  grid-template-columns: 170px 1fr 1fr;
+  gap: 0.55rem;
+}
+
+.catalog-card .tag {
+  border-radius: 30px;
+  font-size: 0.72rem;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border: 1px solid var(--border-gray);
+}
+
+.catalog-card .card-name {
+  margin-top: 0.75rem;
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-turquoise) 100%);
+  color: var(--primary-white);
+  padding: 0.75rem 0.9rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.25px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.catalog-card .card-name .pdf-badges {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: 8px;
+  align-items: center;
+}
+
+.catalog-card .card-name .badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-radius: 8px;
+  line-height: 1;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.catalog-card .card-name .badge.loading {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.catalog-card .card-name .badge.loading::after {
+  content: '';
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  border-top-color: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+.catalog-card .card-name .badge.ok {
+  background: #1fae64;
+  border-color: #1fae64;
+}
+
+.catalog-card .card-name .badge.fail {
+  background: #d63d3d;
+  border-color: #d63d3d;
+}
+
+.pdf-group + .pdf-group {
+  margin-left: 1rem;
+  position: relative;
+}
+
+.pdf-group + .pdf-group::before {
+  content: '';
+  position: absolute;
+  left: -0.6rem;
+  top: 4px;
+  bottom: 4px;
+  width: 1px;
+  background: var(--border-gray);
+}
+
+/* Filtros catálogo: 3 columnas */
+.reactivos-page .filters-grid.catalogo-filters {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.reactivos-page .filters-grid.catalogo-filters .reset-cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.reactivos-page .filters-grid.catalogo-filters .btn-reset-filtros {
+  width: fit-content;
+  padding: 0.8rem 0.9rem;
+  font-size: 0.95rem;
+  line-height: 1.1;
+  height: 50px;
+  background: linear-gradient(135deg, var(--primary-turquoise) 0%, #009a98 100%);
+  border: 1px solid var(--primary-turquoise);
+  color: #fff;
+}
+
+.reactivos-page .filters-grid.catalogo-filters .btn-reset-filtros:hover {
+  filter: brightness(1.05);
+}
+
+/* Filtros de inventario: 3 columnas */
+.reactivos-filters {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Botón detalles */
+.reactivos-page .btn-detalles {
+  background: var(--primary-blue);
+  color: #fff;
+  border: none;
+  padding: 0.25rem 0.55rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.reactivos-page .btn-detalles:hover {
+  filter: brightness(1.1);
+}
+
+/* Centrar texto del botón submit */
+.reactivos-page form.form-grid button[type='submit'] {
+  display: inline-flex;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Botones del modal con tamaño compacto */
+.modal .actions button {
+  padding: 0.5rem 0.8rem;
+  font-size: 0.95rem;
+  line-height: 1.1;
+  min-height: 36px;
+}
+
+/* Autocomplete per-field (like select) */
+.field-autocomplete {
+  position: relative;
+}
+.autocomplete-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 50;
+  background: #fff;
+  border: 1px solid var(--border-gray);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  padding: 6px;
+  max-height: 220px;
+  overflow: auto;
+}
+.autocomplete-item {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.autocomplete-item:hover {
+  background: var(--light-gray);
+}
+.autocomplete-item .code {
+  font-weight: 700;
+  color: #0b5bd3;
+}
+.autocomplete-item .name {
+  color: #333;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Force white background and borderless buttons for the autocomplete dropdown
+   to override the global button styles (primary green) used elsewhere. */
+.autocomplete-panel {
+  background: #ffffff !important;
+}
+.autocomplete-panel .autocomplete-item {
+  background: #ffffff !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: #0b1720 !important; /* dark text */
+}
+.autocomplete-panel .autocomplete-item:hover {
+  background: var(--light-gray) !important;
+}
+.autocomplete-panel .autocomplete-item:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Sugerencias compacto debajo de filtros */
+.catalogo-suggestions-wrap {
+  max-height: 0;
+  overflow: clip;
+  transition: max-height 0.25s ease, opacity 0.25s ease;
+  opacity: 0;
+}
+.catalogo-suggestions-wrap.open {
+  max-height: 200px;
+  opacity: 1;
+}
+.catalogo-suggestions {
+  margin-top: -0.5rem;
+  padding-top: 0.25rem;
+}
+.catalogo-suggestions .suggestions-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.35rem;
+}
+.catalogo-suggestions .link-btn {
+  background: none;
+  border: none;
+  color: var(--primary-blue);
+  cursor: pointer;
+  padding: 0;
+  font-weight: 600;
+}
+.catalogo-suggestions .chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.suggestion-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--border-gray);
+  background: var(--primary-white);
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.suggestion-chip .code {
+  font-weight: 700;
+  color: #0b5bd3;
+}
+.suggestion-chip .name {
+  color: #333;
+  max-width: 40ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ===== Form validation visuals ===== */
+.reactivos-page input.invalid,
+.reactivos-page select.invalid,
+.reactivos-page textarea.invalid {
+  border-color: #d11a1a !important;
+  box-shadow: 0 0 0 2px rgba(209, 26, 26, 0.12);
+}
+
+.reactivos-page .field-hint {
+  color: #666;
+  font-size: 0.75rem;
+  margin-top: 4px;
+}
+
+/* ===== ESTILOS DE ERROR IGUALES A SOLICITUDES ===== */
+
+/* Clase base para todos los campos del formulario */
+.form-field {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+/* Mensaje de error - igual que en Solicitudes */
+.form-field .error-message {
+  display: block;
+  font-size: 0.85rem;
+  margin-top: 4px;
+  padding: 3px 8px;
+
+  border-radius: 4px;
+  animation: fadeInError 0.2s ease;
+  line-height: 1.3;
+}
+
+
+
+/* Para que el error no rompa el layout de field-sm */
+.field-sm.form-field {
+  min-height: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.field-sm.form-field .error-message {
+  margin-top: 2px;
+  font-size: 0.8rem;
+}
+
+/* Para field-autocomplete (con panel de sugerencias) */
+.field-autocomplete.form-field {
+  position: relative;
+}
+
+.field-autocomplete.form-field .error-message {
+  position: relative;
+  z-index: 1;
+  margin-top: 2px;
+}
+
+/* Para full-row */
+.full-row.form-field {
+  grid-column: 1 / -1;
+}
+
+.full-row.form-field .error-message {
+  margin-top: 4px;
+}
+
+/* Animación suave para errores */
+@keyframes fadeInError {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Label con asterisco para campos obligatorios */
+.form-field label:has(+ input[required]),
+.form-field label:has(+ select[required]) {
+  position: relative;
+}
+
+
+
+/* Asegurar que los campos mantengan su tamaño con errores */
+.form-grid > .form-field {
+  min-height: calc(100% - 1rem);
+}
+
+/* ===== Modal de edición ===== */
+/* Elevate modal above sticky header (z:4000) and sticky nav (z:3000) and snackbar (z:5000) */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 6000;
+}
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid var(--border-gray);
+  width: min(900px, 96vw);
+  max-height: 90vh;
+  overflow: auto;
+  z-index: 6001;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  padding: 0.5rem 1.2rem 1rem;
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0;
+}
+.modal .close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.modal form.form-grid {
+  margin-top: 0;
+}
+.modal .actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  justify-content: stretch;
+  flex-wrap: nowrap;
+}
+.modal .actions button {
+  flex: 1 1 100%;
+  width: auto;
+  padding: 0.9rem 1.1rem;
+  min-height: 50px;
+  font-size: 1rem;
+}
+
+/* Botón principal más alto para ocupar mejor la fila */
+.reactivos-page form.form-grid .btn-create {
+  padding: 0.9rem 1.1rem;
+  min-height: 50px;
+  font-size: 1rem;
+}
+
+/* Hacer que el contenedor de acciones ocupe toda la fila y estire el botón al alto del área */
+.reactivos-page form.form-grid .form-actions {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  align-self: stretch;
+}
+.reactivos-page form.form-grid .form-actions .btn-create {
+  flex: 0 0 auto;
+  height: 100%;
+}
+
+
+
+/* ===== SOLO EL CAMPO EN ROJO CUANDO HAY ERROR ===== */
+
+/* Borde rojo para campos con error */
+.form-field input.error,
+.form-field select.error,
+.form-field textarea.error {
+  border-color: #dc2626 !important;
+  border-width: 2px;
+}

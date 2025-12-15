@@ -1,0 +1,272 @@
+/* Inventory Cards Standard Styles
+   Apply to both Insumos and Papelería using the same markup classes. 
+   These selectors target existing classnames used in Insumos and Papelería.
+*/
+
+/* Grid container */
+:is(.insumo-cards, .inventory-cards) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Card */
+:is(.insumo-card, .inventory-card) {
+  background: var(--primary-white);
+  border: 2px solid var(--border-gray);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  position: relative;
+  cursor: pointer;
+}
+:is(.insumo-card, .inventory-card):hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  border-color: var(--primary-turquoise);
+}
+
+/* Media */
+:is(.insumo-card-media, .inventory-card-media) {
+  width: 100%;
+  height: 180px;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+:is(.insumo-card-media img, .inventory-card-media img) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Body */
+:is(.insumo-card-body, .inventory-card-body) {
+  padding: 1rem 1rem 1.25rem 1rem;
+}
+
+/* Header */
+:is(.insumo-card-header, .inventory-card-header) { display: flex; flex-direction: column; gap: 0.15rem; margin-bottom: 0.4rem; }
+:is(.insumo-brand, .inventory-brand) { font-size: 0.82rem; color: #556; }
+:is(.insumo-title-row, .inventory-title-row) { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+:is(.insumo-title, .inventory-title) { font-size: 1.05rem; font-weight: 600; color: var(--primary-blue); margin: 0; }
+:is(.insumo-item-tag, .inventory-item-tag) { background: var(--light-gray); padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.9rem; font-weight: 600; white-space: nowrap; color: #334; }
+
+/* Stats row (spacing like Insumos) */
+:is(.insumo-stats, .inventory-stats) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  margin: 0.5rem 0 0.5rem 0;
+  font-size: 0.92rem;
+}
+
+/* Delete button */
+:is(.insumo-delete-btn, .inventory-delete-btn) {
+  position: absolute; top: 6px !important; right: 6px !important; left: auto !important; width: 28px; height: 28px; padding: 0;
+  border: 1px solid #b11212 !important; background: #d11a1a !important; color: #ffffff;
+  font-size: 22px; font-weight: 900; line-height: 1; display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; box-shadow: none !important; transition: none !important; border-radius: 6px; z-index: 2;
+}
+:is(.insumo-delete-btn, .inventory-delete-btn):hover,
+:is(.insumo-delete-btn, .inventory-delete-btn):active,
+:is(.insumo-delete-btn, .inventory-delete-btn):focus { background: #d11a1a !important; color: #ffffff; box-shadow: none !important; outline: none; }
+:is(.insumo-delete-btn, .inventory-delete-btn):disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* (Estilos de chips eliminados: ya no hay tarjetas de inventario con chips) */
+
+/* (Barra de progreso eliminada) */
+
+/* (Detalles desplegables eliminados) */
+
+/* Stronger safeguard for Papelería: force delete button to top-right */
+.papeleria-page :is(.insumo-delete-btn, .inventory-delete-btn) {
+  position: absolute !important;
+  top: 6px !important;
+  right: 6px !important;
+  left: auto !important;
+}
+
+/* Generic square action button (align with Reactivos pdf-btn) */
+.pdf-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  /* start fully transparent: no border, no background, no shadow */
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: background 160ms ease, color 160ms ease, transform 120ms ease;
+}
+.pdf-btn.delete { color: #d11a1a; }
+.pdf-btn.edit { color: #0369a1; }
+.pdf-btn:hover { transform: translateY(-1px); }
+.pdf-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* Hover states show full color */
+.pdf-btn.delete:hover { background: #d11a1a; color: #fff; }
+.pdf-btn.edit:hover { background: #60a5fa; color: #fff; }
+/* Upload variant: match the turquoise used elsewhere */
+.pdf-btn.upload { color: var(--primary-turquoise); }
+.pdf-btn.upload:hover { background: var(--primary-turquoise); color: #fff; }
+/* alias: view buttons behave same as edit (blue) */
+.pdf-btn.view { color: #0369a1; }
+.pdf-btn.view:hover { background: #60a5fa; color: #fff; }
+
+/* Ensure the inner icon uses currentColor and becomes white on hover */
+.pdf-btn svg,
+.pdf-btn i,
+.pdf-btn .icon {
+  color: inherit;
+  fill: currentColor;
+  width: 18px;
+  height: 18px;
+  display: inline-block; /* inline-block works better for font-icons */
+  line-height: 18px; /* match height to vertically center */
+  text-align: center;
+  vertical-align: middle;
+}
+.pdf-btn.upload svg,
+.pdf-btn.upload .icon {
+  /* small visual nudge for upload icons which can render slightly high
+     due to arrow geometry inside the SVG viewBox. Adjust if needed. */
+  transform: translateY(1px);
+}
+.pdf-btn:hover svg,
+.pdf-btn:hover i,
+.pdf-btn:hover .icon {
+  color: inherit; /* inherit will be white when :hover sets color */
+  fill: currentColor;
+}
+
+/* Force hover/fill behavior across common containers (high specificity to override local rules) */
+.reactivos-page .pdf-btn.edit:hover,
+.catalog-card .pdf-btn.edit:hover,
+.pdf-group .pdf-btn.edit:hover,
+.equipo-card .pdf-btn.edit:hover,
+.insumo-card .pdf-btn.edit:hover,
+.inventory-card .pdf-btn.edit:hover,
+.solicitudes-page .pdf-btn.edit:hover,
+.card-top .pdf-btn.edit:hover {
+  background: #60a5fa !important;
+  color: #fff !important;
+}
+.reactivos-page .pdf-btn.delete:hover,
+.catalog-card .pdf-btn.delete:hover,
+.pdf-group .pdf-btn.delete:hover,
+.equipo-card .pdf-btn.delete:hover,
+.insumo-card .pdf-btn.delete:hover,
+.inventory-card .pdf-btn.delete:hover,
+.solicitudes-page .pdf-btn.delete:hover,
+.card-top .pdf-btn.delete:hover {
+  background: #d11a1a !important;
+  color: #fff !important;
+}
+.reactivos-page .pdf-btn.upload:hover,
+.catalog-card .pdf-btn.upload:hover,
+.pdf-group .pdf-btn.upload:hover,
+.equipo-card .pdf-btn.upload:hover,
+.insumo-card .pdf-btn.upload:hover,
+.inventory-card .pdf-btn.upload:hover,
+.solicitudes-page .pdf-btn.upload:hover,
+.card-top .pdf-btn.upload:hover {
+  background: var(--primary-turquoise) !important;
+  color: #fff !important;
+}
+
+/* Ensure icons become white on hover too (cover svg and font icons) */
+.reactivos-page .pdf-btn:hover svg,
+.catalog-card .pdf-btn:hover svg,
+.pdf-group .pdf-btn:hover svg,
+.equipo-card .pdf-btn:hover svg,
+.insumo-card .pdf-btn:hover svg,
+.inventory-card .pdf-btn:hover svg,
+.solicitudes-page .pdf-btn:hover svg,
+.card-top .pdf-btn:hover svg,
+.reactivos-page .pdf-btn:hover i,
+.catalog-card .pdf-btn:hover i,
+.pdf-group .pdf-btn:hover i,
+.equipo-card .pdf-btn:hover i,
+.insumo-card .pdf-btn:hover i,
+.inventory-card .pdf-btn:hover i,
+.solicitudes-page .pdf-btn:hover i,
+.card-top .pdf-btn:hover i,
+.reactivos-page .pdf-btn:hover .icon,
+.catalog-card .pdf-btn:hover .icon,
+.pdf-group .pdf-btn:hover .icon,
+.equipo-card .pdf-btn:hover .icon,
+.insumo-card .pdf-btn:hover .icon,
+.inventory-card .pdf-btn:hover .icon,
+.solicitudes-page .pdf-btn:hover .icon,
+.card-top .pdf-btn:hover .icon {
+  fill: #fff !important;
+  stroke: #fff !important;
+  color: #fff !important;
+}
+
+/* Extra safeguard: center icon wrappers */
+.pdf-btn .icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Stronger centering guard in case other rules interfere */
+.pdf-btn {
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: middle;
+}
+
+.pdf-btn i {
+  font-size: 16px;
+  line-height: 16px;
+  height: 16px;
+  width: 16px;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0;
+}
+
+/* Position card delete buttons top-right for any card */
+:is(.insumo-card, .inventory-card, .catalog-card) .card-delete-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 2;
+}
+
+/* ==========================
+   Skeleton loading styles
+   ========================== */
+@keyframes skeleton-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-card {
+  pointer-events: none;
+}
+.skeleton-box,
+.skeleton-line {
+  background: linear-gradient(90deg, #f0f0f0 0%, #eaeaea 50%, #f0f0f0 100%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.2s ease-in-out infinite;
+  border-radius: 6px;
+}
+.skeleton-box { width: 100%; height: 180px; border-radius: 8px; }
+.skeleton-line { height: 14px; margin-top: 10px; }
+.skeleton-line.w-90 { width: 90%; }
+.skeleton-line.w-70 { width: 70%; }
+.skeleton-line.w-50 { width: 50%; }
+.skeleton-line.w-40 { width: 40%; }
+.skeleton-line.w-30 { width: 30%; }

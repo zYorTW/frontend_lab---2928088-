@@ -1,0 +1,527 @@
+<div class="liba-theme container referencia-page">
+  <h1>
+    <i class="fas fa-balance-scale"></i>
+    | Gestión de Material de Referencia
+  </h1>
+
+  <!-- Tarjetas de Dashboard -->
+  <div class="dashboard-cards">
+    <div class="action-card" (click)="toggleFormulario('material')" [class.active]="formularioActivo === 'material'">
+      <i class="fas fa-weight"></i>
+      <span>Registrar Material de Referencia</span>
+    </div>
+
+    <div class="action-card" (click)="toggleFormulario('historial')" [class.active]="formularioActivo === 'historial'">
+      <i class="fas fa-history"></i>
+      <span>Registrar Historial de Material</span>
+    </div>
+
+    <div class="action-card" (click)="toggleFormulario('intervalo')" [class.active]="formularioActivo === 'intervalo'">
+      <i class="fas fa-calendar-alt"></i>
+      <span>Registrar Intervalo de Calibración</span>
+    </div>
+  </div>
+
+  <!-- Formulario de Material de Referencia -->
+  @if (formularioActivo === 'material') {
+    <div class="form-section">
+      <h2>
+        <i class="fas fa-weight"></i>
+        | Registrar Material de Referencia
+      </h2>
+      <section>
+        <form class="form-grid" (submit)="crearMaterial($event)">
+          <div class="form-section-title" style="grid-column: 1 / -1; font-weight: bold; margin-top: 1.5rem;">
+            Datos del Material de Referencia
+          </div>
+          
+          <div>
+            <label for="codigo_id">Código ID *</label>
+            <input id="codigo_id" name="codigo_id" type="number" [value]="codigoIdSig()" readonly required placeholder="Ej: 1001" />
+          </div>
+          <div>
+            <label for="nombre_material">Nombre del Material *</label>
+            <input id="nombre_material" name="nombre_material" [(ngModel)]="nombre_material" required placeholder="Ej: Patrón de masa 1kg" />
+          </div>
+          <div>
+            <label for="rango_medicion">Rango de Medición</label>
+            <input id="rango_medicion" name="rango_medicion" [(ngModel)]="rango_medicion" placeholder="Ej: 0-1000 g" />
+          </div>
+          <div>
+            <label for="marca">Marca</label>
+            <input id="marca" name="marca" [(ngModel)]="marca" placeholder="Ej: Mettler Toledo" />
+          </div>
+          <div>
+            <label for="serie">Serie</label>
+            <input id="serie" name="serie" [(ngModel)]="serie" placeholder="Ej: S/N 123456" />
+          </div>
+          <div>
+            <label for="error_max_permitido">Error Máximo Permitido</label>
+            <input id="error_max_permitido" name="error_max_permitido" type="number" step="0.000001" [(ngModel)]="error_max_permitido" placeholder="Ej: 0.000010" />
+          </div>
+          <div>
+            <label for="modelo">Modelo</label>
+            <input id="modelo" name="modelo" [(ngModel)]="modelo" placeholder="Ej: PR-1000" />
+          </div>
+          
+          <div class="actions" style="width:100%; display:flex; justify-content:flex-end;">
+            <button class="btn-compact" type="submit" style="width:fit-content;">Registrar Material</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  }
+
+  <!-- Formulario de Historial -->
+  @if (formularioActivo === 'historial') {
+    <div class="form-section">
+      <h2>Registrar Historial de Material de Referencia</h2>
+      <section>
+        <form class="form-grid" (submit)="crearHistorial($event)">
+          <div>
+            <label for="codigo_material_historial">Material *</label>
+            <select id="codigo_material_historial" name="codigo_material_historial" 
+                    [(ngModel)]="codigo_material_historial" 
+                    (ngModelChange)="onSeleccionMaterialHistorialChange($event)">
+              <option [ngValue]="null" disabled>Seleccione un material</option>
+              @for (material of materialesRegistrados; track material.codigo_id) {
+                <option [ngValue]="material.codigo_id">
+                  {{ material.codigo_id }} - {{ material.nombre_material }}
+                </option>
+              }
+            </select>
+          </div>
+          
+          <div>
+            <label for="consecutivo_historial">Consecutivo *</label>
+            <input id="consecutivo_historial" name="consecutivo_historial" 
+                   [value]="consecutivoHistorialSig() ?? ''" readonly placeholder="Auto" />
+          </div>
+          
+          <div>
+            <label for="fecha_historial">Fecha</label>
+            <input id="fecha_historial" name="fecha_historial" type="date" [(ngModel)]="fecha_historial" />
+          </div>
+          <div>
+            <label for="tipo_historial_instrumento">Tipo de Historial</label>
+            <input id="tipo_historial_instrumento" name="tipo_historial_instrumento" 
+                   [(ngModel)]="tipo_historial_instrumento" placeholder="Ej: Calibración, Verificación" />
+          </div>
+          <div>
+            <label for="codigo_registro_historial">Código de Registro</label>
+            <input id="codigo_registro_historial" name="codigo_registro_historial" 
+                   [(ngModel)]="codigo_registro_historial" placeholder="Ej: CAL-2024-001" />
+          </div>
+          <div>
+            <label for="realizo">Realizó</label>
+            <input id="realizo" name="realizo" [(ngModel)]="realizo" placeholder="Nombre de quien realizó" />
+          </div>
+          <div>
+            <label for="superviso">Supervisó</label>
+            <input id="superviso" name="superviso" [(ngModel)]="superviso" placeholder="Nombre de quien supervisó" />
+          </div>
+          
+          <div class="actions">
+            <button class="btn-compact" type="submit">Registrar Historial</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  }
+
+  <!-- Formulario de Intervalo -->
+  @if (formularioActivo === 'intervalo') {
+    <div class="form-section">
+      <h2>Registrar Intervalo de Calibración</h2>
+      <section>
+        <form class="form-grid" (submit)="crearIntervalo($event)">
+          <div>
+            <label for="codigo_material_intervalo">Material *</label>
+            <select id="codigo_material_intervalo" name="codigo_material_intervalo" 
+                    [(ngModel)]="codigo_material_intervalo" 
+                    (ngModelChange)="onSeleccionMaterialIntervaloChange($event)">
+              <option [ngValue]="null" disabled>Seleccione un material</option>
+              @for (material of materialesRegistrados; track material.codigo_id) {
+                <option [ngValue]="material.codigo_id">
+                  {{ material.codigo_id }} - {{ material.nombre_material }}
+                </option>
+              }
+            </select>
+          </div>
+          
+          <div>
+            <label for="consecutivo_intervalo">Consecutivo *</label>
+            <input id="consecutivo_intervalo" name="consecutivo_intervalo" 
+                   [value]="consecutivoIntervaloSig() ?? ''" readonly placeholder="Auto" />
+          </div>
+          
+          <div>
+            <label for="valor_nominal">Valor Nominal</label>
+            <input id="valor_nominal" name="valor_nominal" type="number" step="0.0001" 
+                   [(ngModel)]="valor_nominal" placeholder="Ej: 1000.0000" />
+          </div>
+          
+          <!-- Calibración 1 -->
+          <div class="form-section-title" style="grid-column: 1 / -1;">Calibración 1 (Penúltima)</div>
+          <div>
+            <label for="fecha_c1">Fecha Cal. 1 *</label>
+            <input id="fecha_c1" name="fecha_c1" type="date" [(ngModel)]="fecha_c1" />
+          </div>
+          <div>
+            <label for="error_c1">Error Cal. 1 *</label>
+            <input id="error_c1" name="error_c1" type="number" step="0.000001" 
+                   [(ngModel)]="error_c1" placeholder="Ej: 0.000012" />
+          </div>
+          
+          <!-- Calibración 2 -->
+          <div class="form-section-title" style="grid-column: 1 / -1;">Calibración 2 (Actual)</div>
+          <div>
+            <label for="fecha_c2">Fecha Cal. 2 *</label>
+            <input id="fecha_c2" name="fecha_c2" type="date" [(ngModel)]="fecha_c2" />
+          </div>
+          <div>
+            <label for="error_c2">Error Cal. 2 *</label>
+            <input id="error_c2" name="error_c2" type="number" step="0.000001" 
+                   [(ngModel)]="error_c2" placeholder="Ej: 0.000015" />
+          </div>
+          
+          <!-- Cálculos -->
+          <div class="form-section-title" style="grid-column: 1 / -1;">Cálculos</div>
+          <div>
+            <label for="tolerancia">Tolerancia</label>
+            <input id="tolerancia" name="tolerancia" type="number" step="0.000001" 
+                   [(ngModel)]="tolerancia" placeholder="Ej: 0.000020" />
+          </div>
+          <div>
+            <label for="incertidumbre_exp">Incertidumbre Expandida</label>
+            <input id="incertidumbre_exp" name="incertidumbre_exp" type="number" step="0.000001" 
+                   [(ngModel)]="incertidumbre_exp" placeholder="Ej: 0.000005" />
+          </div>
+          
+          <!-- Resultados (readonly) -->
+          <div>
+            <label for="diferencia_tiempo_dias">Diferencia Tiempo (días)</label>
+            <input id="diferencia_tiempo_dias" name="diferencia_tiempo_dias" 
+                   [(ngModel)]="diferencia_tiempo_dias" readonly />
+          </div>
+          <div>
+            <label for="desviacion_abs">Desviación Absoluta</label>
+            <input id="desviacion_abs" name="desviacion_abs" [(ngModel)]="desviacion_abs" readonly />
+          </div>
+          <div>
+            <label for="deriva">Deriva (por día)</label>
+            <input id="deriva" name="deriva" [(ngModel)]="deriva" readonly />
+          </div>
+          <div>
+            <label for="intervalo_calibracion_dias">Intervalo Cal. (días)</label>
+            <input id="intervalo_calibracion_dias" name="intervalo_calibracion_dias" 
+                   [(ngModel)]="intervalo_calibracion_dias" readonly />
+          </div>
+          <div>
+            <label for="intervalo_calibracion_anos">Intervalo Cal. (años)</label>
+            <input id="intervalo_calibracion_anos" name="intervalo_calibracion_anos" 
+                   [(ngModel)]="intervalo_calibracion_anos" readonly />
+          </div>
+          
+          <div class="actions">
+            <button class="btn-compact" type="submit">Registrar Intervalo</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  }
+
+  <!-- Lista de Materiales de Referencia -->
+  <div class="form-section">
+    <h2>
+      <i class="fas fa-list"></i>
+      | Lista de Materiales de Referencia
+    </h2>
+    
+    @if (cargandoMateriales) {
+      <div class="sin-referencias">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Cargando materiales...</p>
+      </div>
+    } @else if (!cargandoMateriales && materialesRegistrados.length === 0) {
+      <div class="sin-referencias">
+        <i class="fas fa-inbox"></i>
+        <p>No hay materiales de referencia registrados</p>
+        <button class="btn-compact" (click)="toggleFormulario('material'); $event.stopPropagation()">
+          <i class="fas fa-plus"></i> Registrar primer material
+        </button>
+      </div>
+    } @else {
+      <div class="referencia-grid">
+        @for (material of materialesRegistrados; track material.codigo_id) {
+          <article class="referencia-card" 
+                   (click)="toggleDetalleMaterial(material.codigo_id.toString())">
+            
+            <div class="card-top">
+              <div class="tags">
+                <span class="tag"><strong>Código:</strong> {{ material.codigo_id }}</span>
+                <span class="tag"><strong>Marca:</strong> {{ material.marca || '—' }}</span>
+                <span class="tag"><strong>Modelo:</strong> {{ material.modelo || '—' }}</span>
+                <span class="tag"><strong>Serie:</strong> {{ material.serie || '—' }}</span>
+                <span class="tag"><strong>Rango:</strong> {{ material.rango_medicion || '—' }}</span>
+              </div>
+              <div class="pdf-actions" (click)="$event.stopPropagation()">
+                <button type="button" class="pdf-btn edit" title="Editar material" 
+                        (click)="abrirEditarMaterial(material, $event)">
+                  <svg viewBox="0 0 24 24" class="icon">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" fill="currentColor" />
+                    <path d="M20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor" />
+                  </svg>
+                </button>
+                <button type="button" class="pdf-btn delete" title="Eliminar material" 
+                        (click)="eliminarMaterial(material, $event)">
+                  <svg viewBox="0 0 24 24" class="icon">
+                    <path d="M6 6l12 12M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            
+            <div class="card-header-row">
+              <div class="card-name" [title]="material.nombre_material">
+                <div class="name-line">{{ material.nombre_material }}</div>
+                <div class="meta-line">
+                  <span class="chip">Error máx: {{ material.error_max_permitido || '—' }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Detalles expandidos -->
+            @if (materialExpandido === material.codigo_id.toString()) {
+              <div class="referencia-detalles">
+                <!-- Menú de pestañas -->
+                <div class="referencia-tabs-menu">
+                  @for (tab of referenciaTabs; track tab.key) {
+                    <button type="button" class="tab-btn" 
+                            [class.active]="activeTab[material.codigo_id.toString()] === tab.key" 
+                            (click)="selectTab(material.codigo_id.toString(), tab.key); $event.stopPropagation()">
+                      {{ tab.label }}
+                      @if (tab.key === 'historial' || tab.key === 'intervalo') {
+                        <span class="tab-count" aria-hidden="true">
+                          {{ getTabCount(material, tab.key) }}
+                        </span>
+                      }
+                    </button>
+                  }
+                </div>
+                
+                <div class="referencia-info-card" (click)="$event.stopPropagation()">
+                  <div class="referencia-info-card-header">
+                    <span class="referencia-info-card-title">Información del Material de Referencia</span>
+                  </div>
+                  <div class="referencia-info-card-body">
+                    @switch (activeTab[material.codigo_id.toString()]) {
+                      
+                      <!-- Pestaña General -->
+                      @case ('general') {
+                        <div>
+                          <div class="detalle-grid-compacto">
+                            <div class="detalle-item"><span class="detalle-label">Código ID</span><span>{{ material.codigo_id }}</span></div>
+                            <div class="detalle-item"><span class="detalle-label">Nombre</span><span>{{ material.nombre_material || 'N/A' }}</span></div>
+                            <div class="detalle-item"><span class="detalle-label">Rango de Medición</span><span>{{ material.rango_medicion || 'N/A' }}</span></div>
+                            <div class="detalle-item"><span class="detalle-label">Marca</span><span>{{ material.marca || 'N/A' }}</span></div>
+                            <div class="detalle-item"><span class="detalle-label">Serie</span><span>{{ material.serie || 'N/A' }}</span></div>
+                            <div class="detalle-item"><span class="detalle-label">Modelo</span><span>{{ material.modelo || 'N/A' }}</span></div>
+                            <div class="detalle-item"><span class="detalle-label">Error Máx Permitido</span><span>{{ material.error_max_permitido || 'N/A' }}</span></div>
+                          </div>
+                        </div>
+                      }
+                      
+                      <!-- Pestaña Historial -->
+                      @case ('historial') {
+                        <div>
+                          @if (historialPorMaterial[material.codigo_id] && historialPorMaterial[material.codigo_id].length > 0) {
+                            <div class="historial-records-container">
+                              @for (registro of historialPorMaterial[material.codigo_id]; track registro.consecutivo) {
+                                <div class="historial-record-card">
+                                  <div class="historial-header" 
+                                       (click)="toggleHistorialRegistro(material.codigo_id.toString(), registro.consecutivo)">
+                                    <span class="historial-consecutivo">
+                                      <i class="fas" 
+                                         [ngClass]="historialExpandido[material.codigo_id.toString() + '_' + registro.consecutivo] ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+                                      Registro #{{ registro.consecutivo }}
+                                    </span>
+                                    <span class="historial-fecha">{{ registro.fecha ? (registro.fecha | date: 'yyyy/MM/dd') : 'N/A' }}</span>
+                                  </div>
+                                  @if (historialExpandido[material.codigo_id.toString() + '_' + registro.consecutivo]) {
+                                    <div class="historial-body">
+                                      <div class="historial-grid">
+                                        @if (registro.editando) {
+                                          <div class="historial-item"><span class="historial-label">Tipo de Historial:</span><input [(ngModel)]="registro.tipo_historial_instrumento" /></div>
+                                          <div class="historial-item"><span class="historial-label">Código de Registro:</span><input [(ngModel)]="registro.codigo_registro" /></div>
+                                          <div class="historial-item"><span class="historial-label">Realizó:</span><input [(ngModel)]="registro.realizo" /></div>
+                                          <div class="historial-item"><span class="historial-label">Supervisó:</span><input [(ngModel)]="registro.superviso" /></div>
+                                          <div class="historial-actions">
+                                            <button (click)="guardarEdicionHistorial(material.codigo_id, registro)" class="btn-compact">Guardar</button>
+                                            <button (click)="cancelarEdicionHistorial(material.codigo_id, registro)" class="btn-compact">Cancelar</button>
+                                          </div>
+                                        } @else {
+                                          <div class="historial-item"><span class="historial-label">Tipo de Historial:</span><span>{{ registro.tipo_historial_instrumento || 'N/A' }}</span></div>
+                                          <div class="historial-item"><span class="historial-label">Código de Registro:</span><span>{{ registro.codigo_registro || 'N/A' }}</span></div>
+                                          <div class="historial-item"><span class="historial-label">Realizó:</span><span>{{ registro.realizo || 'N/A' }}</span></div>
+                                          <div class="historial-item"><span class="historial-label">Supervisó:</span><span>{{ registro.superviso || 'N/A' }}</span></div>
+                                          <div class="historial-actions">
+                                            <button (click)="editarRegistroHistorial(registro)" class="btn-compact">Editar</button>
+                                          </div>
+                                        }
+                                      </div>
+                                    </div>
+                                  }
+                                </div>
+                              }
+                            </div>
+                          } @else {
+                            <div class="no-historial-message">
+                              <i class="fas fa-history"></i>
+                              <p>No hay registros de historial para este material</p>
+                            </div>
+                          }
+                        </div>
+                      }
+                      
+                      <!-- Pestaña Intervalo -->
+                      @case ('intervalo') {
+                        <div>
+                          @if (intervaloPorMaterial[material.codigo_id] && intervaloPorMaterial[material.codigo_id].length > 0) {
+                            <div class="historial-records-container">
+                              @for (registro of intervaloPorMaterial[material.codigo_id]; track registro.consecutivo) {
+                                <div class="historial-record-card">
+                                  <div class="historial-header" 
+                                       (click)="toggleIntervaloRegistro(material.codigo_id.toString(), registro.consecutivo)">
+                                    <span class="historial-consecutivo">
+                                      <i class="fas" 
+                                         [ngClass]="intervaloExpandido[material.codigo_id.toString() + '_' + registro.consecutivo] ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+                                      Registro #{{ registro.consecutivo }}
+                                    </span>
+                                    <span class="historial-fecha">Valor: {{ registro.valor_nominal || 'N/A' }}</span>
+                                  </div>
+                                  @if (intervaloExpandido[material.codigo_id.toString() + '_' + registro.consecutivo]) {
+                                    <div class="historial-body">
+                                      <div class="historial-grid">
+                                        @if (registro.editando) {
+                                          <div class="historial-item"><span class="historial-label">Valor Nominal:</span><input type="number" [(ngModel)]="registro.valor_nominal" /></div>
+                                          <div class="historial-item"><span class="historial-label">Fecha Cal. 1:</span><input type="date" [(ngModel)]="registro.fecha_c1" /></div>
+                                          <div class="historial-item"><span class="historial-label">Error Cal. 1:</span><input type="number" [(ngModel)]="registro.error_c1" /></div>
+                                          <div class="historial-item"><span class="historial-label">Fecha Cal. 2:</span><input type="date" [(ngModel)]="registro.fecha_c2" /></div>
+                                          <div class="historial-item"><span class="historial-label">Error Cal. 2:</span><input type="number" [(ngModel)]="registro.error_c2" /></div>
+                                          <div class="historial-item"><span class="historial-label">Diferencia Tiempo (días):</span><input type="number" [(ngModel)]="registro.diferencia_tiempo_dias" /></div>
+                                          <div class="historial-item"><span class="historial-label">Desviación Absoluta:</span><input type="number" [(ngModel)]="registro.desviacion_abs" /></div>
+                                          <div class="historial-item"><span class="historial-label">Deriva:</span><input type="number" [(ngModel)]="registro.deriva" /></div>
+                                          <div class="historial-item"><span class="historial-label">Tolerancia:</span><input type="number" [(ngModel)]="registro.tolerancia" /></div>
+                                          <div class="historial-item"><span class="historial-label">Intervalo Cal. (días):</span><input type="number" [(ngModel)]="registro.intervalo_calibracion_dias" /></div>
+                                          <div class="historial-item"><span class="historial-label">Intervalo Cal. (años):</span><input type="number" [(ngModel)]="registro.intervalo_calibracion_anos" /></div>
+                                          <div class="historial-item"><span class="historial-label">Incertidumbre Expandida:</span><input type="number" [(ngModel)]="registro.incertidumbre_exp" /></div>
+                                          <div class="historial-actions">
+                                            <button (click)="guardarEdicionIntervalo(material.codigo_id, registro)" class="btn-compact">Guardar</button>
+                                            <button (click)="cancelarEdicionIntervalo(material.codigo_id, registro)" class="btn-compact">Cancelar</button>
+                                          </div>
+                                        } @else {
+                                          <div class="historial-item"><span class="historial-label">Valor Nominal:</span><span>{{ registro.valor_nominal || 'N/A' }}</span></div>
+                                          <div class="historial-item"><span class="historial-label">Fecha Cal. 1:</span><span>{{ registro.fecha_c1 ? (registro.fecha_c1 | date: 'yyyy/MM/dd') : 'N/A' }}</span></div>
+                                          <div class="historial-item"><span class="historial-label">Error Cal. 1:</span><span>{{ registro.error_c1 || 'N/A' }}</span></div>
+                                          <div class="historial-item"><span class="historial-label">Fecha Cal. 2:</span><span>{{ registro.fecha_c2 ? (registro.fecha_c2 | date: 'yyyy/MM/dd') : 'N/A' }}</span></div>
+                                          <div class="historial-item"><span class="historial-label">Error Cal. 2:</span><span>{{ registro.error_c2 || 'N/A' }}</span></div>
+                                          <div class="historial-item"><span class="historial-label">Diferencia Tiempo (días):</span><span>{{ registro.diferencia_tiempo_dias || 'N/A' }}</span></div>
+                                          <div class="historial-item"><span class="historial-label">Desviación Absoluta:</span><span>{{ registro.desviacion_abs || 'N/A' }}</span></div>
+                                          <div class="historial-item"><span class="historial-label">Deriva:</span><span>{{ registro.deriva || 'N/A' }}</span></div>
+                                          <div class="historial-item"><span class="historial-label">Tolerancia:</span><span>{{ registro.tolerancia || 'N/A' }}</span></div>
+                                          <div class="historial-item"><span class="historial-label">Intervalo Cal. (días):</span><span>{{ registro.intervalo_calibracion_dias || 'N/A' }}</span></div>
+                                          <div class="historial-item"><span class="historial-label">Intervalo Cal. (años):</span><span>{{ registro.intervalo_calibracion_anos || 'N/A' }}</span></div>
+                                          <div class="historial-item"><span class="historial-label">Incertidumbre Expandida:</span><span>{{ registro.incertidumbre_exp || 'N/A' }}</span></div>
+                                          <div class="historial-actions">
+                                            <button (click)="editarRegistroIntervalo(registro)" class="btn-compact">Editar</button>
+                                          </div>
+                                        }
+                                      </div>
+                                    </div>
+                                  }
+                                </div>
+                              }
+                            </div>
+                          } @else {
+                            <div class="no-historial-message">
+                              <i class="fas fa-calendar-alt"></i>
+                              <p>No hay registros de intervalo para este material</p>
+                            </div>
+                          }
+                        </div>
+                      }
+                      
+                      @default {
+                        <div>
+                          <div class="detalle-grid-compacto"><span>Seleccione una pestaña</span></div>
+                        </div>
+                      }
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          </article>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Modal de edición -->
+  @if (editModalVisible || editModalClosing) {
+    <div class="modal-overlay" 
+         [class.closing]="editModalClosing" (click)="closeEditMaterialModal()">
+      <div class="edit-modal" [class.closing]="editModalClosing" (click)="$event.stopPropagation()">
+        <h3>Editar Material de Referencia</h3>
+        
+        <div class="referencia-tabs-menu">
+          <button type="button" class="tab-btn" [class.active]="editModalActiveTab === 'general'" 
+                  (click)="editModalActiveTab = 'general'">General</button>
+          <button type="button" class="tab-btn" [class.active]="editModalActiveTab === 'historial'" 
+                  (click)="editModalActiveTab = 'historial'">Historial</button>
+          <button type="button" class="tab-btn" [class.active]="editModalActiveTab === 'intervalo'" 
+                  (click)="editModalActiveTab = 'intervalo'">Intervalo</button>
+          <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+            <button type="button" class="tab-btn" (click)="saveAllEditMaterial()">Guardar</button>
+            <button type="button" class="tab-btn" (click)="closeEditMaterialModal()">Cancelar</button>
+          </div>
+        </div>
+        
+        <div style="margin-top:12px" class="edit-modal-body">
+          <!-- Contenido del modal de edición -->
+          <form class="form-grid">
+            <div>
+              <label for="edit_codigo_id">Código ID *</label>
+              <input id="edit_codigo_id" name="edit_codigo_id" type="number" [value]="codigoIdSig()" readonly />
+            </div>
+            <div>
+              <label for="edit_nombre_material">Nombre del Material *</label>
+              <input id="edit_nombre_material" name="edit_nombre_material" [(ngModel)]="nombre_material" required />
+            </div>
+            <div>
+              <label for="edit_rango_medicion">Rango de Medición</label>
+              <input id="edit_rango_medicion" name="edit_rango_medicion" [(ngModel)]="rango_medicion" />
+            </div>
+            <div>
+              <label for="edit_marca">Marca</label>
+              <input id="edit_marca" name="edit_marca" [(ngModel)]="marca" />
+            </div>
+            <div>
+              <label for="edit_serie">Serie</label>
+              <input id="edit_serie" name="edit_serie" [(ngModel)]="serie" />
+            </div>
+            <div>
+              <label for="edit_error_max_permitido">Error Máx Permitido</label>
+              <input id="edit_error_max_permitido" name="edit_error_max_permitido" type="number" step="0.000001" [(ngModel)]="error_max_permitido" />
+            </div>
+            <div>
+              <label for="edit_modelo">Modelo</label>
+              <input id="edit_modelo" name="edit_modelo" [(ngModel)]="modelo" />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  }
+</div>

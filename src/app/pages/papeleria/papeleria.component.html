@@ -1,0 +1,508 @@
+<div class="liba-theme container papeleria-page" (click)="onGlobalClick($event)">
+  <h1>
+    <i class="fas fa-paperclip"></i>
+    | Papeleria
+  </h1>
+  
+  <div class="dashboard-cards">
+    <div class="action-card" (click)="toggleFormulario('catalogo')" [class.active]="formularioActivo === 'catalogo'">
+      <i class="fas fa-book-medical"></i>
+      <span>Crear en Catálogo</span>
+    </div>
+    <div class="action-card" (click)="toggleFormulario('catalogo-list')" [class.active]="formularioActivo === 'catalogo-list'">
+      <i class="fas fa-th-list"></i>
+      <span>Ver Catálogo</span>
+    </div>
+    <div class="action-card" (click)="toggleFormulario('crear-papeleria')" [class.active]="formularioActivo === 'crear-papeleria'">
+      <i class="fas fa-plus-circle"></i>
+      <span>Crear Registro</span>
+    </div>
+    <div class="action-card" (click)="toggleFormulario('listado')" [class.active]="formularioActivo === 'listado'">
+      <i class="fas fa-boxes-stacked"></i>
+      <span>Listado</span>
+    </div>
+  </div>
+
+
+<!-- SECCIÓN: Crear nuevo item en catálogo -->
+@if ((formularioActivo === 'catalogo') && !esAuxiliar()) {
+  <h2>Crear nuevo item en catálogo (Papelería)</h2>
+  <section>
+    <form class="form-grid" (ngSubmit)="crearCatalogo($event)">
+      <!-- Nombre (OBLIGATORIO) -->
+      <div class="form-field">
+        <label for="catNombre">Nombre: *</label>
+        <input id="catNombre" 
+          [(ngModel)]="catNombre" 
+          name="catNombre" 
+          required 
+          appLettersOnly
+          (input)="validarCampoCatalogoEnTiempoReal('nombre', $event)"
+          (blur)="validarCampoCatalogoEnTiempoReal('nombre', $event)"
+          [class.error]="catalogoErrors['nombre']"
+          placeholder="Ej: Resmas de papel A4" />
+        @if (catalogoErrors['nombre']) {
+          <small class="error-message">⚠️ {{ catalogoErrors['nombre'] }}</small>
+        }
+      </div>
+      
+      <!-- Item (OBLIGATORIO) -->
+      <div class="form-field">
+        <label for="catItem">Item: *</label>
+        <input id="catItem" 
+          type="number" 
+          min="1" 
+          step="1" 
+          [(ngModel)]="catItem" 
+          name="catItem" 
+          required 
+          appNumbersOnly
+          (input)="validarCampoCatalogoEnTiempoReal('item', $event)"
+          (blur)="validarCampoCatalogoEnTiempoReal('item', $event)"
+          [class.error]="catalogoErrors['item']" 
+          placeholder="Ej: 2001" />
+        @if (catalogoErrors['item']) {
+          <small class="error-message">⚠️ {{ catalogoErrors['item'] }}</small>
+        }
+      </div>
+      
+      <!-- Imagen (NO obligatorio) -->
+      <div class="form-field">
+        <label for="catImagen">Imagen
+          <span class="hint-icon" tabindex="0" data-tooltip="Peso máximo: 5 MB.">?</span>
+        </label>
+        <input id="catImagen" 
+          type="file" 
+          accept="image/*" 
+          (change)="onCatImagenChange($event); validarCampoCatalogoEnTiempoReal('imagen', $event)"
+          [class.error]="catalogoErrors['imagen']" />
+        @if (catalogoErrors['imagen']) {
+          <small class="error-message">⚠️ {{ catalogoErrors['imagen'] }}</small>
+        }
+      </div>
+      
+      <!-- Descripción (NO obligatorio) -->
+      <div class="full-row form-field">
+        <label for="catDescripcion">Descripción:</label>
+        <textarea id="catDescripcion" 
+          [(ngModel)]="catDescripcion" 
+          name="catDescripcion" 
+          rows="2" 
+          placeholder="Descripción adicional del item"
+          (input)="validarCampoCatalogoEnTiempoReal('descripcion', $event)"
+          (blur)="validarCampoCatalogoEnTiempoReal('descripcion', $event)"
+          [class.error]="catalogoErrors['descripcion']"></textarea>
+        @if (catalogoErrors['descripcion']) {
+          <small class="error-message">⚠️ {{ catalogoErrors['descripcion'] }}</small>
+        }
+      </div>
+      
+      <div class="actions">
+        <button class="btn-compact" type="submit">Agregar al catálogo</button>
+      </div>
+    </form>
+  </section>
+}
+
+  <!-- SECCIÓN: Catálogo de papelería -->
+  @if (formularioActivo === 'catalogo-list') {
+  <h2>Catálogo de papelería</h2>
+  <section>
+    <div>
+      <div class="filters-grid catalogo-filters">
+        <div>
+          <label for="catalogoItemQ">Filtrar por item</label>
+          <input id="catalogoItemQ" [(ngModel)]="itemFiltro" (input)="filtrarCatalogoPorCampos()" placeholder="Ej: 001" />
+        </div>
+        <div>
+          <label for="catalogoNombreQ">Filtrar por nombre</label>
+          <input id="catalogoNombreQ" [(ngModel)]="nombreFiltro" (input)="filtrarCatalogoPorCampos()" placeholder="Ej: Papel" />
+        </div>
+        <div class="reset-cell">
+          <button type="button" class="btn-reset-filtros" (click)="resetCatalogoPaginado()" aria-label="Reiniciar filtros">Reiniciar filtros</button>
+        </div>
+      </div>
+
+      <div class="cards-container">
+        <!-- Estado de carga -->
+        @if (catalogoCargando()) {
+          <div class="catalogo-cards">
+            <article class="catalog-card skeleton-card">
+              <div class="catalog-card-media"><div class="skeleton-box"></div></div>
+              <div class="card-name"><span class="skeleton-line w-70"></span><span class="skeleton-line w-30"></span></div>
+              <div class="card-desc"><div class="skeleton-line w-90"></div></div>
+            </article>
+            <article class="catalog-card skeleton-card">
+              <div class="catalog-card-media"><div class="skeleton-box"></div></div>
+              <div class="card-name"><span class="skeleton-line w-70"></span><span class="skeleton-line w-30"></span></div>
+              <div class="card-desc"><div class="skeleton-line w-90"></div></div>
+            </article>
+            <article class="catalog-card skeleton-card">
+              <div class="catalog-card-media"><div class="skeleton-box"></div></div>
+              <div class="card-name"><span class="skeleton-line w-70"></span><span class="skeleton-line w-30"></span></div>
+              <div class="card-desc"><div class="skeleton-line w-90"></div></div>
+            </article>
+          </div>
+        }
+
+        <!-- Estadísticas -->
+        @if (!catalogoCargando() && catalogoResultados().length) {
+          <div class="catalogo-stats">
+            <span>Mostrando {{ catalogoResultados().length }} de {{ catalogoTotal() }} elementos</span>
+          </div>
+        }
+
+        <!-- Grid de items del catálogo -->
+        <div class="catalogo-cards">
+          @for (c of catalogoResultados(); track c.item) {
+            <article class="catalog-card"
+                     (contextmenu)="onCatalogContextMenu($event, c)"
+                     (click)="onCatalogCardClick(c)" role="button" tabindex="0"
+                     (keyup.enter)="onCatalogCardClick(c)" (keyup.space)="onCatalogCardClick(c)">
+              <div class="catalog-card-media">
+                <img [src]="getCatalogoImagenUrl(c.item)" alt="Imagen {{ c.nombre }}" (error)="onImgError($event)" />
+              </div>
+              <div class="card-name" [title]="c.nombre">
+                <span [innerHTML]="highlightField(c.nombre, 'nombre')"></span>
+                <span class="meta">Item: <strong>{{ c.item }}</strong></span>
+              </div>
+              @if (c.descripcion) {
+                <div class="card-desc">{{ c.descripcion }}</div>
+              }
+            </article>
+          }
+        </div>
+
+        <!-- Botón Cargar más -->
+        @if (catalogoResultados().length < catalogoTotal()) {
+          <div class="reset-cell">
+            <button type="button" class="btn-load-more" 
+                    (click)="cargarMasCatalogo()"
+                    [disabled]="catalogoCargando()">
+              @if (catalogoCargando()) {
+                <i class="fas fa-spinner fa-spin"></i> Cargando...
+              } @else {
+                Cargar más
+              }
+            </button>
+          </div>
+        }
+
+        <!-- Estado vacío -->
+        @if (!catalogoCargando() && !catalogoResultados().length) {
+          <p>No hay elementos en el catálogo.</p>
+        }
+      </div>
+    </div>
+  </section>
+  }
+
+  <!-- Menú contextual -->
+  @if (contextMenuVisible()) {
+    <div class="context-menu" [style.left.px]="contextMenuX" [style.top.px]="contextMenuY" 
+         (click)="$event.stopPropagation()" (contextmenu)="$event.preventDefault()">
+      <button type="button" class="ctx-item delete" (click)="onContextMenuEliminar()">Eliminar</button>
+    </div>
+  }
+
+ <!-- SECCIÓN: Crear registro de Papelería -->
+@if ((formularioActivo === 'crear-papeleria' || item_catalogo() != null) && !esAuxiliar()) {
+  <h2>Crear registro de Papelería</h2>
+  <section #papFormSection>
+    <form class="form-grid" (ngSubmit)="crearPapeleria($event)">
+      <!-- Item catálogo (OBLIGATORIO) -->
+      <div class="form-field">
+        <label for="item_catalogo">Item catálogo: *</label>
+        <input #itemCatalogoInput 
+          id="item_catalogo" 
+          [(ngModel)]="item_catalogo" 
+          name="item_catalogo" 
+          required 
+          appNumbersOnly
+          (input)="validarCampoPapeleriaEnTiempoReal('item_catalogo', $event)"
+          (blur)="validarCampoPapeleriaEnTiempoReal('item_catalogo', $event)"
+          [class.error]="papeleriaErrors['item_catalogo']" 
+          placeholder="Ej: 2001" />
+        @if (papeleriaErrors['item_catalogo']) {
+          <small class="error-message">⚠️ {{ papeleriaErrors['item_catalogo'] }}</small>
+        }
+      </div>
+      
+      <!-- Nombre (OBLIGATORIO) -->
+      <div class="form-field">
+        <label for="nombre">Nombre: *</label>
+        <input id="nombre" 
+          [(ngModel)]="nombre" 
+          name="nombre" 
+          required 
+          appLettersOnly
+          (input)="validarCampoPapeleriaEnTiempoReal('nombre', $event)"
+          (blur)="validarCampoPapeleriaEnTiempoReal('nombre', $event)"
+          [class.error]="papeleriaErrors['nombre']"
+          placeholder="Ej: Resmas de papel A4" />
+        @if (papeleriaErrors['nombre']) {
+          <small class="error-message">⚠️ {{ papeleriaErrors['nombre'] }}</small>
+        }
+      </div>
+      
+      <!-- Cantidad adquirida (OBLIGATORIO) -->
+      <div class="form-field">
+        <label for="cantidad_adquirida">Cantidad adquirida: *</label>
+        <input id="cantidad_adquirida" 
+          type="number" 
+          [(ngModel)]="cantidad_adquirida" 
+          name="cantidad_adquirida" 
+          required 
+          appNumbersOnly
+          (input)="validarCampoPapeleriaEnTiempoReal('cantidad_adquirida', $event)"
+          (blur)="validarCampoPapeleriaEnTiempoReal('cantidad_adquirida', $event)"
+          [class.error]="papeleriaErrors['cantidad_adquirida']" 
+          placeholder="Ej: 10" 
+          min="0" />
+        @if (papeleriaErrors['cantidad_adquirida']) {
+          <small class="error-message">⚠️ {{ papeleriaErrors['cantidad_adquirida'] }}</small>
+        }
+      </div>
+      
+      <!-- Cantidad existente (OBLIGATORIO) -->
+      <div class="form-field">
+        <label for="cantidad_existente">Cantidad existente: *</label>
+        <input id="cantidad_existente" 
+          type="number" 
+          [(ngModel)]="cantidad_existente" 
+          name="cantidad_existente" 
+          required 
+          appNumbersOnly
+          (input)="validarCampoPapeleriaEnTiempoReal('cantidad_existente', $event)"
+          (blur)="validarCampoPapeleriaEnTiempoReal('cantidad_existente', $event)"
+          [class.error]="papeleriaErrors['cantidad_existente']" 
+          placeholder="Ej: 10" 
+          min="0" />
+        @if (papeleriaErrors['cantidad_existente']) {
+          <small class="error-message">⚠️ {{ papeleriaErrors['cantidad_existente'] }}</small>
+        }
+      </div>
+      
+      <!-- Presentación (OBLIGATORIO - select) -->
+      <div class="form-field">
+        <label for="presentacion">Presentación: *</label>
+        <select id="presentacion" 
+          [(ngModel)]="presentacion" 
+          name="presentacion" 
+          required
+          (change)="validarCampoPapeleriaEnTiempoReal('presentacion', $event)"
+          (blur)="validarCampoPapeleriaEnTiempoReal('presentacion', $event)"
+          [class.error]="papeleriaErrors['presentacion']">
+          <option value="">Seleccione</option>
+          <option value="unidad">Unidad</option>
+          <option value="paquete">Paquete</option>
+          <option value="caja">Caja</option>
+          <option value="cajas">Cajas</option>
+        </select>
+        @if (papeleriaErrors['presentacion']) {
+          <small class="error-message">⚠️ {{ papeleriaErrors['presentacion'] }}</small>
+        }
+      </div>
+      
+      <!-- Marca (OBLIGATORIO) -->
+      <div class="form-field">
+        <label for="marca">Marca: *</label>
+        <input id="marca" 
+          [(ngModel)]="marca" 
+          name="marca" 
+          required
+          appAlphaNumeric
+          (input)="validarCampoPapeleriaEnTiempoReal('marca', $event)"
+          (blur)="validarCampoPapeleriaEnTiempoReal('marca', $event)"
+          [class.error]="papeleriaErrors['marca']"
+          placeholder="Ej: Norma" />
+        @if (papeleriaErrors['marca']) {
+          <small class="error-message">⚠️ {{ papeleriaErrors['marca'] }}</small>
+        }
+      </div>
+      
+      <!-- Ubicación (OBLIGATORIO) -->
+      <div class="form-field">
+        <label for="ubicacion">Ubicación: *</label>
+        <input id="ubicacion" 
+          [(ngModel)]="ubicacion" 
+          name="ubicacion" 
+          required
+          appAlphaNumeric
+          (input)="validarCampoPapeleriaEnTiempoReal('ubicacion', $event)"
+          (blur)="validarCampoPapeleriaEnTiempoReal('ubicacion', $event)"
+          [class.error]="papeleriaErrors['ubicacion']"
+          placeholder="Ej: Estantería B-2" />
+        @if (papeleriaErrors['ubicacion']) {
+          <small class="error-message">⚠️ {{ papeleriaErrors['ubicacion'] }}</small>
+        }
+      </div>
+      
+      <!-- Fecha adquisición (OBLIGATORIO) -->
+      <div class="form-field">
+        <label for="fecha_adquisicion">Fecha de adquisición: *</label>
+        <input id="fecha_adquisicion" 
+          type="date" 
+          [(ngModel)]="fecha_adquisicion" 
+          name="fecha_adquisicion" 
+          required
+          (input)="validarCampoPapeleriaEnTiempoReal('fecha_adquisicion', $event)"
+          (blur)="validarCampoPapeleriaEnTiempoReal('fecha_adquisicion', $event)"
+          [class.error]="papeleriaErrors['fecha_adquisicion']" />
+        @if (papeleriaErrors['fecha_adquisicion']) {
+          <small class="error-message">⚠️ {{ papeleriaErrors['fecha_adquisicion'] }}</small>
+        }
+      </div>
+      
+      <!-- Descripción (NO obligatorio) -->
+      <div class="full-row form-field">
+        <label for="descripcion">Descripción:</label>
+        <textarea id="descripcion" 
+          [(ngModel)]="descripcion" 
+          name="descripcion" 
+          rows="2" 
+          placeholder="Descripción del material"
+          (input)="validarCampoPapeleriaEnTiempoReal('descripcion', $event)"
+          (blur)="validarCampoPapeleriaEnTiempoReal('descripcion', $event)"
+          [class.error]="papeleriaErrors['descripcion']"></textarea>
+        @if (papeleriaErrors['descripcion']) {
+          <small class="error-message">⚠️ {{ papeleriaErrors['descripcion'] }}</small>
+        }
+      </div>
+      
+      <!-- Observaciones (NO obligatorio) -->
+      <div class="full-row form-field">
+        <label for="observaciones">Observaciones:</label>
+        <textarea id="observaciones" 
+          [(ngModel)]="observaciones" 
+          name="observaciones" 
+          rows="2" 
+          placeholder="Observaciones adicionales"
+          (input)="validarCampoPapeleriaEnTiempoReal('observaciones', $event)"
+          (blur)="validarCampoPapeleriaEnTiempoReal('observaciones', $event)"
+          [class.error]="papeleriaErrors['observaciones']"></textarea>
+        @if (papeleriaErrors['observaciones']) {
+          <small class="error-message">⚠️ {{ papeleriaErrors['observaciones'] }}</small>
+        }
+      </div>
+      
+      <div class="actions">
+        <button class="btn-compact" type="submit">Crear</button>
+      </div>
+    </form>
+  </section>
+}
+
+  <!-- SECCIÓN: Listado de papelería -->
+  @if (formularioActivo === 'listado') {
+  <div (click)="onGlobalClick($event)">
+    <h2>Listado de papelería</h2>
+    <section>
+      <div class="cards-container">
+        <div class="filters-grid">
+          <div>
+            <label for="papInvItemQ">Filtrar por item</label>
+            <input id="papInvItemQ" [(ngModel)]="invItemFiltro" (input)="filtrarPapeleriaPorCampos()" placeholder="Ej: 001" />
+          </div>
+          <div>
+            <label for="papInvNombreQ">Filtrar por nombre</label>
+            <input id="papInvNombreQ" [(ngModel)]="invNombreFiltro" (input)="filtrarPapeleriaPorCampos()" placeholder="Ej: Papel" />
+          </div>
+        </div>
+
+        <!-- Estado de carga del inventario -->
+        @if (papeleriaCargando()) {
+          <div class="catalogo-cards">
+            @for (s of skeletonPapeleria; track $index) {
+              <article class="catalog-card skeleton-card">
+                <div class="catalog-card-media"><div class="skeleton-box"></div></div>
+                <div class="card-name"><span class="skeleton-line w-70"></span><span class="skeleton-line w-30"></span></div>
+                <div class="card-desc"><div class="skeleton-line w-90"></div></div>
+              </article>
+            }
+          </div>
+        }
+
+        <!-- Grid del inventario -->
+        @if (!papeleriaCargando() && papeleriaList().length) {
+          <div class="catalogo-cards">
+            @for (p of papeleriaList(); track p.id) {
+              <article class="catalog-card" role="button" tabindex="0" [class.open]="isOpen(p)"
+                       (click)="toggleOpen(p)" (keyup.enter)="toggleOpen(p)" (keyup.space)="toggleOpen(p)"
+                       (contextmenu)="onCatalogContextMenu($event, p)">
+                
+                @if (p.item_catalogo) {
+                  <div class="catalog-card-media">
+                    <img [src]="getCatalogoImagenUrl(p.item_catalogo)" alt="Imagen catálogo" (error)="onImgError($event)" />
+                  </div>
+                }
+                
+                <div class="card-name" [title]="p.nombre">
+                  <span>{{ p.nombre }}</span>
+                  <span class="meta">Item: <strong>{{ p.item_catalogo }}</strong></span>
+                </div>
+                
+                <div class="card-meta">
+                  <span class="meta">Cantidad disponible: <strong>{{ p.cantidad_existente }}</strong></span>
+                </div>
+                
+                <!-- Control de stock -->
+                @if (!esAuxiliar()) {
+                  <div class="insumo-actions-row" (click)="$event.stopPropagation()">
+                    <input type="number" min="1" step="1"
+                           [ngModel]="getRemoveQty(p.id)"
+                           (ngModelChange)="setRemoveQty(p.id, $event)"
+                           placeholder="Cantidad" />
+                    <button type="button" class="btn-compact btn-remove"
+                            [disabled]="isBusy(p.id) || !isValidQty(getRemoveQty(p.id))"
+                            (click)="$event.stopPropagation(); quitar(p)">Quitar</button>
+                  </div>
+                }
+
+                <!-- Detalles expandibles -->
+                @if (isOpen(p)) {
+                  <div class="insumo-details-panel">
+                    <div class="detail-row"><strong>Adquirida:</strong> {{ p.cantidad_adquirida }}</div>
+                    @if (p.presentacion) { 
+                      <div class="detail-row"><strong>Presentación:</strong> {{ p.presentacion }}</div> 
+                    }
+                    @if (p.marca) { 
+                      <div class="detail-row"><strong>Marca:</strong> {{ p.marca }}</div> 
+                    }
+                    @if (p.ubicacion) { 
+                      <div class="detail-row"><strong>Ubicación:</strong> {{ p.ubicacion }}</div> 
+                    }
+                    @if (p.fecha_adquisicion) { 
+                      <div class="detail-row"><strong>Fecha adquisición:</strong> {{ p.fecha_adquisicion | date:'yyyy-MM-dd' }}</div> 
+                    }
+                    @if (p.descripcion) { 
+                      <div class="detail-row"><strong>Descripción:</strong> {{ p.descripcion }}</div> 
+                    }
+                    @if (p.observaciones) { 
+                      <div class="detail-row"><strong>Observaciones:</strong> {{ p.observaciones }}</div> 
+                    }
+                    
+                    <!-- Acciones de gestión -->
+                    @if (!esAuxiliar()) {
+                      <div class="panel-actions">
+                        <button type="button" class="btn-delete"
+                                [disabled]="isBusy(p.id)"
+                                (click)="$event.stopPropagation(); eliminar(p)">Eliminar</button>
+                      </div>
+                    }
+                  </div>
+                }
+              </article>
+            }
+          </div>
+        }
+
+        <!-- Estado vacío del inventario -->
+        @if (!papeleriaCargando() && !papeleriaList().length) {
+          <p>No hay registros de papelería.</p>
+        }
+      </div>
+    </section>
+  </div>
+  }
+</div>

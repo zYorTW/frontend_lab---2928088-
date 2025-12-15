@@ -1,0 +1,303 @@
+<!-- ====== HEADER GLOBAL LIBA ====== -->
+@if (user()) {
+<header id="app-header" class="header">
+  <div class="header-content">
+    <div class="logo-section">
+      <div class="logo">LIBA</div>
+      <div>
+        <div class="header-title">
+          Laboratorio Integrado de Biociencias Aplicadas
+        </div>
+        <div class="header-subtitle">
+          Sistema de Gestión de Inventarios
+        </div>
+      </div>
+    </div>
+
+    <div class="user-menu">
+      <!-- User initial circle -->
+      <button type="button" class="user-initial" [class.active]="menuOpen()" aria-haspopup="true" [attr.aria-expanded]="menuOpen()" (click)="toggleUserMenu()">
+        {{ (user()?.email || '')[0] | uppercase }}
+      </button>
+
+      <!-- Dropdown menu -->
+      <div class="user-dropdown gh-style" [class.open]="menuOpen()" [attr.aria-hidden]="!menuOpen()" role="menu">
+        <!-- Profile header: larger area showing name and email -->
+        <div class="profile-header">
+          <div class="profile-initial">{{ (user()?.email || '')[0] | uppercase }}</div>
+          <div class="profile-meta">
+            <div class="profile-name">{{ userShortName() }}</div>
+            <div class="profile-email">{{ user()?.email }}</div>
+            <div class="profile-role">{{ user()?.rol }}</div>
+          </div>
+        </div>
+
+        <div class="profile-actions">
+          <button type="button" class="user-dropdown-item" role="menuitem">
+            <i class="fas fa-user" aria-hidden="true"></i>
+            <span>Perfil</span>
+          </button>
+          <button type="button" class="user-dropdown-item" role="menuitem">
+            <i class="fas fa-cog" aria-hidden="true"></i>
+            <span>Opciones</span>
+          </button>
+        </div>
+        <hr class="dropdown-divider"/>
+        <button type="button" class="user-dropdown-item logout" (click)="onLogout()" [disabled]="isLoggingOut()" role="menuitem">
+          <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+          <span>{{ isLoggingOut() ? 'Cerrando sesión…' : 'Salir' }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+}
+
+<!-- ====== NAVIGATION MENU ====== -->
+@if (user()) {
+<nav class="nav-menu">
+  <div class="nav-content">
+    <a
+      routerLink="/dashboard"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-item"
+    >
+      <i class="fas fa-tachometer-alt"></i> Dashboard
+    </a>
+
+    <a 
+      routerLink="/solicitudes" 
+      routerLinkActive="active" 
+      class="nav-item"
+    >
+      <i class="fas fa-clipboard-list"></i> Solicitudes
+    </a>
+
+    <!-- Inventario dropdown - CON ESTADO ACTIVO -->
+    <div 
+      class="nav-item dropdown full-width-dropdown" 
+      [class.is-open]="inventoryMenuOpen()" 
+      [class.active]="selectedInventory()"
+      (click)="toggleInventoryMenu()"
+    >
+      <button
+        type="button"
+        class="dropdown-toggle"
+        [class.has-selection]="selectedInventory()"
+        aria-haspopup="true"
+        [attr.aria-expanded]="inventoryMenuOpen()"
+      >
+        @if (selectedInventory()) {
+          <!-- Estado activo: muestra el apartado seleccionado -->
+          <i class="fas" [class]="getInventoryIcon(selectedInventory()!)"></i>
+          <span>{{ getInventoryName(selectedInventory()!) }}</span>
+        } @else {
+          <!-- Estado por defecto: muestra Inventario -->
+          <i class="fas fa-warehouse" aria-hidden="true"></i>
+          <span>Inventario</span>
+        }
+        <i class="fas fa-chevron-down caret" aria-hidden="true"></i>
+      </button>
+
+      <div class="dropdown-menu inventory-menu full-width-menu" role="menu" [class.open]="inventoryMenuOpen()">
+        <div class="inventory-container">
+          <div class="inventory-grid">
+            <!-- Apartados originales -->
+            <a 
+              routerLink="/reactivos" 
+              class="inventory-card" 
+              role="menuitem"
+              (click)="setSelectedInventory('reactivos'); $event.stopPropagation()"
+            >
+              <div class="inventory-icon reactivos">
+                <i class="fas fa-flask" aria-hidden="true"></i>
+              </div>
+              <div class="inventory-content">
+                <div class="inventory-title">Reactivos</div>
+                <div class="inventory-subtitle">Químicos y sustancias</div>
+              </div>
+              <i class="fas fa-arrow-right inventory-arrow"></i>
+            </a>
+
+            <a 
+              routerLink="/insumos" 
+              class="inventory-card" 
+              role="menuitem"
+              (click)="setSelectedInventory('insumos'); $event.stopPropagation()"
+            >
+              <div class="inventory-icon insumos">
+                <i class="fas fa-boxes" aria-hidden="true"></i>
+              </div>
+              <div class="inventory-content">
+                <div class="inventory-title">Insumos</div>
+                <div class="inventory-subtitle">Materiales generales</div>
+              </div>
+              <i class="fas fa-arrow-right inventory-arrow"></i>
+            </a>
+
+            <a 
+              routerLink="/papeleria" 
+              class="inventory-card" 
+              role="menuitem"
+              (click)="setSelectedInventory('papeleria'); $event.stopPropagation()"
+            >
+              <div class="inventory-icon papeleria">
+                <i class="fas fa-paperclip" aria-hidden="true"></i>
+              </div>
+              <div class="inventory-content">
+                <div class="inventory-title">Papelería</div>
+                <div class="inventory-subtitle">Oficina y suministros</div>
+              </div>
+              <i class="fas fa-arrow-right inventory-arrow"></i>
+            </a>
+
+            <!-- NUEVOS APARTADOS -->
+            <a 
+              routerLink="/equipos" 
+              class="inventory-card" 
+              role="menuitem"
+              (click)="setSelectedInventory('equipos'); $event.stopPropagation()"
+            >
+              <div class="inventory-icon equipos">
+                <i class="fas fa-microscope" aria-hidden="true"></i>
+              </div>
+              <div class="inventory-content">
+                <div class="inventory-title">Equipos</div>
+                <div class="inventory-subtitle">Instrumentación científica</div>
+              </div>
+              <i class="fas fa-arrow-right inventory-arrow"></i>
+            </a>
+
+            <a 
+              routerLink="/materiales-volumetricos" 
+              class="inventory-card" 
+              role="menuitem"
+              (click)="setSelectedInventory('volumetricos'); $event.stopPropagation()"
+            >
+              <div class="inventory-icon volumetricos">
+                <i class="fas fa-vial" aria-hidden="true"></i>
+              </div>
+              <div class="inventory-content">
+                <div class="inventory-title">Materiales Volumétricos</div>
+                <div class="inventory-subtitle">Medición de precisión</div>
+              </div>
+              <i class="fas fa-arrow-right inventory-arrow"></i>
+            </a>
+
+            <a 
+              routerLink="/materiales-referencia" 
+              class="inventory-card" 
+              role="menuitem"
+              (click)="setSelectedInventory('referencia'); $event.stopPropagation()"
+            >
+              <div class="inventory-icon referencia">
+                <i class="fas fa-vial" aria-hidden="true"></i>
+              </div>
+              <div class="inventory-content">
+                <div class="inventory-title">Materiales de Referencia</div>
+                <div class="inventory-subtitle">Material de referencia</div>
+              </div>
+              <i class="fas fa-arrow-right inventory-arrow"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<!-- Menú Análisis actualizado con clase específica -->
+@if (user()?.rol === 'Administrador' || user()?.rol === 'Superadmin') {
+  <div 
+    class="nav-item dropdown analysis-dropdown" 
+    [class.is-open]="analysisMenuOpen()" 
+    [class.active]="selectedAnalysis()"
+    (click)="toggleAnalysisMenu()"
+  >
+    <button
+      type="button"
+      class="dropdown-toggle"
+      [class.has-selection]="selectedAnalysis()"
+      aria-haspopup="true"
+      [attr.aria-expanded]="analysisMenuOpen()"
+    >
+      @if (selectedAnalysis()) {
+        <!-- Estado activo: muestra el análisis seleccionado -->
+        <i class="fas" [class]="getAnalysisIcon(selectedAnalysis()!)"></i>
+        <span class="inventory-active-text">{{ getAnalysisName(selectedAnalysis()!) }}</span>
+      } @else {
+        <!-- Estado por defecto: muestra Análisis -->
+        <i class="fas fa-chart-line" aria-hidden="true"></i>
+        <span>Análisis</span>
+      }
+      <i class="fas fa-chevron-down caret" aria-hidden="true"></i>
+    </button>
+
+    <div class="dropdown-menu" role="menu" [class.open]="analysisMenuOpen()">
+      <!-- Auditoría -->
+      <a 
+        routerLink="/auditoria" 
+        class="dropdown-item" 
+        role="menuitem"
+        (click)="setSelectedAnalysis('auditoria'); $event.stopPropagation()"
+      >
+        <i class="fas fa-clipboard-check" aria-hidden="true"></i>
+        <span>Auditoría</span>
+      </a>
+
+      <!-- Reportes -->
+      <a 
+        routerLink="/reportes" 
+        class="dropdown-item" 
+        role="menuitem"
+        (click)="setSelectedAnalysis('reportes'); $event.stopPropagation()"
+      >
+        <i class="fas fa-chart-bar" aria-hidden="true"></i>
+        <span>Reportes</span>
+      </a>
+    </div>
+  </div>
+}
+
+    @if (user()?.rol === 'Superadmin') {
+      <a 
+        routerLink="/usuarios" 
+        routerLinkActive="active" 
+        class="nav-item"
+      >
+        <i class="fas fa-users"></i> Usuarios
+      </a>
+    }
+  </div>
+</nav>
+}
+
+<!-- ====== CONTENIDO PRINCIPAL ====== -->
+<main class="main-content liba-theme" [class.route-navigating]="isNavigating()">
+  <router-outlet></router-outlet>
+</main>
+
+<!-- ====== FOOTER GLOBAL LIBA ====== -->
+@if (showFooter()) {
+<footer class="app-footer">
+  <p>
+    © {{ currentYear }} LIBA - Laboratorio Integrado de Biociencias Aplicadas.
+    Todos los derechos reservados.
+  </p>
+</footer>
+}
+
+<!-- ====== GLOBAL SNACKBAR ====== -->
+<div class="snackbar" [class.open]="snack.openSig()" [class.success]="snack.typeSig() === 'success'" [class.error]="snack.typeSig() === 'error'" [class.warn]="snack.typeSig() === 'warn'">
+  <div class="snackbar-content">
+    <span class="snackbar-icon" aria-hidden="true">
+      <i class="fas" [ngClass]="{
+        'fa-check-circle': snack.typeSig() === 'success',
+        'fa-exclamation-triangle': snack.typeSig() === 'warn',
+        'fa-times-circle': snack.typeSig() === 'error',
+        'fa-info-circle': snack.typeSig() !== 'success' && snack.typeSig() !== 'warn' && snack.typeSig() !== 'error'
+      }"></i>
+    </span>
+    <span class="snackbar-text">{{ snack.messageSig() }}</span>
+  </div>
+  <div class="snackbar-timer"></div>
+</div>
